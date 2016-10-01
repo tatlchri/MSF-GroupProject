@@ -89,6 +89,22 @@ summary(ml)
 cat('It does seem to have a positive correlation.')
 cat('The stricter the parent, the less time child spends on social media')
 
+# Plot a boxplot for each option in x1, just to visualise it
+ggplot(data = data2) + geom_boxplot(aes(x=factor(x1), y=y)) + xlab("x1")
+
+# See if there are differences in gender
+data_specific[, "gender"] <- survey_data$Child_gender
+# Correlation of x and y, given males. Male = option 1
+cor.test(data_specific[data_specific[,"gender"] == 1, "x1"], data_specific[data_specific[,"gender"] == 1, "y"])
+cat('p-value = 0.3823 for Males')
+# Correlation of x and y, given males. Female = option 2
+cor.test(data_specific[data_specific[,"gender"] == 2, "x1"], data_specific[data_specific[,"gender"] == 2, "y"])
+cat('p-value = 0.006259 for Females')
+
+cat('This suggests that female teens may be more obedient than males.')
+cat('In that their time spent on social media positively correlates with how strict their parents are')
+cat('Whereas male teens do not correlate well')
+
 # Check with related questions to x
 
 # P13_A:          Have you ever used parental controls or other technological means of blocking, filtering or monitoring your child's online activities?  1(YES)-2(NO)-3(does Not Apply)
