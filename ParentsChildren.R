@@ -15,10 +15,31 @@ survey_data <- read.csv("data.csv", header = TRUE, sep = ",", na.strings = "NA")
 # first convert caseID from Factor into a character vector, then into integer. Invalid entries will turn into NA
 case_id <- as.integer(as.character(survey_data$ï..CaseID))
 survey_data <- survey_data[!is.na(case_id), ]
+
 # dim(survey_data) would indicate 1638 rows
 #   ---> 4 rows removed. Checked with csv manually. Removed rows matches with rows with string instead of integer
 
-# (could do later)
+# remove rows where parent answered 0 or empty response to QS1
+# QS1: How many teenagers aged 13 through 17 live in your household at least 50% of the time?  [IF QS1=0, INSERT STANDARD CLOSE AND TERMINATE]
+survey_data <- survey_data[!is.na(survey_data$QS1), ]
+survey_data <- survey_data[survey_data$QS1 > 0, ]
+# COMMENT: not sure why I need two separate lines of code above..
+#  I tried: survey_data <- survey_data[!is.na(survey_data$QS1 > 0), ]
+#     and it gives a different result..
+
+# remove rows where parent answered 0 or empty response to QS1
+# QS2: For how many of the teenagers aged 13 to 17 in your household are you the parent or legal guardian?   [IF QS2=0, INSERT STANDARD CLOSE AND TERMINATE]
+survey_data <- survey_data[!is.na(survey_data$QS2), ]
+survey_data <- survey_data[survey_data$QS2 > 0, ]
+
+# remove rows where teen's age is not between 13 and 17.
+survey_data <- survey_data[!is.na(survey_data$Child_age), ]
+survey_data <- survey_data[(survey_data$Child_age >= 13 & survey_data$Child_age <= 17), ]
+
+
+# (should each qn response validation be done on Global or Local level?)
+# For discussion on 4th October..
+# For now, have adopted local cleaning
 # go through each question/column, and check if responses are valid. 
 # remove rows without valid responses 
 #  -> should this removal be done here in global level, 
