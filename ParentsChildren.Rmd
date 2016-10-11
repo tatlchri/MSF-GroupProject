@@ -7,6 +7,26 @@ output:
   pdf_document: default
 ---
 
+Team discussion on 11 Oct 2016:  
+  
+* Intro  
+* Description of the dataset of the variables that you used.  
+    + how many participants, where are they. age range  
+    + how many questions asked.  
+* Describe the global cleaning - how many records we lost.  
+  
+* 3 sections overview  
+  
+* Each section  
+    + Intro and hypothesis  
+    + Which questions you looked at  
+    + Findings  
+    + Limitations  
+    + Conclusion  
+    + Improvements we could to do in future if we had more time..  
+  
+* Final conclusion  
+
 
 ```{r, echo = FALSE, message = FALSE, include = FALSE}
 #Relationship between parents and children (Kelvin/Bilal)
@@ -24,33 +44,23 @@ library(ggplot2)
 library(stargazer)
 ```
 
-## Executive summary of findings:
-
-* There is significant evidence to show that parent's strictness on teen's usage of social media affects female teens - the stricter the parent, the more time the female teen spends on social media, suggesting that female teens may surprisingly be more rebellious. There is no significant evidence to show any impact of parent's strictness on male teens' time spent on social media.  
-  
-* There is no statistic significant evidence that these parent behaviours, (i) by controlling cell phone, (ii) taking away privileges, (iii) limiting time spent online, have an impact on whether the teen sends flirty or sexy messages.  
-  
-* Teens who feel pressure to only post content that makes them look good to others, has a positive regression coefficient to him/her posting public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours, such as being friends with child in Facebook or other social media, have an effect on teen's public affection behaviour.  
-  
-* Do stalking behaviour of parents influence child's stalking behaviour on his/her significant other? For male teens, a parent monitoring child's location has a positive, statistically significant, impact on the teen exhibiting stalking behaviours.   Age has a negative (but small) impact on the teen exhibiting stalking behaviours; but its confidence level is at 90%.  For female teens, a parent checking on which websites his/her child visits, has a negative, statistically significant, impact on the teen exhibiting stalking behaviours. Perhaps the more the parent does this, the more likely the female teen feels irksome and does not do the same to her significant other.  
-
-* On whether parent's teaching their child on appropriate behaviour is effect:  For male teens, a parent's teaching on online behaviour do not seem to affect whether teen exhibits appropriate behaviour. All regression coefficients are not statistically significant.  For female teens, a parent talking with teen about what is appropriate or inappropriate content for them to be viewing online, and what to share online, have positive, statistically significant, regression coefficients with teen's appropriate behaviour.   
-   
-
 
 ***
 
-## Effects of Parent and child behaviour, on teen's use of social media
+## Executive summary of findings:
   
-We'll study the following questions regarding effect of parent and child relationships on teen's use of social media:  
   
-Question                               |  Hypothesis
--------------------------------------  |  -------------------------------------
-1. Relationship between parents who are strict with their children and the teen’s usage of social media    |  If teens are rebellious, then the stricter the parent, the more time teen will use social media  
-2. Relationship between parents blocking their child’s phone usage and their child’s online behaviour on sexy/flirty pictures   |  If teens are rebellious, then the stricter the parent, the more the child wants to be liberal and may be more inclined to send flirty pictures
-3.	Relationship on whether children self-censor their posts if they are friends with parents on social media   |   Teens’ whose parents are friends with them on social media will likely not post details of their relationship online
-4.	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend  |  If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend
-5.	Is parent’s teaching on online behaviour effective?  |  If parents talk to their child on appropriate behaviour, then teen is less likely to have inappropriate behaviour (e.g. sending flirty pictures)
+<u>Effects of Parent and child behaviour, on teen's use of social media</u>
+
+The table below summarises the questions we studied, our initial hypothesis, and findings we had from the data.  
+  
+Question                               |  Hypothesis   |  Findings
+-------------------------------------  |  ------------------------------------- | -------------------------------------
+1. Relationship between parents who are strict with their children and the teen’s usage of social media    |  If teens are rebellious, then the stricter the parent, the more time teen will use social media  | There is significant evidence to show that parent's strictness on teen's usage of social media affects female teens - the stricter the parent, the more time the female teen spends on social media, suggesting that female teens may surprisingly be more rebellious. There is no significant evidence to show any impact of parent's strictness on male teens' time spent on social media  
+2. Relationship between parents blocking their child’s phone usage and their child’s online behaviour on sexy/flirty pictures   |  If teens are rebellious, then the stricter the parent, the more the child wants to be liberal and may be more inclined to send flirty pictures | There is no statistically significant evidence that these parent behaviours, (i) by controlling cell phone, (ii) taking away privileges, (iii) limiting time spent online, have an impact on whether the teen sends flirty or sexy messages  
+3.	Relationship on whether children self-censor their posts if they are friends with parents on social media   |   Teens’ whose parents are friends with them on social media will likely not post details of their relationship online  | Teens who feel pressure to only post content that makes them look good to others, has a positive regression coefficient to him/her posting public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours, such as being friends with child in Facebook or other social media, have an effect on teen's public affection behaviour  
+4.	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend  |  If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend |  For male teens, a parent monitoring child's location has a positive, statistically significant, impact on the teen exhibiting stalking behaviours.   Age has a negative (but small) impact on the teen exhibiting stalking behaviours; but its confidence level is at 90%.  For female teens, a parent checking on which websites his/her child visits, has a negative, statistically significant, impact on the teen exhibiting stalking behaviours. Perhaps the more the parent does this, the more likely the female teen feels irksome and does not do the same to her significant other  
+5.	Is parent’s teaching his/her child about appropriate online behaviour effective?  |  If parents talk to their child on appropriate behaviour, then teen is less likely to have inappropriate behaviour (e.g. sending flirty pictures, starting a fight due to online events) |  For male teens, a parent's teaching of online behaviour do not seem to affect whether teen exhibits appropriate behaviour. All regression coefficients are not statistically significant.  For female teens, a parent talking with teen about what is appropriate or inappropriate content for them to be viewing online, and what to share online, have positive, statistically significant, regression coefficients with teen's appropriate behaviour  
 
 ***
 
@@ -325,8 +335,8 @@ data_specific$parent_controls_cell_phone <- abs(data_specific$parent_controls_ce
 data_specific$take_away_privileges <- abs(data_specific$take_away_privileges - 4) - 1
 data_specific$limit_time_online <- abs(data_specific$limit_time_online - 4) - 1
 # convert from 1(YES)-2(NO)
-#           to 1(NO)-2(YES)
-data_specific$y <- abs( data_specific$y - 3 )
+#           to 0(NO)-1(YES)
+data_specific$y <- abs( data_specific$y - 3 ) - 1
 
 # convert to factor for linear regression
 data_specific$parent_controls_cell_phone <- factor(data_specific$take_away_privileges)
@@ -387,11 +397,10 @@ data_specific[ !is.na(data_specific$parent_connect_child) & (data_specific$paren
 data_specific[ !is.na(data_specific$teen_public_affection) & (data_specific$teen_public_affection < 1 | data_specific$teen_public_affection > 3), ] <- NA  # needs the !is.na condition otherwise an error throws up
 
 # convert from 1(YES)-2(NO)
-#           to 1(NO)-2(YES)
-data_specific$parent_connect_child <- abs(data_specific$parent_connect_child - 3) 
+#           to 0(NO)-1(YES)
+data_specific$parent_connect_child <- abs(data_specific$parent_connect_child - 3) - 1
 
-data_specific$teen_public_affection <- abs(data_specific$teen_public_affection - 3) 
-
+data_specific$teen_public_affection <- abs(data_specific$teen_public_affection - 3) - 1
 
 
 data_specific$age <- survey_data$Child_age
@@ -466,7 +475,9 @@ data_specific$friends_facebook <- survey_data$P8
 data_specific[ is.na(data_specific$friends_facebook), ] <- NA
 
 data_specific[ !is.na(data_specific$friends_facebook) & (data_specific$friends_facebook < 1 | data_specific$friends_facebook > 2), ] <- NA  # needs the !is.na condition otherwise an error throws up
-data_specific$friends_facebook <- abs(data_specific$friends_facebook - 3) 
+# convert from 1(YES)-2(NO)
+#           to 0(NO)-1(YES)
+data_specific$friends_facebook <- abs(data_specific$friends_facebook - 3) - 1
 
 data_specific$check_child_profile <- survey_data$P13_C
 data_specific[ is.na(data_specific$check_child_profile), ] <- NA
@@ -563,10 +574,10 @@ data_specific$monitor_child_location <- abs(data_specific$monitor_child_location
 data_specific$look_child_phone_records <- abs(data_specific$look_child_phone_records - 4) - 1
 
 # convert from 1(YES)-2(NO)
-#           to 1(NO)-2(YES)
-data_specific$access_date_phone <- abs(data_specific$access_date_phone - 3) 
+#           to 0(NO)-1(YES)
+data_specific$access_date_phone <- abs(data_specific$access_date_phone - 3) - 1
 
-data_specific$track_date_loc <- abs(data_specific$track_date_loc - 3) 
+data_specific$track_date_loc <- abs(data_specific$track_date_loc - 3) - 1
 
 data_specific$y <- data_specific$access_date_phone + data_specific$track_date_loc
 
@@ -712,9 +723,12 @@ data_specific[ !is.na(data_specific$block_flirting_friends) & (data_specific$blo
 data_specific[ !is.na(data_specific$flirt_messages) & (data_specific$flirt_messages < 1 | data_specific$flirt_messages > 2), ] <- NA  
 
 # convert from 1(YES)-2(NO)
-#           to 1(NO)-2(YES)
-data_specific$fight_friends <- abs(data_specific$fight_friends - 3) 
-data_specific$flirt_messages <- abs(data_specific$flirt_messages - 3) 
+#           to 0(NO)-1(YES)
+data_specific$fight_friends <- abs(data_specific$fight_friends - 3) - 1 
+data_specific$flirt_messages <- abs(data_specific$flirt_messages - 3) - 1
+# change from 1.Yes 2.No to 0.Yes 1.No  
+# [Do not reverse the order for this question. 'Yes' is perceived to be good behaviour]
+data_specific$block_flirting_friends <- data_specific$block_flirting_friends - 1
 
 data_specific$y <- data_specific$fight_friends + data_specific$block_flirting_friends + data_specific$flirt_messages
 
@@ -765,7 +779,7 @@ stargazer(list(ml_male, ml_female), type = "text", digits = 2, title  = "Regress
   
 For male teens, a parent's teaching on online behaviour do not seem to affect whether teen exhibits appropriate behaviour. All regression coefficients are not statistically significant.  
     
-For female teens, a parent talking with teen about what is appropriate or inappropriate content for them to be viewing online, and what to share online, have positive, statistically significant, regression coefficients with teen's appropriate behaviour.   
+For female teens, a parent talking with teen about what is appropriate or inappropriate content for them to be viewing online, and what to share online, have positive, statistically significant, regression coefficients with teen's appropriate behaviour.  A positive coefficient means that, the more the parent speaks to the child on appropriate behaviour, the more probable the child exhibits *inappropriate* behaviour.   
   
   
 ## End of section  
