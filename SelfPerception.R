@@ -66,7 +66,7 @@ perception<-data.frame("KFSNS1_A"=as.character(teensdata[,"KFSNS1_A"]),"KFSNS1_B
 perception<-perception[!is.na(perception[,"KFSNS1_A"]),]
 
 #all lines that have neither Fb nor Instagram are removed from the dataset -> 
-#WhatsApp doesn´t qualify for the questions but is considered to be social media in the questionaire as well
+#WhatsApp doesn??t qualify for the questions but is considered to be social media in the questionaire as well
 perception<- perception[!is.na(perception[,"KFB1A"]) | !is.na(perception[,"KFB1C"]),]
 
 #All relevant questions that are looked into
@@ -432,7 +432,7 @@ for (i in 1:nrow(n_per_cluster_quantile))
   if (n_per_cluster_quantile[i,"V3"]<=n_per_cluster_bins[1]){n_per_cluster_quantile[i,5]<-1}
   else{n_per_cluster_quantile[i,5]<-2}
   }
-
+e
 colnames(n_per_cluster_quantile)<- c("Cohort", "Occurences_FB", "Occurences_IG","Quantile_Group_FB","Quantile_Group_FB")
 
 ######################################################
