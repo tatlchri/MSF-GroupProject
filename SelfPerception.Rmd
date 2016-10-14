@@ -1,0 +1,713 @@
+---
+title: 'BA1820: Group Project'
+author: "Team 3"
+date: ''
+output:
+  html_document: default
+  pdf_document: default
+---
+
+Team discussion on 11 Oct 2016:  
+  
+* Intro  
+* Description of the dataset of the variables that you used.  
+    + how many participants, where are they. age range  
+    + how many questions asked.  
+* Describe the global cleaning - how many records we lost.  
+  
+* 3 sections overview  
+  
+* Each section  
+    + Intro and hypothesis  
+    + Which questions you looked at  
+    + Findings  
+    + Limitations  
+    + Conclusion  
+    + Improvements we could to do in future if we had more time..  
+  
+* Final conclusion  
+
+
+```{r, FALSE}
+library(ggplot2)
+library(RColorBrewer)  
+library(reshape2)
+library(plyr)
+
+#Import complete questionnaire
+load("cleaned_data.Rdata") 
+teensdata<- survey_data
+```
+
+
+***
+
+## Introduction
+
+In general the dataset offers a lot of questions focusing on the use, general behaviour and perception of social media by parents and their kids between the age of 13 and 17 years.
+
+The previous research was mainly focusing on quite "straigth forward" approaches, leading to already interesting results. Therefore the following will focus on a more descriptive and bottom down approach. 
+
+Social media like Facebook or Instagram, provide a plattform that enables people to engage and parcticipate in social activities in a way that is close to the normal social spectrum and furthermore increase the reach of every person to the limits of number of users. 
+
+This imposes new challenges for each individual, like defining a close network of peers, differentiating between online and real world realtionships - if there is any difference. But one of the most interesting questions is, How does social media change the way we perceive ourselves, enabling us to benachmark against more than 1bn different people, compared to the wider circle of aquaintances 15 years ago?.
+
+According to Huffington Post Article there has been research conducted how Facebook has significant impact on our feelings as well as how our personality is reflected in certain behavioral patterns on social media. ([Atricle](http://www.huffingtonpost.com/dr-perpetua-neo/does-facebook-make-you-de_b_8474654.html))
+
+Given this, it seems logic to infer that the higher the exposure to social media, the higher the impact on feelings and in consequences on self perception. Defining a variable to measure "exposure" especially not just expressed as hours spent on Facebook, but also how emotionally people might be engaged to their own social media network, seems to be tricky. Generally the quality or value added of all networks is strongly relying on members of the network, in this case this would be number of friends a person has on a certain social media plattform.
+
+The basic assumption therefore is, that the number of friends should have a significant impact on the perceived value added of social media for each individual, therefore should have a positively correlating impact on exposure (the higher perceived value, the more time online and therefore the more exposure) and based on the assumptions stated in the article, this should have an impact on feelings and selfperception.
+
+Hypothesis: "The number of friends on Facebook resp. followers on Instagram, has a significant impact on the perceived value added of social media and consequently about the own life".
+
+This hypothesis was amended during to findings during the anylsis for the following reason. The set of 5 questions, at least in part require a certain capability of self reflection, emotional intelligence and general maturity. 
+1. In general, does social media make you feel more connected to information about whats going on in your friends lives?
+2. In general, does social media make you feel worse about your own life because of what you see from other friends on social media?
+3. In general, does social media make you feel better connected to your friends feelings?
+4. In general, does social media make you feel pressure to post content that will be popular and get lots of comments or likes?
+5. In general, does social media make you feel pressure to only post content that makes you look good to others?
+
+Especially question 4 and 5 support this assumption. Therefore the hypothesis was amended to the following.
+
+Hypothesis: "The age and the number of friends on Facebook resp. followers on Instagram, have a significant impact on the perceived value added of social media and consequently about the own life".
+
+Given the holisitc nature of the question the following description will predominantely focus on the approach and the rational behind certain decisions.
+
+Prior to the explanation of the initial approach, the following steps need to be carried out.
+
+
+#Loading & cleaning
+
+Besides the standardised global cleaning which was done centrally, for the purpose of the following analysis there needs to be done further cleaning for the following reason:
+
+The survey assumes different media channels as "social media". With regards to the hypothesis not all considered media channel by the survey are accurate or applicable e.g. WhatsApp is predominantely and doesn´t fullfill the criteria of social exposure within the network. Therefore, in the following the Facebook and Instagram are subsummised as social media. 
+
+Besides on cleaning out not valid responses to all examined questions, all respondends have to be removed that are neither using Facebook nor Instagram. This means that all responses that are considered to be valid for this analysis must have cummulated valid responses to the research questions and have to be at least present in one of the networks.
+
+This cleaning is crucial for the validity of later results, but unfortunately decreases the number of responses from initially 1081 to a final of 755. In general the comparably small number of responses in the survey, needs to be kept in mind at all times.
+
+```{r, echo = FALSE}
+
+library(ggplot2)
+library(RColorBrewer)  
+library(reshape2)
+library(plyr)
+library(knitr)
+#Import data
+
+
+                      ######################################################
+                      ############                              ############
+                      ############    -Loading and cleaning-    ############
+                      ############                              ############
+                      ######################################################
+
+
+#load dataset as perception inluding the following columns questions:
+
+# Possible answers(1 = Yes, a lot 2 = Yes, a little 3 = No)
+# KFSNS1_A: In general, does social media make you feel\tmore connected to information about whats going on in your friends lives?
+# KFSNS1_B: In general, does social media make you feel worse about your own life because of what you see from other friends on social media?
+# KFSNS1_C: In general, does social media make you feel better connected to your friends feelings?
+# KFSNS1_D: In general, does social media make you feel pressure to post content that will be popular and get lots of comments or likes?
+# KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others?
+
+#Possible answers (numeric)
+# KFB1A:    How many friends do you have on Facebook?
+# KFB1B:    How many followers do you have on Twitter?
+# KFB1C:    How many followers do you have on Instagram
+#Child_age: How old is your child?
+
+#Possible answers (1 = Yes 2 = No)
+#KF13_D:    Do you spend time with your closest friend on a regular basis at any of these places? Online, such as places like social networking sites or gaming sites?
+
+#Possible answers (1 = Every day 2 = Every few days 3 = Less often 4 = Never)
+#KFR11_H:   How often do you spend time with friendsposting on social media sites?
+
+perception<-data.frame("KFSNS1_A"=as.character(teensdata[,"KFSNS1_A"]),"KFSNS1_B"=as.character(teensdata[,"KFSNS1_B"]),"KFSNS1_C"=as.character(teensdata[,"KFSNS1_C"]),"KFSNS1_D"=as.character(teensdata[,"KFSNS1_D"]),"KFSNS1_E"=as.character(teensdata[,"KFSNS1_E"]),"KF13_D" = teensdata[,"KF13_D"],"KFR11_H" = teensdata[,"KFR11_H"],"KFB1A"=teensdata[,"KFB1A"],"KFB1B"=teensdata[,"KFB1B"],"KFB1C"=teensdata[,"KFB1C"], "Child_age" = teensdata[,"Child_age"])
+
+############################### CLEANING ###############################
+
+#clean out NA answers (apparently NA in KFSNS1_A also have NA in the othe KFSNS1_ questions)
+perception<-perception[!is.na(perception[,"KFSNS1_A"]),]
+
+#all lines that have neither Fb nor Instagram are removed from the dataset -> 
+#WhatsApp doesn??t qualify for the questions but is considered to be social media in the questionaire as well
+perception<- perception[!is.na(perception[,"KFB1A"]) | !is.na(perception[,"KFB1C"]),]
+
+#All relevant questions that are looked into
+questions_short<- c("KFSNS1_A", "KFSNS1_B", "KFSNS1_C", "KFSNS1_D","KFSNS1_E","KF13_D","KFR11_H")
+
+#transform to numeric values to be able to calculate correlation 
+for(i in 1:length(questions_short))
+{
+  perception[,i]<- as.character(perception[,i])
+  perception[,i]<- as.numeric(perception[,i])
+}
+
+#clean questions from negative values (-> not valid answers but not marked as NA)
+for(i in 1:5)
+{
+  perception<-perception[perception[,i] %in% c(1,2,3),]
+}
+
+
+
+```
+
+
+    
+#Clustering
+
+The cleaned data set is now ready to be clustered. The selection of Facebook and Instagram as representative networks follows the rational or reciprocety and, size, primary way of communication as well as popularity.
+
+Reciprocity:
+
+Reciprocal: The connection between members of Facebook (friends) are exclusively reciprocal, and need to be requested/approved individually. Therefore there is no mismatch between people be able accessing own vs. acessing other peoples information/posts.
+
+Non-reciprocal: Instagram and Twitter offer non reciprocal relation ships, that can lead to significant missmatches between the information streems. Extreme examples of this patterns can be seen with celebrity profiles, sometime following 200 profiles, but beeing followed by several million people.
+
+Size: Facebook as well as Instagram are both extremely popular and established networks. Facebook as the game changer in the mid 2010s and Instagram as the innovator predominantely moving communication from text to picture based. Based on the non-reciprocal character and picture based communication, Instagram is extremely interesting with regards to exposure and subtile submessages pictures are more capable of including that written messages.
+
+Based on this logic, every respondend has an assigned 33% quantile with 3 being highest 1 lowest, based on his individual number of friends for Facebook and follower on Instagram.
+
+This seems to be in line with the hypothesis, since it can be concluded that respondends with a comparably higher number of friends/followers have comparably higher exposure to the network and therefore might have different views on certain things, like perception of other or pressure to post content.
+
+
+```{r,echo = FALSE}
+#Create even groups by 33% - quantiles
+
+#Facebook 
+perception1<-perception[!is.na(perception[,"KFB1A"]),]
+KFB1A_bins<-unname(quantile(perception1[,"KFB1A"],c(.33, .66, 1)))
+#Twitter
+perception2<-perception[!is.na(perception[,"KFB1B"]),]
+KFB1B_bins<-unname(quantile(perception2[,"KFB1B"],c(.33, .66, 1)))
+#Instagram
+perception3<-perception[!is.na(perception[,"KFB1C"]),]
+KFB1C_bins<-unname(quantile(perception3[,"KFB1C"],c(.33, .66, 1)))
+
+
+
+#create clusters by quantile of #fried/followers within social media 
+#channel replace actual number with cluster
+for (i in 1:nrow(perception)){
+  if (!is.na(perception[i,"KFB1A"])){
+    if (perception[i,"KFB1A"]<=KFB1A_bins[1]){
+      perception[i,"KFB1A"]<-1
+    }else if (perception[i,"KFB1A"]<=KFB1A_bins[2]){
+      perception[i,"KFB1A"]<-2
+    }else{
+      perception[i,"KFB1A"]<-3
+    }
+  }
+  
+  if (!is.na(perception[i,"KFB1B"])){
+    if (perception[i,"KFB1B"]<=KFB1B_bins[1]){
+      perception[i,"KFB1B"]<-1
+    }else if (perception[i,"KFB1B"]<=KFB1B_bins[2]){
+      perception[i,"KFB1B"]<-2
+    }else{
+      perception[i,"KFB1B"]<-3
+    }
+  }
+  
+  if (!is.na(perception[i,"KFB1C"])){
+    if (perception[i,"KFB1C"]<=KFB1C_bins[1]){
+      perception[i,"KFB1C"]<-1
+    }else if (perception[i,"KFB1C"]<=KFB1C_bins[2]){
+      perception[i,"KFB1C"]<-2
+    }else {
+      perception[i,"KFB1C"]<-3
+    }
+  }
+}
+
+
+```
+
+#Evaluation of usage
+
+To ensure the comparability of the different subsets clustered by quantile limited analysis was conducted based on frequency of usage. The following assumptions were done:
+
+People with an account in both networks can be considered to be the most exposed individuals in the set. Therefore the variance of logins within this subset was compared to the variance of logins in the entire data set among the different clusters. Due to the "either or"" decision with regards to representation in the networks, the correlation between belonging to same cluster in the two different networks could only be conducted in the subset.
+
+There is a moderate correlation with: <b>0.479</b>
+
+The frequency of usage was measured by question KFR11_H
+
+How often do you spend time with friendsposting on social media sites? 1.Every day, 2.Every few days, 3. Less often, 4. Never
+
+The variance of logins in the set is <b>0.788</b>, in the subset <b>0.779</b>, which leaves to the conclusion that logins of respondends with no clustering by quantile vary equally among the different sets.
+
+As shown below, the variance of logins varies stronger over the different clusters in the set compared to the subset, while Instagram has a almost equally variation of logins.
+
+
+```{r , echo=FALSE}
+
+#   Subset, where respondends use both, Facebook and Instagram - 
+#     this is used to compare some parameters to the big set (perception)
+#     number of respondends using both is 397
+FbIn<- perception[!is.na(perception[,"KFB1A"]) & !is.na(perception[,"KFB1C"]),]
+
+
+#the correlation between quantiles among the different media is 0.46348
+#   Question: Do #friends on facebook and #followers of the same person belong to the same quantile?
+cor_FbIn<- cor(FbIn$KFB1A,FbIn$KFB1C)
+
+
+#This question: How often do you spend time with friendsposting on social media sites? 1.Every day,2.Every few days,3. Less often,4. Never
+#with var_FbInKFR11_H = 0.775 (subset) and var_perceptionKFR11_H = 0.7704 (set) 
+#the values are equally varying regardless of presence in different social media
+
+var_FbInKFR11_H<- var(FbIn$KFR11_H)
+var_perceptionKFR11_H<- var(perception$KFR11_H)
+
+
+#Calculate the variance of usage among the different quantiles based on #friend/#follower
+# in subset and set
+var_usage_media<- data.frame()
+for(j in 1:3)
+{
+  var_usage_media[j,1]<- var(FbIn[FbIn[,8]== j,"KFR11_H"])
+  var_usage_media[j,2]<- var(perception[perception[,8]== j,"KFR11_H"] , na.rm = TRUE)
+  var_usage_media[j,3]<- var(FbIn[FbIn[,10]== j,"KFR11_H"])
+  var_usage_media[j,4]<- var(perception[perception[,10]== j,"KFR11_H"], na.rm = TRUE)
+}
+colnames(var_usage_media)<- c("Facebook_Sub","Facebook_Total", "Instagram_Sub", "Instagram_Total")
+
+# Generally the data of the subset and the set is moving in same direction with almost equal values
+# While the medium quantile has a stronger variance compared to the others
+
+```
+
+```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
+kable(var_usage_media)
+```
+
+
+#Excursion
+
+As initially mentioned many conclusion relevant for the final approach, evolved during the first approach of analysing the data. After cleaning the data and clustering it, a visual analysis for assumed patterns was conducted with so called heatmaps. As mentioned the observed correlation based on the clustering would have been expected to be much clearer, eventhough some weak pattern proving the initial though could be observed, like respondends from cohort 3 feel in general more connected to information than others. Furthermore most of the respondends stating that they "feel worse about their lifes" were considered themselves to be highly connected to information.
+
+
+How do responses vary among the clusters by quantile
+```{r, echo = FALSE,fig.align = "center", fig.width= 10, fig.height= 8}
+
+#create first plot based on cluster 
+y<-count(perception[!is.na(perception[,"KFB1A"]),], vars = c(as.character("KFSNS1_A"),"KFB1A"))
+ for(i in 1:nrow(y)){y[i,"KFSNS1_A"]<- as.character(y[i,"KFSNS1_A"])}
+ggplot(y, aes(x = KFSNS1_A, y = KFB1A, fill = freq)) + geom_tile() + scale_fill_gradient(low = "white",   high = "steelblue") + 
+  geom_text(data=y, aes(KFSNS1_A, KFB1A, label = freq), color="black", size=rel(5))+
+  labs(x = "KFSNS1_A: Feel connected to information", y = "Quantile by Facebook friends", title = "")+
+  scale_x_discrete(labels = c("1"="Yes a lot", "2"="Yes,  a little ","3"="No"))
+```
+
+How do questions access to information and perceived of own life correlate
+```{r, echo = FALSE,fig.align = "center", fig.width= 10, fig.height= 8}
+#create second plot question/question
+y1<-count(perception[!is.na(perception[,"KFB1A"]),], vars = c(as.character("KFSNS1_A"),"KFSNS1_B"))
+ for(i in 1:nrow(y1)){
+ y1[i,"KFSNS1_A"]<- as.character(y1[i,"KFSNS1_A"]) 
+ y1[i,"KFSNS1_B"]<- as.character(y1[i,"KFSNS1_B"])}
+
+ggplot(y1, aes(x = KFSNS1_A, y = KFSNS1_B, fill = freq)) + geom_tile() + scale_fill_gradient(low = "white",   high = "steelblue") + 
+  geom_text(data=y1, aes(KFSNS1_A, KFSNS1_B, label = freq), color="black", size=rel(5))+
+  labs(x = "KFSNS1_A: Feel connected to information", y = "KFSNS1_B: Feel bad about life", title = "")+
+  scale_x_discrete(labels = c("1"="Yes a lot", "2"="Yes,  a little ","3"="No"))+
+  scale_y_discrete(labels = c("1"="Yes a lot", "2"="Yes,  a little ","3"="No"))
+
+```
+
+
+<b>Conclusion:</b>
+
+The heatmaps do not indicate any significant relationships between the number of friends on Facebook, nor the perceived mood (feeling bad about live) with perceived value added of the network (feel connected to information).
+
+Especially the "Yes a little" received comparibly high results, which might be due to the "neither nor" character of the answer. Based on these observation, the following two conclusions were drawn:
+
+
+- the results are not supporting the initially logical assumptions based on the mentioned research strong enough, but on the other hand the observations are too weak to allow to reject the hypothesis
+- the complexity and intimacy of some questions might increase the likelyhood of answering with a more or less perceived neutral answer like the "Yes a little". Especially the intimate questions like 
+
+KFSNS1_B: In general, does social media make you feel worse about your own life because of what you see from other friends on social media?
+KFSNS1_D: In general, does social media make you feel pressure to post content that will be popular and get lots of comments or likes?
+KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others?
+
+receive comparably high negative or indifferent responses. Given the initial thoughts, this might be due to the age of the participants and there mentioned emotional capabilities. To evaluate whether the age has an impact on the way of responding to the dataset was reclustered by age.
+
+```{r,echo = FALSE}
+######################################################
+############                              ############
+############          -Analysis-          ############
+############    -Correlation by age-      ############
+############                              ############
+######################################################
+
+
+#create subsets by age
+perception13<- perception[perception[,"Child_age"]== 13,]
+perception14<- perception[perception[,"Child_age"]== 14,]
+perception15<- perception[perception[,"Child_age"]== 15,]
+perception16<- perception[perception[,"Child_age"]== 16,]
+perception17<- perception[perception[,"Child_age"]== 17,]
+
+
+# create subsets of correlation by age group (to be recoded like lower example)
+############### total ###############
+
+# final df used for plotting
+cor_plot_age<- data.frame()
+#final df giving #observations per subset
+n_per_cluster_age<- data.frame()
+#rownames from perception df
+perception_rnames<- colnames(perception)
+
+#working subsets
+age_sub_age<- data.frame()
+age_sub_age_cor<-data.frame()
+
+#vectors for row and column names
+cor_sub_rnames<-c()
+cor_sub_rnames_break<-c()
+cor_plot_age_coln<-c()
+
+#columnnumber for cor_plot_age each column represents the results of a unique combination eg. Age = 13/QuantileFriends = 1
+cn<-1
+
+
+######################################################
+############         -Main loop-          ############
+######################################################
+
+
+#gets the ages relevant for analysis 13-17 - 18 represents total
+for(i in 13:18)
+{
+    #creates subset with the applicable filters by age
+    if(i < 18) age_sub_age<-perception[perception[,"Child_age"] == i,]
+    else 
+      {
+        #take total set as working subset
+        age_sub_age<-perception
+        i<- "Total"
+      }
+    
+    #creates string that contains relevant information about analysed cohort
+    subsetname<- paste("Cohort",as.character(i))
+    
+    #populates df containing #observations in cohort subset
+    n_per_cluster_age[cn,1]<-subsetname
+    n_per_cluster_age[cn,2]<- nrow(age_sub_age)
+    
+    #assigns current cohort name to column names vector
+    cor_plot_age_coln[cn]<-subsetname
+    
+    #needed to calculate the different correlation (results in 5x5 square matrix)
+    for(m in 1:5)
+    {
+      for(n in 1:5)
+      {
+        #checks whether calculated cor equals 1.0 this would mean same question and creates square matrix
+        if(cor(age_sub_age[,m], age_sub_age[,n])>=0.99) age_sub_age_cor[m,n]<- 0.0
+        else age_sub_age_cor[m,n]<- cor(age_sub_age[,m], age_sub_age[,n])
+      }
+    }
+    
+    # needed to get all values below the trace of the matrix
+    #initialize row count at two 
+    s<-2
+    #initialise row counter for transposing values from square matrix in 1 column
+    p<-1
+    
+    #columns can start at 1
+    for(r in 1:ncol(age_sub_age_cor))
+    {
+      #gets all rows needs to start at because [1,1] equals 0.0000 first field of trace
+      #q gets increased by increasing s per total column iteration
+      for (q in s:5)
+      {
+        #cor_rownames[p]<-paste(colnames(cor_sum13[r]),"/","\n",colnames(cor_sum13[q+1]))
+        #gets the value for each unique combination
+        cor_plot_age[p,cn]<-age_sub_age_cor[q,r]
+        
+        #assigns question combination to vector
+        cor_sub_rnames_break[p]<-paste(as.character(perception_rnames[r]),"/","\n",as.character(perception_rnames[q]))
+        cor_sub_rnames[p]<-paste(as.character(perception_rnames[r]),"/",as.character(perception_rnames[q]))
+        
+        #increases row index for cor_plot1
+        p<- p+1
+      }
+      #increases starting index rows for inner loop
+      s<-s+1
+    }
+
+    #for each processed unique subset increase column index for cor_plot_age
+    cn<-cn+1
+}
+
+#assign column names and row names - delete last two items from df
+colnames(cor_plot_age)<-cor_plot_age_coln
+rownames(cor_plot_age)<-cor_sub_rnames
+cor_plot_age<- cor_plot_age[(-c(11,12)),]
+cor_sub_rnames_break<-cor_sub_rnames_break[-c(11,12)]
+```
+
+#Clustering by age
+
+The following results are solely clustered by age, regardless of the quantile for the networks. This was done to look at the impact of age on the results in an isolated way.
+
+The table shows all correlation for all different unique combination of questions per age cohort. It can be observed that the correlation for the same combination of question slightly vary among the different cohorts. With 130,147,136,172 and 170 the respondends are more or less evenly distributed among the different ages (increasing order starting with 13). Therefore the observation can be assumed to be valid, with not too many variations due to the different sample sizes. 
+
+
+```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
+kable(cor_plot_age)
+```
+
+The plot confirms the previous observation of varying correlations over the different cohorts for the same pair of question. Looking at question pair <b>KFSNS1_D / KFSNS1_E</b> within cohorte 13, its interesting to observe that there is a oustanding high correlation for this pair and only in this cohorte. This might be due to two contradictive assumptions. Question D as well as E are aiming almost in the exact same direction but slightly differently phrased. Therefore the two possibilities are that either the difference between the questions was not correctly perceived, or given the case that E is a control question for D, 13 year olds are more honest and responding the same way to equal questions.
+
+```{r, echo= FALSE , message=FALSE ,fig.align = "center", fig.width= 10, fig.height= 8}
+
+#final plot for age cor with questions
+#1:5 is just for values excluding total results
+rownames(cor_plot_age)<-cor_sub_rnames_break
+cor_plot_age_t <- as.data.frame(t(cor_plot_age[,1:5]))
+cor_plot_age_t_melt<-melt(cor_plot_age_t[,1:10])
+colnames(cor_plot_age_t_melt)<-c("Question_combination", "Correlation")
+#plot
+ggplot(cor_plot_age_t_melt, aes(x = Question_combination, y = Correlation)) + 
+  geom_boxplot(notch = FALSE,outlier.colour = "red", outlier.shape = 1)+
+  ggtitle("Calculated correlations for individual\nquestion combination clustered by age")
+```
+
+
+## Clustering by age, quantile and network
+
+Following the same logic as above, the analysis of correlations between different question sets will be done based on a new clustering. The respondends are now clustered by their age, quantile of friends/followers and their responses split up by the two networks Facebook and Instagram.
+
+
+```{r, echo= FALSE , message=FALSE}
+
+######################################################
+############                              ############
+############          -Analysis-          ############
+############        -Correlation-         ############
+############       -Age & Quantile-       ############
+############                              ############
+######################################################
+
+
+
+cor_plot_quantile_FB<- data.frame()
+cor_plot_quantile_IG<- data.frame()
+#sub working set
+age_sub_w_FB<- data.frame()
+age_sub_w_IG<- data.frame()
+
+cor_quantile_coln<-c()
+
+n_per_cluster_quantile<- data.frame()
+#columnnumber for cor_plot1 each column represents the results of a unique combination eg. Age = 13/QuantileFriends = 1
+cn<-1
+#creates ages to look for
+for(i in 13:18)
+{
+  #creates quantiles to look for
+  for(j in 1:3)
+  {
+    if(i == 18)
+    {
+      age_sub_sm_FB<-perception[!is.na(perception[,"KFB1A"]) & perception[, "KFB1A"] == j,]
+      age_sub_sm_IG<-perception[!is.na(perception[,"KFB1C"]) & perception[, "KFB1C"] == j,]
+      x<-"Total"
+    }
+    
+    else
+      {
+        age_sub_sm_FB<-perception[perception[,"Child_age"] == i & !is.na(perception[,"KFB1A"]) & perception[, "KFB1A"] == j,]
+        age_sub_sm_IG<-perception[perception[,"Child_age"] == i & !is.na(perception[,"KFB1C"]) & perception[, "KFB1C"] == j,]
+        x<-i
+      } 
+    
+    #creates subset with the applicable filters by age and quantile
+    
+    #print(summary(age_sub_sm))
+    n_per_cluster_quantile[cn,1]<-paste(as.character(x),"/",as.character(j))
+    n_per_cluster_quantile[cn,2]<- nrow(age_sub_sm_FB)
+    n_per_cluster_quantile[cn,3]<- nrow(age_sub_sm_IG)
+
+    cor_quantile_coln[cn]<-c(paste(as.character(x),"/",as.character(j)))
+    #needed to calculate the different correlation (results in 5x5 square matrix)
+    for(m in 1:5)
+    {
+      for(n in 1:5)
+      {
+        
+        #checks whether calculated cor equals 1.0 this would mean same question
+        if(cor(age_sub_sm_FB[,m], age_sub_sm_FB[,n])>=0.99) age_sub_w_FB[m,n]<- 0.0
+        else age_sub_w_FB[m,n]<- cor(age_sub_sm_FB[,m], age_sub_sm_FB[,n])
+        
+        if(cor(age_sub_sm_IG[,m], age_sub_sm_IG[,n])>=0.99) age_sub_w_IG[m,n]<- 0.0
+        else age_sub_w_IG[m,n]<- cor(age_sub_sm_IG[,m], age_sub_sm_IG[,n])
+      }
+    }
+    #print(age_sub_w)
+    # needed to get all values below the trace of the matrix
+    s<-2
+    p<-1
+    #get columns can start at 1
+    for(r in 1:ncol(age_sub_w_FB))
+    {
+      #gets all rows needs to start at because [1,1] equals 0.0000 first field of trace
+      for (q in s:5)
+      {
+        #cor_rownames[p]<-paste(colnames(cor_sum13[r]),"/","\n",colnames(cor_sum13[q+1]))
+        #gets the value for each unique combination
+        cor_plot_quantile_FB[p,cn]<-age_sub_w_FB[q,r]
+        cor_plot_quantile_IG[p,cn]<-age_sub_w_IG[q,r]
+        
+        #increases row index for cor_plot1
+        p<- p+1
+        
+      }
+      #increases starting index rows for inner loop
+      s<-s+1
+    }
+    #print(cor_plot1)
+  
+  #for each processed unique subset increase column index for cor_plot1
+  cn<-cn+1
+    
+  }
+  
+}
+
+
+######################################################
+############          -Finalising-        ############
+######################################################
+
+
+#Finalising returns
+rownames(cor_plot_quantile_FB)<-cor_sub_rnames
+colnames(cor_plot_quantile_FB)<-c(cor_quantile_coln)
+cor_plot_quantile_FB<- cor_plot_quantile_FB[-c(11,12),]
+
+rownames(cor_plot_quantile_IG)<-cor_sub_rnames
+colnames(cor_plot_quantile_IG)<-c(cor_quantile_coln)
+cor_plot_quantile_IG<- cor_plot_quantile_IG[-c(11,12),]
+
+
+
+## eliminating the most non representative cluster with the given constraints
+
+#Facebook & Instagram (remove lowest 10% by quantity of occurences)
+n_per_cluster_bins_FB<-unname(quantile(n_per_cluster_quantile[,"V2"],c(.1,1)))
+n_per_cluster_bins_IG<-unname(quantile(n_per_cluster_quantile[,"V3"],c(.1,1)))
+
+for (i in 1:nrow(n_per_cluster_quantile))
+  {
+  if (n_per_cluster_quantile[i,"V2"]<=n_per_cluster_bins_FB[1]){n_per_cluster_quantile[i,4]<-1}
+  else{n_per_cluster_quantile[i,4]<-2}
+  
+  if (n_per_cluster_quantile[i,"V3"]<=n_per_cluster_bins_IG[1]){n_per_cluster_quantile[i,5]<-1}
+  else{n_per_cluster_quantile[i,5]<-2}
+  }
+
+colnames(n_per_cluster_quantile)<- c("Cohort", "Occurences_FB", "Occurences_IG","Quantile_Group_FB","Quantile_Group_FB")
+
+```
+
+
+#Information about the different cluster
+
+The number of observations in each cluster is important with regards to the reliability of further conclusions based on this data set. 
+
+<b>Occurences:</b> Displays the number of all respondends that have an account in the corresponding network and cluster
+
+<b>Quantile:</b> Value 1 indicates that this cohort belongs to the lowest 10% qunatile amd therefore shouldn´t be considered due to the small sample size
+
+
+```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
+kable(n_per_cluster_quantile)
+```
+
+```{r, echo= FALSE , message=FALSE ,fig.align = "center", fig.width= 10 , fig.height= 8}
+#Showing #number of responses per cohorte (age & quantile) (final)
+n_per_cluster_quantile_melt <- melt(n_per_cluster_quantile[,1:3], id = c("Cohort"))
+#plot
+ggplot(n_per_cluster_quantile_melt, aes(x = Cohort, y = value, fill = variable)) + 
+  geom_bar(position = "dodge", stat = "identity")+ 
+  labs(x = "Cluster(age & quantile)", y = "# of occurences", title = "")+
+  ggtitle("# of observations for each cluster\n Facebook/Instagram")
+```
+
+#Correlation per cluster based on Facebook
+
+Observations:
+
+Highest correlation: The highest correlations can be observed for questions (A/C, B/E, D/E, B/C). Starting with the already mentioned unique combination of D/E which are closely related questions, the following can be concluded from the plot. Looking at all counter example, so same first question matched with D and E, it becomes obvious that those questions with exception of (B/D, B/E) are more or less equally correlating with the opposite question. Also taking the observation of (D/E) into consideration, it appears to be a valid conclusion that these two questions are equally perceived by the responders.
+
+The same accounts for the combination of (A/C) with both asking about the quality of connection to friends respectively their feelings.
+Left with (B/E) this is most likely the most interesting question combination, looking at the correlation between feeling "worse about your own life because of what you see from other friends on social meda" and feeling the pressure to "only post content that makes you look good to others". This observation is strongly in line with the initially presented research discussed by the ([Huffington Post](http://www.huffingtonpost.com/dr-perpetua-neo/does-facebook-make-you-de_b_8474654.html)).
+
+The last interesting observation with regards to the variance of the values is combination (B/C). The observations vary from positively to negatively correlating, which might be explained with the following assumption. Some people might perceive it positively to be connected to friends feelings, while other might get jealous and therefore attach it as negative feeling.
+
+
+```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
+kable(cor_plot_quantile_FB)
+```
+
+```{r, echo= FALSE , message=FALSE ,fig.align = "center", fig.width= 10 , fig.height= 8}
+#age, quantile for Facebook
+rownames(cor_plot_quantile_FB)<-cor_sub_rnames_break
+cor_plot_quantile_FB_t<- as.data.frame(t(cor_plot_quantile_FB[,1:15]))
+cor_plot_quantile_FB_t_melt<-melt(cor_plot_quantile_FB_t[,1:10])
+colnames(cor_plot_quantile_FB_t_melt)<-c("Question_combination", "Correlation")
+#plot
+ggplot(cor_plot_quantile_FB_t_melt, aes(x = Question_combination, y = Correlation)) + 
+  geom_boxplot(notch = FALSE,outlier.colour = "red",outlier.size = 3 , outlier.shape = 1)+
+  geom_jitter(width = 0.3, shape = 2)+
+  ggtitle("Calculated correlations for individual question combination\n clustered by age, quantile of friends and Facebook")
+```
+
+#Correlation per cluster based on Instagram
+
+In general the patterns follow the same patterns as observed with Facebook. Looking at the previously identified questions, it occurs that for (B/E) Instagram has sliglty more extreme values but a weaker variance, while mean and median are almost equally with 0.44/0.43 and 0.477/0.49 respectively (Instagram first).
+
+The situation for (B/C) is almost the same, with one extreme outlier having a negative correlation of -0.37 from the 15 year old with a lot of followers. 
+
+```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
+kable(cor_plot_quantile_IG)
+```
+
+```{r, echo= FALSE , message=FALSE ,fig.align = "center", fig.width= 10 , fig.height= 8}
+#age, quantile for Facebook
+rownames(cor_plot_quantile_IG)<-cor_sub_rnames_break
+#age, quantile for Instagram
+cor_plot_quantile_IG_t<- as.data.frame(t(cor_plot_quantile_IG[,1:15]))
+cor_plot_quantile_IG_t_melt<-melt(cor_plot_quantile_IG_t[,1:10])
+colnames(cor_plot_quantile_IG_t_melt)<-c("Question_combination", "Correlation")
+#plot
+ggplot(cor_plot_quantile_IG_t_melt, aes(x = Question_combination, y = Correlation), ymax = "blue") + 
+  geom_boxplot(notch = FALSE,outlier.colour = "red", outlier.shape = 1)+
+  geom_jitter(width = 0.3, shape = 2)+
+  ggtitle("Calculated correlations for individual question combination\n clustered by age, quantile of friends and Instagram")
+
+
+for(i in 1:10)
+  {
+  print(colnames(cor_plot_quantile_IG_t[i]))
+  print(summary(cor_plot_quantile_IG_t[,i]))
+  print(summary(cor_plot_quantile_FB_t[,i]))
+}
+```
+
+#Conclusion and limitations
+
+Given the initial size of the entire set and the necessary cleaning, the cluster ended up being relatively small to make statistically significant observations. Futhermore the selected independent variables number of friends/ followers and age must be evaluated under the following assumptions. Looking at dependent variables that are deeply connected to the psyche of human beings, given the age and the along going presumable changes in life of the respondends, using only these two variables is a strong reduction of complexity to explain complex occurences that are influenced by numerous factors. 
+Second, given the time restriction and scope of the project a deeper analysis was simply not possible. The overall aim of this analysis was to show how clustering by relevant parameters might lead to different results and insight, which will be quickly recaptured.
+
+Starting with the initial heat maps, that only had limited explenatory power, the clustering by quantile of friends and age let to more detailed and differentiated results, clearly showing that the correlations between the responses to the questions are also relying on the cluster criterias. Furthermore as discussed above, there is a correlation between feeling "worse about your own life because of what you see from other friends on social media" and feeling the pressure to "only post content that makes you look good to others". This observation adresses exactly what the author of the article initially describes with regards to her experience. Given the mentioned limitations regarding the dataset as well as the complexity of the human mind, the hypothesis must be rejected from a statistical point of view, nevertheless the observation showed as well, that exposure expressed in number of friends has an impact on the perception of social media.
+
+
