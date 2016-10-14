@@ -1,0 +1,82 @@
+---
+title: "Untitled"
+author: "Christina Tatli"
+date: "October 10, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Descriptive statistics
+
+
+```{r cars}
+load('cleaned_data.Rdata')
+library(ggplot2)
+library(plyr)
+library(plotly)
+
+
+#Number of Female and Males that took part in the survey
+survey_data$Child_gender<-as.character(survey_data$Child_gender)
+survey_data$Child_gender<-revalue(survey_data$Child_gender, c("1"="Male", "2"="Female"))
+ggplot(data=survey_data,aes(x=Child_gender))+geom_bar()+labs(title="Number of Females and Males that took part in the survey",x="Child Gender")
+
+
+#Create  Hispanic ethnicity table
+races<-data.frame(race=c("Other","Mexican, Mexican-American,Chicano","Puerto Rican","Cuban, Cuban American","Central or South American","Other Spanish/Hispanic/Latino "),n=table(survey_data$QS9)[-1])
+bp<- ggplot(races, aes(x="", y=n.Freq, fill=race))+
+geom_bar(width = 1, stat = "identity")+ coord_polar("y")
+
+#Plot Hispanic ethnicity pie
+plot_ly(data=races, labels = races$race, values = races$n.Freq, type = "pie") %>%
+  layout(title = "Basic Pie Chart using Plotly")
+
+
+#Create racial background table
+races2<-data.frame(race=c("White","Black or African American","American Indian or Alaska Native","Asian Indian","Chinese","Filipino","Japanese","Korean","Vietnamese","Other Asian","Native Hawaiian
+","Guamanian or Chamorro
+","Samoan
+","Other Pacific Islander ","Other"),n=c(sum(survey_data$QS10_1==1,na.rm=TRUE),sum(survey_data$QS10_2==1,na.rm=TRUE),sum(survey_data$QS10_3==1,na.rm=TRUE),sum(survey_data$QS10_4==1,na.rm=TRUE),sum(survey_data$QS10_5==1,na.rm=TRUE),sum(survey_data$QS10_6==1,na.rm=TRUE),sum(survey_data$QS10_7==1,na.rm=TRUE),sum(survey_data$QS10_8==1,na.rm=TRUE),sum(survey_data$QS10_9==1,na.rm=TRUE),sum(survey_data$QS10_10==1,na.rm=TRUE),sum(survey_data$QS10_11==1,na.rm=TRUE),sum(survey_data$QS10_12==1,na.rm=TRUE),sum(survey_data$QS10_13==1,na.rm=TRUE),sum(survey_data$QS10_14==1,na.rm=TRUE),sum(survey_data$QS10_15==1,na.rm=TRUE)))
+
+#Plot racial background pie
+plot_ly(data=races2, labels = races2$race, values = races2$n, type = "pie") %>%
+  layout(title = "Racial Background")
+
+
+#Child age
+ggplot(data=survey_data,aes(x=Child_age))+geom_bar()+labs(title="Children age",x="Child Age")
+ggplot(data=survey_data,aes(x=Child_age,fill=Child_gender))+geom_bar(position="dodge")+labs(title="Children age",x="Child Age")
+
+#Most used social media
+famous_sm<-data.frame(sm=c("Facebook","Twitter ","Instagram ","Google+","Snapchat ","Vine ","Tumblr "),n=c(sum(survey_data$K6_1==1,na.rm=TRUE),sum(survey_data$K6_2==1,na.rm=TRUE),sum(survey_data$K6_3==1,na.rm=TRUE),sum(survey_data$K6_4==1,na.rm=TRUE),sum(survey_data$K6_5==1,na.rm=TRUE),sum(survey_data$K6_6==1,na.rm=TRUE),sum(survey_data$K6_7==1,na.rm=TRUE)))
+
+ggplot(data=famous_sm, aes(x=sm, y=n)) +
+  geom_bar(position="dodge", stat="identity",fill="steelblue") + 
+  coord_flip() +labs(title="Usage of social media",x="Social Media",y="")
+
+#Number of friends/followers in facebook,twitter,instagram
+sm_number<-survey_data[,c("KFB1A","KFB1B","KFB1C","Child_age","Child_gender")]
+sm_number<-sm_number[sm_number[,"KFB1A"]>=0,]
+
+#Number of facebook friends by gender and by age
+ggplot(data=sm_number,aes(x=1,y=KFB1A))+geom_boxplot(aes(fill=Child_gender))+labs(title="Number of  Facebook friends",y="Number of facebook friends")
+ggplot(data=sm_number,aes(x="",y=KFB1A))+geom_boxplot(aes(fill=factor(Child_age)))+labs(title="Number of  Facebook friends",y="Number of facebook friends",x="")
+
+#Number of twitter followers by gender and by age
+ggplot(data=sm_number,aes(x="",y=KFB1B))+geom_boxplot(aes(fill=Child_gender))+labs(title="Number of  twitter followers",y="Number of twitter followers")
+ggplot(data=sm_number,aes(x="",y=KFB1B))+geom_boxplot(aes(fill=factor(Child_age)))+labs(title="Number of  twitter followers",y="Number of twitter followers",x="")
+
+#Number of instagram followers by gender and by age
+ggplot(data=sm_number,aes(x="",y=KFB1C))+geom_boxplot(aes(fill=Child_gender))+labs(title="Number of  instagram followers",y="Number of instagram followers")
+ggplot(data=sm_number,aes(x="",y=KFB1C))+geom_boxplot(aes(fill=factor(Child_age)))+labs(title="Number of  instagram followers",y="Number of instagram followers",x="")
+
+
+
+#How teens maintain their relationship
+ggplot(data=survey_data[survey_data[,"KFR11_A"]>0,]) +
+  geom_bar(aes(x=KFR11_A)) +
+  coord_flip() 
+```
