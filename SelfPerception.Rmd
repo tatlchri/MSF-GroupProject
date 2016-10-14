@@ -46,22 +46,22 @@ teensdata<- survey_data
 
 In general the dataset offers a lot of questions focusing on the use, general behaviour and perception of social media by parents and their kids between the age of 13 and 17 years.
 
-The previous research was mainly focusing on quite "straigth forward" approaches, leading to already interesting results. Therefore the following will focus on a more descriptive and bottom down approach. 
+The previous research was mainly focusing on quite "straight forward" approaches, leading to already interesting results. Therefore the following will focus on a more descriptive and bottom down approach. 
 
-Social media like Facebook or Instagram, provide a plattform that enables people to engage and parcticipate in social activities in a way that is close to the normal social spectrum and furthermore increase the reach of every person to the limits of number of users. 
+Social media like Facebook or Instagram provide a platform that enables people to engage and participate in social activities in a way that is close to the normal social spectrum and furthermore increase the reach of every person to the limits of number of users. 
 
-This imposes new challenges for each individual, like defining a close network of peers, differentiating between online and real world realtionships - if there is any difference. But one of the most interesting questions is, How does social media change the way we perceive ourselves, enabling us to benachmark against more than 1bn different people, compared to the wider circle of aquaintances 15 years ago?.
+This imposes new challenges for each individual, like defining a close network of peers, differentiating between online and real world relationships - if there is any difference. But one of the most interesting questions is, “How does social media change the way we perceive ourselves, enabling us to benchmark against more than 1bn different people, compared to the wider circle of acquaintances 15 years ago?”
 
-According to Huffington Post Article there has been research conducted how Facebook has significant impact on our feelings as well as how our personality is reflected in certain behavioral patterns on social media. ([Atricle](http://www.huffingtonpost.com/dr-perpetua-neo/does-facebook-make-you-de_b_8474654.html))
+According to Huffington Post Article there has been research conducted how Facebook has significant impact on our feelings as well as how our personality is reflected in certain behavioural patterns on social media. ([Article](http://www.huffingtonpost.com/dr-perpetua-neo/does-facebook-make-you-de_b_8474654.html))
 
-Given this, it seems logic to infer that the higher the exposure to social media, the higher the impact on feelings and in consequences on self perception. Defining a variable to measure "exposure" especially not just expressed as hours spent on Facebook, but also how emotionally people might be engaged to their own social media network, seems to be tricky. Generally the quality or value added of all networks is strongly relying on members of the network, in this case this would be number of friends a person has on a certain social media plattform.
+Given this, it seems logic to infer that the higher the exposure to social media, the higher the impact on feelings and in consequences on self-perception. Defining a variable to measure "exposure" especially not just expressed as hours spent on Facebook, but also how emotionally people might be engaged to their own social media network, seems to be tricky. Generally the quality or value added of all networks is strongly relying on members of the network, in this case this would be number of friends a person has on a certain social media platform.
 
-The basic assumption therefore is, that the number of friends should have a significant impact on the perceived value added of social media for each individual, therefore should have a positively correlating impact on exposure (the higher perceived value, the more time online and therefore the more exposure) and based on the assumptions stated in the article, this should have an impact on feelings and selfperception.
+The basic assumption therefore is, that the number of friends should have a significant impact on the perceived value added of social media for each individual, therefore should have a positively correlating impact on exposure (the higher perceived value, the more time online and therefore the more exposure) and based on the assumptions stated in the article, this should have an impact on feelings and self-perception.
 
 Hypothesis: "The number of friends on Facebook resp. followers on Instagram, has a significant impact on the perceived value added of social media and consequently about the own life".
 
-This hypothesis was amended during to findings during the anylsis for the following reason. The set of 5 questions, at least in part require a certain capability of self reflection, emotional intelligence and general maturity. 
-1. In general, does social media make you feel more connected to information about whats going on in your friends lives?
+This hypothesis was amended due to findings during the analysis for the following reason. The set of 5 questions, at least in part require a certain capability of self-reflection, emotional intelligence and general maturity. 
+1. In general, does social media make you feel more connected to information about what’s going on in your friend’s lives?
 2. In general, does social media make you feel worse about your own life because of what you see from other friends on social media?
 3. In general, does social media make you feel better connected to your friends feelings?
 4. In general, does social media make you feel pressure to post content that will be popular and get lots of comments or likes?
@@ -71,20 +71,12 @@ Especially question 4 and 5 support this assumption. Therefore the hypothesis wa
 
 Hypothesis: "The age and the number of friends on Facebook resp. followers on Instagram, have a significant impact on the perceived value added of social media and consequently about the own life".
 
-Given the holisitc nature of the question the following description will predominantely focus on the approach and the rational behind certain decisions.
+Given the holistic nature of the question the following description will predominantly focus on the approach and the rational behind certain decisions.
 
 Prior to the explanation of the initial approach, the following steps need to be carried out.
 
 
 #Loading & cleaning
-
-Besides the standardised global cleaning which was done centrally, for the purpose of the following analysis there needs to be done further cleaning for the following reason:
-
-The survey assumes different media channels as "social media". With regards to the hypothesis not all considered media channel by the survey are accurate or applicable e.g. WhatsApp is predominantely and doesn´t fullfill the criteria of social exposure within the network. Therefore, in the following the Facebook and Instagram are subsummised as social media. 
-
-Besides on cleaning out not valid responses to all examined questions, all respondends have to be removed that are neither using Facebook nor Instagram. This means that all responses that are considered to be valid for this analysis must have cummulated valid responses to the research questions and have to be at least present in one of the networks.
-
-This cleaning is crucial for the validity of later results, but unfortunately decreases the number of responses from initially 1081 to a final of 755. In general the comparably small number of responses in the survey, needs to be kept in mind at all times.
 
 ```{r, echo = FALSE}
 
@@ -155,27 +147,38 @@ for(i in 1:5)
 
 ```
 
+Besides the standardised global cleaning, which was done centrally for the purpose of the following analysis, there needs to be done further cleaning for the following reason:
+
+The survey assumes different media channels as "social media". With regards to the hypothesis not all considered media channel by the survey are accurate or applicable e.g. WhatsApp is predominantly a peer-to-peer instant messenger service and doesn´t fulfil the criteria of social exposure within the network. Therefore, in the following the Facebook and Instagram are summarised as social media. 
+
+Besides cleaning out not valid responses to all examined questions, all respondents have to be removed that are neither using Facebook nor Instagram. This means that all responses that are considered to be valid for this analysis must have cumulated valid responses to the research questions and have to be at least present in one of the networks.
+
+This cleaning is crucial for the validity of later results, but unfortunately decreases the number of responses from initially <b>`r nrow(teensdata)`</b> to a final of <b>`r nrow(perception)`</b> . In general the comparably small number of responses in the survey, needs to be kept in mind at all times.
+
+
+
+
 
     
 #Clustering
 
-The cleaned data set is now ready to be clustered. The selection of Facebook and Instagram as representative networks follows the rational or reciprocety and, size, primary way of communication as well as popularity.
+The cleaned data set is now ready to be clustered. The selection of Facebook and Instagram as representative networks follows the rational of reciprocity, size, primary way of communication as well as popularity.
 
 Reciprocity:
+Reciprocal: The connection between members of Facebook (friends) are exclusively reciprocal and need to be requested/approved individually. Therefore there is no mismatch between people be able accessing own vs. accessing other peoples information/posts.
 
-Reciprocal: The connection between members of Facebook (friends) are exclusively reciprocal, and need to be requested/approved individually. Therefore there is no mismatch between people be able accessing own vs. acessing other peoples information/posts.
+Non-reciprocal: Instagram and Twitter offer non-reciprocal relationships, that can lead to significant mismatches between the information streams. Extreme examples of these patterns can be seen with celebrity profiles, sometime following 200 profiles, but being followed by several million people.
 
-Non-reciprocal: Instagram and Twitter offer non reciprocal relation ships, that can lead to significant missmatches between the information streems. Extreme examples of this patterns can be seen with celebrity profiles, sometime following 200 profiles, but beeing followed by several million people.
+Size: Facebook as well as Instagram are both extremely popular and established networks. Facebook, as the game changer in the early 2000s and Instagram as the innovator, predominantly moving communication from text to picture based. Based on the non-reciprocal character and picture-based communication, Instagram is extremely interesting with regards to exposure and subtle messages, pictures are more capable of including that written messages.
 
-Size: Facebook as well as Instagram are both extremely popular and established networks. Facebook as the game changer in the mid 2010s and Instagram as the innovator predominantely moving communication from text to picture based. Based on the non-reciprocal character and picture based communication, Instagram is extremely interesting with regards to exposure and subtile submessages pictures are more capable of including that written messages.
+Based on this logic, every respondent has an assigned 33% tercile with 3 being highest 1 lowest, based on the individual number of friends for Facebook and follower on Instagram.
 
-Based on this logic, every respondend has an assigned 33% quantile with 3 being highest 1 lowest, based on his individual number of friends for Facebook and follower on Instagram.
+This seems to be in line with the hypothesis, since it can be concluded that respondents with a comparably higher number of friends/followers have comparably higher exposure to the network and therefore might have different views on certain things, like perception of other or pressure to post content.
 
-This seems to be in line with the hypothesis, since it can be concluded that respondends with a comparably higher number of friends/followers have comparably higher exposure to the network and therefore might have different views on certain things, like perception of other or pressure to post content.
 
 
 ```{r,echo = FALSE}
-#Create even groups by 33% - quantiles
+#Create even groups by 33% - terciles
 
 #Facebook 
 perception1<-perception[!is.na(perception[,"KFB1A"]),]
@@ -189,7 +192,7 @@ KFB1C_bins<-unname(quantile(perception3[,"KFB1C"],c(.33, .66, 1)))
 
 
 
-#create clusters by quantile of #fried/followers within social media 
+#create clusters by tercile of #fried/followers within social media 
 #channel replace actual number with cluster
 for (i in 1:nrow(perception)){
   if (!is.na(perception[i,"KFB1A"])){
@@ -225,24 +228,6 @@ for (i in 1:nrow(perception)){
 
 
 ```
-
-#Evaluation of usage
-
-To ensure the comparability of the different subsets clustered by quantile limited analysis was conducted based on frequency of usage. The following assumptions were done:
-
-People with an account in both networks can be considered to be the most exposed individuals in the set. Therefore the variance of logins within this subset was compared to the variance of logins in the entire data set among the different clusters. Due to the "either or"" decision with regards to representation in the networks, the correlation between belonging to same cluster in the two different networks could only be conducted in the subset.
-
-There is a moderate correlation with: <b>0.479</b>
-
-The frequency of usage was measured by question KFR11_H
-
-How often do you spend time with friendsposting on social media sites? 1.Every day, 2.Every few days, 3. Less often, 4. Never
-
-The variance of logins in the set is <b>0.788</b>, in the subset <b>0.779</b>, which leaves to the conclusion that logins of respondends with no clustering by quantile vary equally among the different sets.
-
-As shown below, the variance of logins varies stronger over the different clusters in the set compared to the subset, while Instagram has a almost equally variation of logins.
-
-
 ```{r , echo=FALSE}
 
 #   Subset, where respondends use both, Facebook and Instagram - 
@@ -251,8 +236,8 @@ As shown below, the variance of logins varies stronger over the different cluste
 FbIn<- perception[!is.na(perception[,"KFB1A"]) & !is.na(perception[,"KFB1C"]),]
 
 
-#the correlation between quantiles among the different media is 0.46348
-#   Question: Do #friends on facebook and #followers of the same person belong to the same quantile?
+#the correlation between terciles among the different media is 0.46348
+#   Question: Do #friends on facebook and #followers of the same person belong to the same tercile?
 cor_FbIn<- cor(FbIn$KFB1A,FbIn$KFB1C)
 
 
@@ -264,7 +249,7 @@ var_FbInKFR11_H<- var(FbIn$KFR11_H)
 var_perceptionKFR11_H<- var(perception$KFR11_H)
 
 
-#Calculate the variance of usage among the different quantiles based on #friend/#follower
+#Calculate the variance of usage among the different terciles based on #friend/#follower
 # in subset and set
 var_usage_media<- data.frame()
 for(j in 1:3)
@@ -277,9 +262,29 @@ for(j in 1:3)
 colnames(var_usage_media)<- c("Facebook_Sub","Facebook_Total", "Instagram_Sub", "Instagram_Total")
 
 # Generally the data of the subset and the set is moving in same direction with almost equal values
-# While the medium quantile has a stronger variance compared to the others
+# While the medium tercile has a stronger variance compared to the others
 
 ```
+#Evaluation of usage
+
+To ensure the comparability of the different subsets clustered by tercile, limited analysis was conducted based on frequency of usage. The following assumptions were done:
+
+People with an account in both networks can be considered to be the most exposed individuals in the set. Therefore the variance of logins within this subset was compared to the variance of logins in the entire data set among the different clusters. Due to the "either or"" decision with regards to representation in the networks, the correlation between belonging to same cluster in the two different networks could only be conducted in the subset.
+
+
+There is a moderate correlation with: <b>`r cor_FbIn`</b>
+
+The frequency of usage was measured by question KFR11_H
+
+How often do you spend time with friends posting on social media sites? 1.Every day, 2.Every few days, 3. Less often, 4. Never
+
+The variance of logins in the set is <b>`r var_perceptionKFR11_H`</b>, in the subset <b>`r var_FbInKFR11_H`</b>, which leaves to the conclusion that logins of respondents with no clustering by tercile vary equally among the different sets.
+
+As shown below, the variance of logins varies stronger over the different clusters in the set compared to the subset, while Instagram has almost equally variation of logins.
+
+
+
+
 
 ```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
 kable(var_usage_media)
@@ -288,10 +293,10 @@ kable(var_usage_media)
 
 #Excursion
 
-As initially mentioned many conclusion relevant for the final approach, evolved during the first approach of analysing the data. After cleaning the data and clustering it, a visual analysis for assumed patterns was conducted with so called heatmaps. As mentioned the observed correlation based on the clustering would have been expected to be much clearer, eventhough some weak pattern proving the initial though could be observed, like respondends from cohort 3 feel in general more connected to information than others. Furthermore most of the respondends stating that they "feel worse about their lifes" were considered themselves to be highly connected to information.
+As initially mentioned many conclusions relevant for the final approach, evolved during the first approach of analysing the data. After cleaning the data and clustering it, a visual analysis for assumed patterns was conducted with so called heat maps. As mentioned the observed correlation based on the clustering would have been expected to be much clearer, even though some weak patterns, proving the initial thought could be observed, like respondents from cohort 3 feel in general more connected to information than others. Furthermore most of the respondents stating that they "feel worse about their lives" considered themselves to be highly connected to information.
 
 
-How do responses vary among the clusters by quantile
+How do responses vary among the clusters by tercile?
 ```{r, echo = FALSE,fig.align = "center", fig.width= 10, fig.height= 8}
 
 #create first plot based on cluster 
@@ -299,11 +304,11 @@ y<-count(perception[!is.na(perception[,"KFB1A"]),], vars = c(as.character("KFSNS
  for(i in 1:nrow(y)){y[i,"KFSNS1_A"]<- as.character(y[i,"KFSNS1_A"])}
 ggplot(y, aes(x = KFSNS1_A, y = KFB1A, fill = freq)) + geom_tile() + scale_fill_gradient(low = "white",   high = "steelblue") + 
   geom_text(data=y, aes(KFSNS1_A, KFB1A, label = freq), color="black", size=rel(5))+
-  labs(x = "KFSNS1_A: Feel connected to information", y = "Quantile by Facebook friends", title = "")+
+  labs(x = "KFSNS1_A: Feel connected to information", y = "tercile by Facebook friends", title = "")+
   scale_x_discrete(labels = c("1"="Yes a lot", "2"="Yes,  a little ","3"="No"))
 ```
 
-How do questions access to information and perceived of own life correlate
+How do questions access to information and perceived of own life correlate?
 ```{r, echo = FALSE,fig.align = "center", fig.width= 10, fig.height= 8}
 #create second plot question/question
 y1<-count(perception[!is.na(perception[,"KFB1A"]),], vars = c(as.character("KFSNS1_A"),"KFSNS1_B"))
@@ -322,19 +327,20 @@ ggplot(y1, aes(x = KFSNS1_A, y = KFSNS1_B, fill = freq)) + geom_tile() + scale_f
 
 <b>Conclusion:</b>
 
-The heatmaps do not indicate any significant relationships between the number of friends on Facebook, nor the perceived mood (feeling bad about live) with perceived value added of the network (feel connected to information).
+The heat maps do neither indicate any significant relationships between the number of friends on Facebook, nor the perceived mood (feeling bad about live) with perceived value added of the network (feel connected to information).
 
-Especially the "Yes a little" received comparibly high results, which might be due to the "neither nor" character of the answer. Based on these observation, the following two conclusions were drawn:
+Especially the "Yes a little" received comparably high results, which might be due to the "neither nor" character of the answer. Based on these observations, the following two conclusions were drawn:
 
 
-- the results are not supporting the initially logical assumptions based on the mentioned research strong enough, but on the other hand the observations are too weak to allow to reject the hypothesis
-- the complexity and intimacy of some questions might increase the likelyhood of answering with a more or less perceived neutral answer like the "Yes a little". Especially the intimate questions like 
+- The results are not supporting the initially logical assumptions based on the mentioned research strong enough, but on the other hand the observations are too weak to allow rejecting the hypothesis
+- The complexity and intimacy of some questions might increase the likelihood of answering with a more or less perceived neutral answer like the "Yes a little". Especially the intimate questions like
 
 KFSNS1_B: In general, does social media make you feel worse about your own life because of what you see from other friends on social media?
 KFSNS1_D: In general, does social media make you feel pressure to post content that will be popular and get lots of comments or likes?
 KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others?
 
-receive comparably high negative or indifferent responses. Given the initial thoughts, this might be due to the age of the participants and there mentioned emotional capabilities. To evaluate whether the age has an impact on the way of responding to the dataset was reclustered by age.
+receive comparably high negative or indifferent responses. Given the initial thoughts, this might be due to the age of the participants and there mentioned emotional capabilities. To evaluate whether the age has an impact on the way of responding to the dataset was re-clustered by age.
+
 
 ```{r,echo = FALSE}
 ######################################################
@@ -372,7 +378,7 @@ cor_sub_rnames<-c()
 cor_sub_rnames_break<-c()
 cor_plot_age_coln<-c()
 
-#columnnumber for cor_plot_age each column represents the results of a unique combination eg. Age = 13/QuantileFriends = 1
+#columnnumber for cor_plot_age each column represents the results of a unique combination eg. Age = 13/tercileFriends = 1
 cn<-1
 
 
@@ -455,16 +461,17 @@ cor_sub_rnames_break<-cor_sub_rnames_break[-c(11,12)]
 
 #Clustering by age
 
-The following results are solely clustered by age, regardless of the quantile for the networks. This was done to look at the impact of age on the results in an isolated way.
+The following results are solely clustered by age, regardless of the tercile for the networks. This was done to look at the impact of age on the results in an isolated way.
 
-The table shows all correlation for all different unique combination of questions per age cohort. It can be observed that the correlation for the same combination of question slightly vary among the different cohorts. With 130,147,136,172 and 170 the respondends are more or less evenly distributed among the different ages (increasing order starting with 13). Therefore the observation can be assumed to be valid, with not too many variations due to the different sample sizes. 
+The table shows all correlation for all different unique combination of questions per age cohort. It can be observed that the correlation for the same combination of questions slightly vary among the different cohorts. With <b>`r nrow(perception[perception[,"Child_age"]== 13,]) ` </b>,<b>`r nrow(perception[perception[,"Child_age"]== 14,]) ` </b>,<b>`r nrow(perception[perception[,"Child_age"]== 15,]) ` </b>,<b>`r nrow(perception[perception[,"Child_age"]== 16,]) ` </b> and <b>`r nrow(perception[perception[,"Child_age"]== 17,]) ` </b> the respondents are more or less evenly distributed among the different ages (increasing order starting with 13). Therefore the observation can be assumed to be valid, with not too many variations due to the different sample sizes.
+
 
 
 ```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
 kable(cor_plot_age)
 ```
 
-The plot confirms the previous observation of varying correlations over the different cohorts for the same pair of question. Looking at question pair <b>KFSNS1_D / KFSNS1_E</b> within cohorte 13, its interesting to observe that there is a oustanding high correlation for this pair and only in this cohorte. This might be due to two contradictive assumptions. Question D as well as E are aiming almost in the exact same direction but slightly differently phrased. Therefore the two possibilities are that either the difference between the questions was not correctly perceived, or given the case that E is a control question for D, 13 year olds are more honest and responding the same way to equal questions.
+The plot confirms the previous observation of varying correlations over the different cohorts for the same pair of question. Looking at question pair <b>KFSNS1_D / KFSNS1_E</b> within cohort 13, its interesting to observe that there is a outstanding high correlation for this pair and only in this cohort(displayed in table above). This might be due to two contradictive assumptions. Questions D as well as E are aiming almost in the exact same direction but slightly differently phrased. Therefore the two possibilities are that either the difference between the questions was not correctly perceived, or given the case that E is a control question for D, 13 year olds are more honest and responding the same way to equal questions.
 
 ```{r, echo= FALSE , message=FALSE ,fig.align = "center", fig.width= 10, fig.height= 8}
 
@@ -481,9 +488,9 @@ ggplot(cor_plot_age_t_melt, aes(x = Question_combination, y = Correlation)) +
 ```
 
 
-## Clustering by age, quantile and network
+## Clustering by age, tercile and network
 
-Following the same logic as above, the analysis of correlations between different question sets will be done based on a new clustering. The respondends are now clustered by their age, quantile of friends/followers and their responses split up by the two networks Facebook and Instagram.
+Following the same logic as above, the analysis of correlations between different questions sets will be done based on a new clustering. The respondents are now clustered by their age, tercile of friends/followers and their responses split up by the two networks Facebook and Instagram.
 
 
 ```{r, echo= FALSE , message=FALSE}
@@ -492,27 +499,27 @@ Following the same logic as above, the analysis of correlations between differen
 ############                              ############
 ############          -Analysis-          ############
 ############        -Correlation-         ############
-############       -Age & Quantile-       ############
+############       -Age & tercile-       ############
 ############                              ############
 ######################################################
 
 
 
-cor_plot_quantile_FB<- data.frame()
-cor_plot_quantile_IG<- data.frame()
+cor_plot_tercile_FB<- data.frame()
+cor_plot_tercile_IG<- data.frame()
 #sub working set
 age_sub_w_FB<- data.frame()
 age_sub_w_IG<- data.frame()
 
-cor_quantile_coln<-c()
+cor_tercile_coln<-c()
 
-n_per_cluster_quantile<- data.frame()
-#columnnumber for cor_plot1 each column represents the results of a unique combination eg. Age = 13/QuantileFriends = 1
+n_per_cluster_tercile<- data.frame()
+#columnnumber for cor_plot1 each column represents the results of a unique combination eg. Age = 13/tercileFriends = 1
 cn<-1
 #creates ages to look for
 for(i in 13:18)
 {
-  #creates quantiles to look for
+  #creates terciles to look for
   for(j in 1:3)
   {
     if(i == 18)
@@ -529,14 +536,14 @@ for(i in 13:18)
         x<-i
       } 
     
-    #creates subset with the applicable filters by age and quantile
+    #creates subset with the applicable filters by age and tercile
     
     #print(summary(age_sub_sm))
-    n_per_cluster_quantile[cn,1]<-paste(as.character(x),"/",as.character(j))
-    n_per_cluster_quantile[cn,2]<- nrow(age_sub_sm_FB)
-    n_per_cluster_quantile[cn,3]<- nrow(age_sub_sm_IG)
+    n_per_cluster_tercile[cn,1]<-paste(as.character(x),"/",as.character(j))
+    n_per_cluster_tercile[cn,2]<- nrow(age_sub_sm_FB)
+    n_per_cluster_tercile[cn,3]<- nrow(age_sub_sm_IG)
 
-    cor_quantile_coln[cn]<-c(paste(as.character(x),"/",as.character(j)))
+    cor_tercile_coln[cn]<-c(paste(as.character(x),"/",as.character(j)))
     #needed to calculate the different correlation (results in 5x5 square matrix)
     for(m in 1:5)
     {
@@ -563,8 +570,8 @@ for(i in 13:18)
       {
         #cor_rownames[p]<-paste(colnames(cor_sum13[r]),"/","\n",colnames(cor_sum13[q+1]))
         #gets the value for each unique combination
-        cor_plot_quantile_FB[p,cn]<-age_sub_w_FB[q,r]
-        cor_plot_quantile_IG[p,cn]<-age_sub_w_IG[q,r]
+        cor_plot_tercile_FB[p,cn]<-age_sub_w_FB[q,r]
+        cor_plot_tercile_IG[p,cn]<-age_sub_w_IG[q,r]
         
         #increases row index for cor_plot1
         p<- p+1
@@ -589,32 +596,32 @@ for(i in 13:18)
 
 
 #Finalising returns
-rownames(cor_plot_quantile_FB)<-cor_sub_rnames
-colnames(cor_plot_quantile_FB)<-c(cor_quantile_coln)
-cor_plot_quantile_FB<- cor_plot_quantile_FB[-c(11,12),]
+rownames(cor_plot_tercile_FB)<-cor_sub_rnames
+colnames(cor_plot_tercile_FB)<-c(cor_tercile_coln)
+cor_plot_tercile_FB<- cor_plot_tercile_FB[-c(11,12),]
 
-rownames(cor_plot_quantile_IG)<-cor_sub_rnames
-colnames(cor_plot_quantile_IG)<-c(cor_quantile_coln)
-cor_plot_quantile_IG<- cor_plot_quantile_IG[-c(11,12),]
+rownames(cor_plot_tercile_IG)<-cor_sub_rnames
+colnames(cor_plot_tercile_IG)<-c(cor_tercile_coln)
+cor_plot_tercile_IG<- cor_plot_tercile_IG[-c(11,12),]
 
 
 
 ## eliminating the most non representative cluster with the given constraints
 
 #Facebook & Instagram (remove lowest 10% by quantity of occurences)
-n_per_cluster_bins_FB<-unname(quantile(n_per_cluster_quantile[,"V2"],c(.1,1)))
-n_per_cluster_bins_IG<-unname(quantile(n_per_cluster_quantile[,"V3"],c(.1,1)))
+n_per_cluster_bins_FB<-unname(quantile(n_per_cluster_tercile[,"V2"],c(.1,1)))
+n_per_cluster_bins_IG<-unname(quantile(n_per_cluster_tercile[,"V3"],c(.1,1)))
 
-for (i in 1:nrow(n_per_cluster_quantile))
+for (i in 1:nrow(n_per_cluster_tercile))
   {
-  if (n_per_cluster_quantile[i,"V2"]<=n_per_cluster_bins_FB[1]){n_per_cluster_quantile[i,4]<-1}
-  else{n_per_cluster_quantile[i,4]<-2}
+  if (n_per_cluster_tercile[i,"V2"]<=n_per_cluster_bins_FB[1]){n_per_cluster_tercile[i,4]<-1}
+  else{n_per_cluster_tercile[i,4]<-2}
   
-  if (n_per_cluster_quantile[i,"V3"]<=n_per_cluster_bins_IG[1]){n_per_cluster_quantile[i,5]<-1}
-  else{n_per_cluster_quantile[i,5]<-2}
+  if (n_per_cluster_tercile[i,"V3"]<=n_per_cluster_bins_IG[1]){n_per_cluster_tercile[i,5]<-1}
+  else{n_per_cluster_tercile[i,5]<-2}
   }
 
-colnames(n_per_cluster_quantile)<- c("Cohort", "Occurences_FB", "Occurences_IG","Quantile_Group_FB","Quantile_Group_FB")
+colnames(n_per_cluster_tercile)<- c("Cohort", "Occurences_FB", "Occurences_IG","tercile_Group_FB","tercile_Group_FB")
 
 ```
 
@@ -623,22 +630,22 @@ colnames(n_per_cluster_quantile)<- c("Cohort", "Occurences_FB", "Occurences_IG",
 
 The number of observations in each cluster is important with regards to the reliability of further conclusions based on this data set. 
 
-<b>Occurences:</b> Displays the number of all respondends that have an account in the corresponding network and cluster
+<b>Occurrences:</b> Displays the number of all respondents that have an account in the corresponding network and cluster
 
-<b>Quantile:</b> Value 1 indicates that this cohort belongs to the lowest 10% qunatile amd therefore shouldn´t be considered due to the small sample size
+<b>tercile:</b> Value 1 indicates that this cohort belongs to the lowest 10% quantile and therefore shouldn´t be considered due to the small sample size
 
 
 ```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
-kable(n_per_cluster_quantile)
+kable(n_per_cluster_tercile)
 ```
 
 ```{r, echo= FALSE , message=FALSE ,fig.align = "center", fig.width= 10 , fig.height= 8}
-#Showing #number of responses per cohorte (age & quantile) (final)
-n_per_cluster_quantile_melt <- melt(n_per_cluster_quantile[,1:3], id = c("Cohort"))
+#Showing #number of responses per cohorte (age & tercile) (final)
+n_per_cluster_tercile_melt <- melt(n_per_cluster_tercile[,1:3], id = c("Cohort"))
 #plot
-ggplot(n_per_cluster_quantile_melt, aes(x = Cohort, y = value, fill = variable)) + 
+ggplot(n_per_cluster_tercile_melt, aes(x = Cohort, y = value, fill = variable)) + 
   geom_bar(position = "dodge", stat = "identity")+ 
-  labs(x = "Cluster(age & quantile)", y = "# of occurences", title = "")+
+  labs(x = "Cluster(age & tercile)", y = "# of occurences", title = "")+
   ggtitle("# of observations for each cluster\n Facebook/Instagram")
 ```
 
@@ -646,68 +653,69 @@ ggplot(n_per_cluster_quantile_melt, aes(x = Cohort, y = value, fill = variable))
 
 Observations:
 
-Highest correlation: The highest correlations can be observed for questions (A/C, B/E, D/E, B/C). Starting with the already mentioned unique combination of D/E which are closely related questions, the following can be concluded from the plot. Looking at all counter example, so same first question matched with D and E, it becomes obvious that those questions with exception of (B/D, B/E) are more or less equally correlating with the opposite question. Also taking the observation of (D/E) into consideration, it appears to be a valid conclusion that these two questions are equally perceived by the responders.
+Highest correlation: The highest correlations can be observed for questions (A/C, B/E, D/E, B/C). Starting with the already mentioned unique combination of D/E, which are closely related questions the following can be concluded from the plot. Looking at all counter examples, so same first question matched with D and E, it becomes obvious that those questions with exception of (B/D, B/E) are more or less equally correlating with the opposite question. Also taking the observation of (D/E) into consideration, it appears to be a valid conclusion that the respondents perceive these two questions similarly.
 
-The same accounts for the combination of (A/C) with both asking about the quality of connection to friends respectively their feelings.
-Left with (B/E) this is most likely the most interesting question combination, looking at the correlation between feeling "worse about your own life because of what you see from other friends on social meda" and feeling the pressure to "only post content that makes you look good to others". This observation is strongly in line with the initially presented research discussed by the ([Huffington Post](http://www.huffingtonpost.com/dr-perpetua-neo/does-facebook-make-you-de_b_8474654.html)).
+The same accounts for the combination of (A/C) with both asking about the quality of connection to friends their feelings respectively.
+Left with (B/E) this is most likely the most interesting question combination, looking at the correlation between feeling "worse about your own life because of what you see from other friends on social media" and feeling the pressure to "only post content that makes you look good to others". This observation is strongly in line with the initially presented research discussed by the ([Huffington Post](http://www.huffingtonpost.com/dr-perpetua-neo/does-facebook-make-you-de_b_8474654.html)).
 
-The last interesting observation with regards to the variance of the values is combination (B/C). The observations vary from positively to negatively correlating, which might be explained with the following assumption. Some people might perceive it positively to be connected to friends feelings, while other might get jealous and therefore attach it as negative feeling.
+The last interesting observation with regards to the variance of the values is combination (B/C). The observations vary from positively to negatively correlating, which might be explained with the following assumption. Some people might perceive it positively to be connected to friend’s feelings, while other might get jealous and therefore absorb it as negative feeling.
 
 
 ```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
-kable(cor_plot_quantile_FB)
+kable(cor_plot_tercile_FB)
 ```
 
 ```{r, echo= FALSE , message=FALSE ,fig.align = "center", fig.width= 10 , fig.height= 8}
-#age, quantile for Facebook
-rownames(cor_plot_quantile_FB)<-cor_sub_rnames_break
-cor_plot_quantile_FB_t<- as.data.frame(t(cor_plot_quantile_FB[,1:15]))
-cor_plot_quantile_FB_t_melt<-melt(cor_plot_quantile_FB_t[,1:10])
-colnames(cor_plot_quantile_FB_t_melt)<-c("Question_combination", "Correlation")
+#age, tercile for Facebook
+rownames(cor_plot_tercile_FB)<-cor_sub_rnames_break
+cor_plot_tercile_FB_t<- as.data.frame(t(cor_plot_tercile_FB[,1:15]))
+cor_plot_tercile_FB_t_melt<-melt(cor_plot_tercile_FB_t[,1:10])
+colnames(cor_plot_tercile_FB_t_melt)<-c("Question_combination", "Correlation")
 #plot
-ggplot(cor_plot_quantile_FB_t_melt, aes(x = Question_combination, y = Correlation)) + 
+ggplot(cor_plot_tercile_FB_t_melt, aes(x = Question_combination, y = Correlation)) + 
   geom_boxplot(notch = FALSE,outlier.colour = "red",outlier.size = 3 , outlier.shape = 1)+
   geom_jitter(width = 0.3, shape = 2)+
-  ggtitle("Calculated correlations for individual question combination\n clustered by age, quantile of friends and Facebook")
+  ggtitle("Calculated correlations for individual question combination\n clustered by age, tercile of friends and Facebook")
 ```
 
 #Correlation per cluster based on Instagram
 
-In general the patterns follow the same patterns as observed with Facebook. Looking at the previously identified questions, it occurs that for (B/E) Instagram has sliglty more extreme values but a weaker variance, while mean and median are almost equally with 0.44/0.43 and 0.477/0.49 respectively (Instagram first).
+In general the patterns follow the same patterns as observed with Facebook. Looking at the previously identified questions, it occurs that for (B/E) Instagram has slightly more extreme values but a weaker variance, while mean and median are almost equally with 0.44/0.43 and 0.477/0.49 respectively (Instagram first).
 
-The situation for (B/C) is almost the same, with one extreme outlier having a negative correlation of -0.37 from the 15 year old with a lot of followers. 
+The situation for (B/C) is almost the same, with one extreme outlier having a negative correlation of -0.37 from the 15 year old with a lot of followers.
 
 ```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
-kable(cor_plot_quantile_IG)
+kable(cor_plot_tercile_IG)
 ```
 
 ```{r, echo= FALSE , message=FALSE ,fig.align = "center", fig.width= 10 , fig.height= 8}
-#age, quantile for Facebook
-rownames(cor_plot_quantile_IG)<-cor_sub_rnames_break
-#age, quantile for Instagram
-cor_plot_quantile_IG_t<- as.data.frame(t(cor_plot_quantile_IG[,1:15]))
-cor_plot_quantile_IG_t_melt<-melt(cor_plot_quantile_IG_t[,1:10])
-colnames(cor_plot_quantile_IG_t_melt)<-c("Question_combination", "Correlation")
+#age, tercile for Facebook
+rownames(cor_plot_tercile_IG)<-cor_sub_rnames_break
+#age, tercile for Instagram
+cor_plot_tercile_IG_t<- as.data.frame(t(cor_plot_tercile_IG[,1:15]))
+cor_plot_tercile_IG_t_melt<-melt(cor_plot_tercile_IG_t[,1:10])
+colnames(cor_plot_tercile_IG_t_melt)<-c("Question_combination", "Correlation")
 #plot
-ggplot(cor_plot_quantile_IG_t_melt, aes(x = Question_combination, y = Correlation), ymax = "blue") + 
+ggplot(cor_plot_tercile_IG_t_melt, aes(x = Question_combination, y = Correlation), ymax = "blue") + 
   geom_boxplot(notch = FALSE,outlier.colour = "red", outlier.shape = 1)+
   geom_jitter(width = 0.3, shape = 2)+
-  ggtitle("Calculated correlations for individual question combination\n clustered by age, quantile of friends and Instagram")
+  ggtitle("Calculated correlations for individual question combination\n clustered by age, tercile of friends and Instagram")
 
 
 for(i in 1:10)
   {
-  print(colnames(cor_plot_quantile_IG_t[i]))
-  print(summary(cor_plot_quantile_IG_t[,i]))
-  print(summary(cor_plot_quantile_FB_t[,i]))
+  print(colnames(cor_plot_tercile_IG_t[i]))
+  print(summary(cor_plot_tercile_IG_t[,i]))
+  print(summary(cor_plot_tercile_FB_t[,i]))
 }
 ```
 
 #Conclusion and limitations
 
-Given the initial size of the entire set and the necessary cleaning, the cluster ended up being relatively small to make statistically significant observations. Futhermore the selected independent variables number of friends/ followers and age must be evaluated under the following assumptions. Looking at dependent variables that are deeply connected to the psyche of human beings, given the age and the along going presumable changes in life of the respondends, using only these two variables is a strong reduction of complexity to explain complex occurences that are influenced by numerous factors. 
-Second, given the time restriction and scope of the project a deeper analysis was simply not possible. The overall aim of this analysis was to show how clustering by relevant parameters might lead to different results and insight, which will be quickly recaptured.
+Given the initial size of the entire set and the necessary cleaning, the cluster ended up being relatively small to make statistically significant observations. Furthermore the selected independent variables number of friends/followers and age must be evaluated under the following assumptions. Looking at dependent variables that are deeply connected to the psyche of human beings, given the age and the along going presumable changes in life of the respondents, using only these two variables is a strong reduction of complexity to explain highly connected and complex occurrences that are influenced by numerous factors. 
+Second, given the time restriction and scope of the project a deeper analysis was simply not possible. The overall aim of this analysis was to show how clustering by relevant parameters might lead to different results and insights, which will be quickly recaptured.
 
-Starting with the initial heat maps, that only had limited explenatory power, the clustering by quantile of friends and age let to more detailed and differentiated results, clearly showing that the correlations between the responses to the questions are also relying on the cluster criterias. Furthermore as discussed above, there is a correlation between feeling "worse about your own life because of what you see from other friends on social media" and feeling the pressure to "only post content that makes you look good to others". This observation adresses exactly what the author of the article initially describes with regards to her experience. Given the mentioned limitations regarding the dataset as well as the complexity of the human mind, the hypothesis must be rejected from a statistical point of view, nevertheless the observation showed as well, that exposure expressed in number of friends has an impact on the perception of social media.
+Starting with the initial heat maps, that only had limited explanatory power, the clustering by tercile of friends and age let to more detailed and differentiated results, clearly showing that the correlations between the responses to the questions are also relying on the cluster criteria. Furthermore as discussed above, there is a correlation between feeling "worse about your own life because of what you see from other friends on social media" and feeling the pressure to "only post content that makes you look good to others". This observation addresses exactly what the author of the article initially describes with regards to her experience. Given the mentioned limitations regarding the dataset as well as the complexity of the human mind, the hypothesis must be rejected from a statistical point of view, nevertheless the observation showed as well, that exposure expressed in number of friends has an impact on the perception of social media.
+
 
 
