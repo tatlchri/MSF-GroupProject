@@ -49,13 +49,25 @@ library(stargazer)
 
 ## Introduction
 
-The dataset had a number of questions to the teen's parent, as well as similar questions to the teen.  
+The dataset had a number of questions there were posed to the teen's parent, and a number of similar questions posed to the teen.  
   
-Hence we thought it would be interesting to investigate if there were any relationships between parent's behaviours and the teen's behaviours using social media.  
+A number of hypotheses were investigated using this dataset, to see if there were any relationships between parent's behaviours and the teen's behaviours using social media.  
   
-For example, parents were asked if they monitor their child's location (sort of stalking behaviour), and whether the teen monitors someone they are dating or had dated (similar stalking behaviour).  There were also questions on whether the parent talks to their teen child on appropriate online behaviours. We can then investigate if these teachings were effective.    
+For example, parents were asked if they monitor their child's location (could be considered as a form of stalking behaviour), and whether the teen monitored someone they were dating or had dated (similar stalking behaviour). This was an opportunity to investigate if teens were more likely to exhibit stalking behaviour if their parent did the same too.  
   
-We had investigated 5 questions, with findings summarised in the section below.  
+There were also questions on whether the parent blocks their child's phone usage and whether the child sends sexy/flirty messages. One of the hypotheses was thus whether the child would send more likely sexy/flirty messages, if the parent blocks their child's phone usage, which could suggest that the parent's intervention might have triggered a rebellious behaviour (e.g. the stricter the parent, the more the child wants to be liberal).    
+
+<b>Methodology</b>  
+  
+As the dependent variable for each investigation was a categorical variable (being responses of a survey question), logistic regression was used. Linear regression would not make sense as the coefficient of linear regression would not translate to anything meaningful.  Dependent variables where the possible responses were "No" or "Yes", i.e. binary 0 or 1 response, were chosen for analysis.    
+  
+The function <i>glm</i> was used, <i>model <- glm(y ~ x1 + x2 + .. + xk, data = dataframe, family = "binomial").</i>    
+  
+In most cases, the independent variables were also survey responses that could have more than 2 options. e.g. 1.Yes, a lot, 2.Yes, a little, 3.No.  Researching literature online, there were two possible approaches: (1) leave such variables as numeric (R would interpret them as continuous variables), or convert them as factors (R would interpret them as categorical variables, and regression would yield a coefficient for each possible option). Setting these variables as continuous variables might be contentious as the value of the variables were discrete in nature, and it might be difficult to explain why optioni 1 had value 1, and not 2 or 50 etc. Hence on balance, these variables were converted to factor, even though this would increase the total number of variables used in the regression and inflate the R<sup>2</sup> value (AIC value for logistic regression).  All dependent and independent variables were reordered so that the higher the value, the higher the scale of the response. i.e. instead of 1 for Yes and 2 for No, we reordered it to 0 for No and 1 for Yes.          
+
+<font color = red> Bilal: help to put in explanations on how to interpret the coefficients, and exp function. thanks!</font>
+  
+The 6 questions, their corresponding hypotheses, and their associated findings are summarised in the section below.  
   
 ***
 
@@ -64,248 +76,20 @@ We had investigated 5 questions, with findings summarised in the section below.
   
 <u>Effects of Parent and child behaviour, on teen's use of social media</u>
 
-The table below summarises the questions we studied, our initial hypothesis, and findings we had from the data.  
+The table below summarises the questions studied, the initial hypothesis, and findings from the data.  
   
 Question                               |  Hypothesis   |  Findings
 -------------------------------------  |  ------------------------------------- | -------------------------------------
-1. Relationship between parents who are strict with their children and the teen’s usage of social media    |  If teens are rebellious, then the stricter the parent, the more time teen will use social media  | There is significant evidence to show that parent's strictness on teen's usage of social media affects female teens - if the parent limits their female teen's time spent with friends, the more time the female teen would spend on social media, suggesting that female teens may perhaps be more rebellious than male teens, or that they would turn to online interactions rather than physical interactions with friends. There is no significant evidence to show any impact of parent's strictness on male teens' time spent on social media  
-2. Relationship between parents blocking their child’s phone usage and their child’s online behaviour on sexy/flirty pictures   |  If teens are rebellious, then the stricter the parent, the more the child wants to be liberal and may be more inclined to send flirty pictures | The regression results suggest that if parents took away their child’s cell phone or internet privileges as punishment, the teen is more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of parent using parental controls to restrict child’s use of his/her cell phone, and limiting the amount of time or times of day when  child can go online   
-3.	Relationship on whether children self-censor their posts if they are friends with parents on social media   |   Teens’ whose parents are friends with them on social media will likely not post details of their relationship online  | Teens who feel pressure to only post content that makes them look good to others, has a positive regression coefficient to him/her posting public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours, such as being friends with child in Facebook or other social media, have an effect on teen's public affection behaviour. This seems to suggest that teens are more influenced by their self-perception, rather than their parent's interventions, with respect to whether or not they post public affection towards his/her significant other.    
-4.	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend  |  If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend |  For male teens, a parent monitoring child's location has a positive, statistically significant, impact on the teen exhibiting stalking behaviours.  Age has a negative (but small) impact on the teen exhibiting stalking behaviours; but its confidence level is at 90%. Perhaps this suggests that male teens are influenced by parents' behaviour, but older teens may be more mature and less prone to exhibiting stalking behaviour. For female teens, the coefficients are not statistically significant.    
-5.	Is parent’s teaching his/her child about appropriate online behaviour effective?  |  If parents talk to their child on appropriate behaviour, then teen is less likely to have inappropriate behaviour (e.g. sending flirty pictures, starting a fight due to online events) |  For male teens, a parent's teaching of online behaviour do not seem to affect whether teen exhibits appropriate behaviour. All regression coefficients are not statistically significant.  For female teens, a parent talking with teen about what is appropriate or inappropriate content for them to be viewing online, and what to share online, have positive, statistically significant, regression coefficients with teen's appropriate behaviour  
+1. Relationship between parents blocking their child’s phone usage and their child’s online behaviour on sexy/flirty pictures   |  If teens are rebellious, then the stricter the parent, the more the child wants to be liberal and may be more inclined to send flirty pictures | The regression results suggest that if parents took away their child’s cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of other parent's strict behaviours: parent using parental controls to restrict child’s use of his/her cell phone, and limiting the amount of time or times of day when child can go online   
+2.	Relationship on whether children self-censor their posts if they are friends with parents on social media   |   Teens’ whose parents are friends with them on social media will likely not post details of their relationship online  | There was no statiscally significant evidence to show that whether the parent was connected to their child on social media had an impact on child posting public affection for their significant other (proxy of whether child self-censors their posts). Upon adding more variables to the regression, the regression suggests that teens feeling pressure to only post content that makes them look good to others, were around 90% ("Yes, a little pressure") to 214% ("Yes, a lot pressure") more likely to post public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours (connecting with child on social media, being friends on Facebook, and checking child's social media profile) have an effect on teen's public affection behaviour.  This seems to suggest that teens are more influenced by their self-perception, rather than their parent's interventions, with respect to whether or not they post public affection towards his/her significant other.     
+3.	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend |  If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend | It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 190% more likely (at 90% confidence level) to access the phone of someone they were dating or used to date (child's stalking behaviour).  It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour).  In both cases, parent monitoring child's location seemed correlated with both child's stalking behaviours (accessing phone and tracking GPS location).      
 
 ***
-## Details of the questions we investigated, and findings
-
-### Question 1
-
-1. Relationship between parents who are strict with their children and the teen’s usage of social media   
+## Details of the questions investigated, and findings
   
-*Hypothesis: If teens are rebellious, then the stricter the parent, the more time teen will use social media*  
-  
-<b>Background info - data cleaning and manipulation</b>
-
-For this question, the relevant dataset questions are:
-
-*[Dependent variable]*:  
-KFR11_H: How often do you spend time with friends posting on social media sites? The options respondents had were:  
-1.Every day,  
-2.Every few days,  
-3. Less often,  
-4. Never  
-  
-*[Independent variables]*:  
-P4: Which comes closer to the way you approach the time your child spends with his/her friends? The options respondents had were:  
-1. He/She can spend as much time with his/her friends as he/she wants as long as it doesn’t interfere with other pre-planned activities,  
-2. I limit the time he/she spends with his/her friends, even if it doesn’t interfere with other pre-planned activities.  
-  
-We had also cleaned the data and removed rows with invalid responses by filling them with NA (e.g. if respondents were supposed to choose only options 1 or 2, but the data showed 3 or -1, these would be invalid responses).    
-  
-We first inverse the order of the options, so that the higher number represents the "most" choice. E.g. for question KFR11_H, the original order of choices that respondents can choose are:  
-  1.Every day,  2.Every few days,  3. Less often,  4. Never  
-We re-order it to:  
-  1.Never,  2. Less often,  3.Every few days,  4. Every day  
-  
-For questions with options as Yes/No only, we will order No as 0 and Yes as 1. For questions with options as Yes/No/Does not apply, for respondents who responded Does not apply, we will remove the data record (by filling it with NA), and order No as 0 and Yes as  1.
-  
-This helps facilitate correlation or regression analysis.  
-We also convert numeric values into factor, for categorical variables for regression.    
-  
-```{r, echo = FALSE}
-
-# ---------------------
-# Data cleaning methodology
-# ---------------------
-
-# Even with the global cleaning of data,
-# we'll need to further clean the dataset on a 'local' basis
-# i.e. based on the specific questions we are studying,
-# we will need to go through those questions' columns of data,
-# and check that the responses are in the valid range.
-# if not, fill them with NAs
-
-
-
-# Study correlation between these two:
-  
-#  P4:         Which comes closer to the way you approach the time your child spends with his/her friends?  1.          He/She can spend as much time with his/her friends as he/she wants as long as it doesn’t interfere with other pre-planned activities,2.               I limit the time he/she spends with his/her friends, even if it doesn’t interfere with other pre-planned activities.
-# [66% response rate]
-
-#  KFR11_H: How often do you spend time with friends  posting on social media sites? 1.Every day,2.Every few days,3. Less often,4. Never
-# [48% response rate]
-
-# Local data cleaning:
-# Do not remove rows but fill them with NAs instead.
-# So that you can add on columns more easily
-# for a more disaggregated / detailed analysis.
-# Otherwise, if we had deleted invalid rows from the dataset,
-# when you want to add another column in, the number of rows
-# would not match. Removing NAs will be easier.
-# e.g. when data_specific$parent_control_time is NA, set data_specific$y NA too
-# and when performing functions, use na.rm (lm for example, by default, uses na.omit)
-
-# create a copy of the 'global' dataset survey_data
-# into a variable data_specific. Use this local variable
-# for further data manipulation rather than editing the
-# survey_data variable. If we edit survey_data directly
-# we may mess up the dataset that other team members may use 
-# in their code, once we have combined our code altogether.
-data_specific <- data.frame(parent_control_time = survey_data$P4, y = survey_data$KFR11_H)
-
-# set NA to invalid responses, 
-# e.g. parent_control_time (question P4), should have 1 and 2 as valid responses.
-data_specific[ is.na(data_specific$parent_control_time), ] <- NA
-data_specific[ is.na(data_specific$y), ] <- NA
-
-data_specific[ !is.na(data_specific$parent_control_time) & (data_specific$parent_control_time < 1 | data_specific$parent_control_time > 2), ] <- NA  # needs the !is.na condition otherwise an error throws up
-
-data_specific[ !is.na(data_specific$y) & (data_specific$y < 1 | data_specific$y > 4), ] <- NA  # needs the !is.na condition otherwise an error throws up
-
-
-# Change the order of answers, from 1 for 'most' to 1 for 'least'
-# To illustrate:
-# The choices for each question are numbered.
-# For P4,
-#   1. He/She can spend as much time with his/her friends as he/she wants as long as it doesn’t interfere with other pre-planned activities
-#   2. I limit the time he/she spends with his/her friends, even if it doesn’t interfere with other pre-planned activities.
-# Here, 1 is the 'most' because child can spend as much time, 2 is 'least'
-# but if we were to do regression, we should flip the order
-# 1 should be 'least' and 2 should be 'most'.
-# Same for question KFR11_H
-
-data_specific$parent_control_time <- abs( data_specific$parent_control_time - 3 )
-
-data_specific$y <- abs( data_specific$y - 5 )
-
-cat('after data cleaning, number of valid data records for analysis is: ', dim(na.omit(data_specific))[1])
-
-```
-
-<b>Findings</b>  
-    
-Let's find out the correlation between question KFR11_H (time teen spends on social media) and question P4 (whether parent limits the time his/her child spends with friends).
-
-Correlation results:
-
-```{r}
-cor.test(data_specific$parent_control_time, data_specific$y)
-
-```
-
-The p-value = 0.01889.  
-As p-value is less than 5%, we have 95% confidence to reject H0 where H0 is that correlation is 0.  
-It has a positive correlation of 0.0843738.  
-  
-This suggests that the stricter the parent, the more time child spends on social media (small effect).  
-
-A boxplot summary of the responses:  
-
-```{r, echo = FALSE}
-# Plot a boxplot for each option in parent_control_time, just to visualise it
-ggplot(data = na.omit(data_specific)) + geom_boxplot(aes(x=factor(parent_control_time), y=y)) + xlab("Parent's strictness") + scale_x_discrete(labels = c("1" = "Allow as much time", "2" = "Limit the time")) + ylab("Teen's time spent on social media") + scale_y_continuous(labels = c("1" = "Never", "2" = "Less often", "3" = "Every few days", "4" = "Every day")) + theme(axis.text.y = element_text(size=5))
-```
-
-We now investigate if there are differences in responses by gender.  
-
-```{r}
-# See if there are differences in gender
-data_specific[, "gender"] <- survey_data$Child_gender
-# Correlation of x and y, given males. Male = option 1
-cor.test(data_specific[data_specific[,"gender"] == 1, "parent_control_time"], data_specific[data_specific[,"gender"] == 1, "y"])
-# Correlation of x and y, given males. Female = option 2
-cor.test(data_specific[data_specific[,"gender"] == 2, "parent_control_time"], data_specific[data_specific[,"gender"] == 2, "y"])
-```
-
-The p-value = 0.3823 for Males and  
-the 'p-value = 0.006259 for Females  
-This suggests that parent's strictness may not affect male teen's time spent on social media, whereas it may affect a female teen's usage.  
-Moreover, we note that for female teens, the correlation coefficient = 0.1348115. The positive coefficient suggests that the stricter the parent, the more time a female teen spends on social media.
-
-```{r, echo = FALSE}
-data_specific$gender <- factor(data_specific$gender, labels = c("Male","Female"))
-ggplot(data = na.omit(data_specific)) + geom_boxplot(aes(x = factor(parent_control_time), y = y, color = gender)) + xlab("Parent's strictness") + scale_x_discrete(labels = c("1" = "Allow as much time", "2" = "Limit the time")) + ylab("Teen's time spent on social media") + scale_y_continuous(labels = c("1" = "Never", "2" = "Less often", "3" = "Every few days", "4" = "Every day")) + theme(axis.text.y = element_text(size=5))
-```
-
-
-Besides question P4, there is another question that  
-may also be indicative of parent's strictness  
-It is P13_A:  
-          Have you ever used parental controls or other technological means of blocking, filtering or monitoring your child's online activities?  1(YES)-2(NO)-3(does Not Apply)  
-  
-Let's add this data (and clean it) into the local data set  
-and run a correlation test.    
-
-```{r, echo = FALSE}
-
-
-# P13_A:          Have you ever used parental controls or other technological means of blocking, filtering or monitoring your child's online activities?  1(YES)-2(NO)-3(does Not Apply)
-data_specific[, "parent_block_online"] <- survey_data$P13_A
-# data clean for new question
-data_specific[ is.na(data_specific$parent_block_online), ] <- NA
-data_specific[ !is.na(data_specific$parent_block_online) & (data_specific$parent_block_online < 1 | data_specific$parent_block_online > 2), ] <- NA  
-# Remove data records where respondents replied "Does not apply"
-
-# only retain records that replied YES or NO
-# convert from 1(YES)-2(NO)-3(does Not Apply)
-#           to 0(NO)-1(YES)
-data_specific$parent_block_online <- abs(data_specific$parent_block_online - 3) - 1
-
-cat('after data cleaning, number of valid data records for analysis is: ', dim(na.omit(data_specific))[1])
-
-```
-
-```{r} 
-cor.test(data_specific$parent_block_online, data_specific$y)
-```
-
-There is no significant evidence to reject H0 hypothesis that correlation between the two variables is 0.  
-This seems to suggest that whether or not a parent tries to block, filter or monitor their child's online activities, does not have a correlated impact on the time that the child spends on social media.  
-
-```{r, echo = FALSE}
-# convert the independent categorical variables into factors
-data_specific$parent_control_time <- factor(data_specific$parent_control_time)
-data_specific$parent_block_online <- factor(data_specific$parent_block_online)
-
-# Add age, to see if the teen's age has effect on the time he/her spends on social media
-data_specific$age <- survey_data$Child_age
-```
-
-Now let's run a regression to study the significance of question P4 (whether parent limits child's time) and question P13_A (whether parent blocks child's usage), as well as teen's age (one may hypothesize that the older the child, the more obedient one might be), relating to the dependent variable question KFR11_H (teen's time spent on social media).  
-
-```{r}
-ml <- lm(y ~ parent_control_time + parent_block_online + age, data = na.omit(data_specific))
-summary(ml)
-```
-
-The coefficients for parent_control is significant at 95% confidence level, whereas the parent_block_online and age coefficients are not statistically significant.  
-However, the coefficient for parent_control is POSITIVE.  
-This suggests that the stricter the parent, the more time the teen will spend on social media.  
-However, this is the aggregated result for both genders.  
-
-Next, we shall run disaggregated linear regressions for male and female teens.
-
-```{r, echo = FALSE}
-data_specific_male <- data_specific[data_specific$gender == "Male", ]
-ml_male <- lm(y ~ parent_control_time + parent_block_online + age, data = na.omit(data_specific_male))
-data_specific_female <- data_specific[data_specific$gender == "Female", ]
-ml_female <- lm(y ~ parent_control_time + parent_block_online + age, data = na.omit(data_specific_female))
-```
-
-```{r, echo = FALSE}
-stargazer(list(ml_male, ml_female), type = "text", digits = 2, title  = "Regression on male (model 1) and female (model 2) teens", dep.var.labels = "Time spent on social media")
-```
-
-The coefficients are not statistically significant for male teens.
-For female teens, only the parent_control_time variable is  statistically significant at least at the 99% confidence level.
-Parents who limit the time their female teen spends with his/her friends, would increase the female teen's time spent with friends posting on social media sites. Perhaps parents are only able to limit time spent by their teen physically interacting with friends (e.g. can only go out within certain times), and this may lead to female teens spending more time with friends online instead.     
-  
-We conclude that parent's strictness affect female teens and not male teens. One would originally think that female teens may be more obedient and hence the coefficient should be negative.   However, the coefficient is positive (with a large coefficient and high statistical significance), suggesting that female teens might perhaps be rebellious - in that the more the parent wishes to limit her time, the more time she spends on social media.  
-  
-***
-  
-### Question 2  
+### Question 1  
  
-2. Relationship between parents blocking their child’s phone usage and their child’s online behaviour on sexy/flirty pictures   
+Question: Relationship between parents blocking their child’s phone usage and their child’s online behaviour on sexy/flirty pictures   
   
 *Hypothesis: The stricter the parent, the more the child wants to be liberal.*  
   
@@ -333,9 +117,18 @@ P13_E: Have you ever limited the amount of time or times of day when your child 
 1.Yes  
 2.No  
 3.Does Not Apply  
-  
-We perform similar data cleaning and manipulation operations to get rid of invalid responses and to re-order values according from least to most.  
 
+<b> Data cleaning </b>  
+  
+Rows with invalid responses were removed by filling them with NA (e.g. if respondents were supposed to choose only options 1 or 2, but the data showed 3 or -1, these would be invalid responses).    
+  
+The order of the options were reversed, so that the higher number represents the "most" choice, and 0 for No or None. E.g. for if the question's original order of choices that respondents could choose from were:  
+  1.Yes,  2.No  
+The responses' order were re-ordered to:  
+  0.No,  1. Yes  
+  
+For questions with options as Yes/No/Does not apply, for respondents who responded Does not apply, the data record was removed (by filling it with NA), and order No as 0 and Yes as  1.  
+  
 
 ```{r, echo = FALSE}
 data_specific <- data.frame(parent_controls_cell_phone = survey_data$P14_F, take_away_privileges = survey_data$P13_D, limit_time_online = survey_data$P13_E, y = survey_data$KDATE2_G)
@@ -365,7 +158,7 @@ data_specific$y <- abs( data_specific$y - 3 ) - 1
 
 cat('after data cleaning, number of valid data records for analysis is: ', dim(na.omit(data_specific))[1])
 
-# convert to factor for linear regression
+# convert to factor for regression
 data_specific$parent_controls_cell_phone <- factor(data_specific$parent_controls_cell_phone)
 data_specific$take_away_privileges <- factor(data_specific$take_away_privileges)
 data_specific$limit_time_online <- factor(data_specific$limit_time_online)
@@ -376,23 +169,30 @@ data_specific$age <- survey_data$Child_age
 
 <b>Findings</b>  
     
-Let's find out the correlation between whether teen sends flirty messages, and the strictness of parents: (i) by controlling cell phone, (ii) taking away privileges, (iii) limiting time spent online.  
+The regression between whether teen sends flirty messages, and the strictness of parents: (i) by controlling cell phone, (ii) taking away privileges, (iii) limiting time spent online, and (iv) age, is shown below.    
   
 ```{r}
-ml <- lm(y ~ parent_controls_cell_phone + take_away_privileges + limit_time_online + age, data = na.omit(data_specific))
+ml <- glm(y ~ parent_controls_cell_phone + take_away_privileges + limit_time_online + age, family = "binomial", data = na.omit(data_specific))
+
 summary(ml)
+
+exp(ml$coefficients)
+
+
 ```
   
 The take_away_privileges variable is statistically significant with 99% confidence level.  
   
-The regression results suggest that if parents took away their child’s cell phone or internet privileges as punishment, the teen is more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of parent using parental controls to restrict child’s use of his/her cell phone, and limiting the amount of time or times of day when  child can go online.        
+The regression results suggest that if parents took away their child’s cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of parent using parental controls to restrict child’s use of his/her cell phone, and limiting the amount of time or times of day when  child can go online.  
+  
+Given that take_away_privileges was significant, the results suggest that parent's strictness behaviour did affect teen's behaviour on social media.  However, to be more conclusive, more aspects of parental strict behaviour, and more teen's possible rebellious behaviour, could be looked at if time permitted, and if more data was available.  For example, there was a lack of data on other proxies of rebellious behaviour or desire to be more liberal due to strictness of parent, besides sending flirty messages. Perhaps the survey could have included questions on whether the child had found alternative ways to access social media, such as using their friend's internet device or lie to parents that they were in school studying but were actually using a library computer to use social media.  With more data, the investigation could be more comprehensive to determine whether parents being strict had made the situation worse than if parents did not intervene.                 
       
   
 ***
   
-### Question 3  
+### Question 2  
  
-3.	Relationship on whether children self-censor their posts if they are friends with parents on social media.    
+Question:  Relationship on whether children self-censor their posts if they are friends with parents on social media.    
   
 *Hypothesis: Teens’ whose parents are friends with them on social media will likely not post details of their relationship online.*  
   
@@ -410,7 +210,7 @@ P10: Are you connected with your child on any  social media sites?
 1.Yes  
 2.No  
   
-We perform similar data cleaning and manipulation operations to get rid of invalid responses and to re-order values according from least to most.  
+Similar data cleaning and manipulation operations were performed to get rid of invalid responses and to re-order values according from least to most.  
   
 ```{r, echo = FALSE}
 data_specific <- data.frame(parent_connect_child = survey_data$P10, teen_public_affection = survey_data$KRSNS3_C)
@@ -447,17 +247,18 @@ As the p-value is 0.2742, there is no statistically significant evidence to show
 
 
 ```{r}
-# convert to factor for linear regression
+# convert to factor for regression
 data_specific$parent_connect_child <- factor(data_specific$parent_connect_child)
 
-ml <- lm(teen_public_affection ~ parent_connect_child + age, data = na.omit(data_specific))
+ml <- glm(teen_public_affection ~ parent_connect_child + age, family = "binomial", data = na.omit(data_specific))
 summary(ml)
+exp(ml$coefficients)
 
 ```
 
 The factor of parent connecting to child is not statistically significant.  
   
-Let's examine the data:
+Further examination of the data:
 
 ```{r}
 data_specific$teen_public_affection_factor <- factor(data_specific$teen_public_affection)
@@ -467,7 +268,8 @@ ggplot(data = na.omit(data_specific)) + geom_bar(aes(x = parent_connect_child, f
 ```
 
 It seems that when the parent is connected to the child (option 1 / "Yes"), the proportion of teens who express their affection for their significant other publicly, is higher.  
-Let's do a proportion test:  
+
+A further a proportion test is done:  
 
 ```{r}
 prob_table <- table(data_specific$parent_connect_child, data_specific$teen_public_affection)
@@ -480,7 +282,7 @@ prop.test(prob_table)
 The p-value = 0.3402, which suggests that there is no statistically significant evidence to show that the two proportions differ.
 i.e. similar to the correlation tests, it suggests that the parent social media connection with the child, does not have significant effect on whether the teen shows public affection for significant other on social media.   
 
-Let us add more variables to the linear regression model:  
+Given these intial results, more variables which may relate to the hypothesis, were added to the regression model:  
   
 KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others? 1.Yes, a lot,2.Yes, a little,3.No  
 *To test if child's self perception is more strongly correlated to his/her behaviour regarding posting public affection for significant other*
@@ -496,7 +298,9 @@ data_specific$feel_pressure <- survey_data$KFSNS1_E
 data_specific[ is.na(data_specific$feel_pressure), ] <- NA
 
 data_specific[ !is.na(data_specific$feel_pressure) & (data_specific$feel_pressure < 1 | data_specific$feel_pressure > 3), ] <- NA  # needs the !is.na condition otherwise an error throws up
-data_specific$feel_pressure <- abs(data_specific$feel_pressure - 4) 
+# Change from 1.Yes, a lot,2.Yes, a little,3.No 
+#         to 0.No, 1.Yes, a little, 2.Yes, a lot
+data_specific$feel_pressure <- abs(data_specific$feel_pressure - 4) - 1 
 
 data_specific$friends_facebook <- survey_data$P8
 data_specific[ is.na(data_specific$friends_facebook), ] <- NA
@@ -527,20 +331,21 @@ data_specific$check_child_profile <- factor(data_specific$check_child_profile)
 ```
 
 ```{r}
-ml <- lm(teen_public_affection ~ parent_connect_child + age + feel_pressure + friends_facebook + check_child_profile, data = na.omit(data_specific))
+ml <- glm(teen_public_affection ~ parent_connect_child + age + feel_pressure + friends_facebook + check_child_profile, family = "binomial", data = na.omit(data_specific))
 summary(ml)
+exp(ml$coefficients)
 
 ```
 
-The regression suggests that teen feeling pressure to only post content that makes you look good to others, has a positive regression coefficient to him/her posting public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours have an effect on teen's public affection behaviour.  
+The regression suggests that teens feeling pressure to only post content that makes them look good to others, were around 90% ("Yes, a little pressure") to 214% ("Yes, a lot pressure") more likely to post public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours (connecting with child on social media, being friends on Facebook, and checking child's social media profile) have an effect on teen's public affection behaviour.  
 
 This seems to suggest that teens are more influenced by their self-perception, rather than their parent's interventions, with respect to whether or not they post public affection towards his/her significant other.  
   
 ***
   
-### Question 4  
+### Question 3  
  
-4.	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend.   
+Question:	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend.   
   
 *Hypothesis: If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend*    
   
@@ -557,8 +362,7 @@ KR13_F: Have you ever done any of the following to someone you were dating or us
 1.Yes  
 2.No  
   
-We could sum up the scores for these two questions to form our y / dependent variable.
-  
+
 *[Independent variables]*:  
 P13_B: Have you ever checked which websites your child visited?   
 1.Yes  
@@ -575,7 +379,7 @@ P14_H: Have you ever looked at the phone call records or messages on your child'
 2.No  
 3.Does Not Apply  
   
-We perform similar data cleaning and manipulation operations to get rid of invalid responses and to re-order values according from least to most.  
+Similar data cleaning and manipulation operations were performed to get rid of invalid responses and to re-order values according from least to most.  
   
 ```{r, echo = FALSE}
 data_specific <- data.frame(
@@ -621,7 +425,7 @@ data_specific$access_date_phone <- abs(data_specific$access_date_phone - 3) - 1
 
 data_specific$track_date_loc <- abs(data_specific$track_date_loc - 3) - 1
 
-data_specific$y <- data_specific$access_date_phone + data_specific$track_date_loc
+#data_specific$y <- data_specific$access_date_phone + data_specific$track_date_loc
 
 data_specific$age <- survey_data$Child_age
 
@@ -633,214 +437,52 @@ cat('after data cleaning, number of valid data records for analysis is: ', dim(n
 <b>Findings</b>  
     
 ```{r, echo = FALSE}
-# convert to factor for linear regression
+# convert to factor for regression
 data_specific$check_child_website <- factor(data_specific$check_child_website)
 
 data_specific$monitor_child_location <- factor(data_specific$monitor_child_location)
 
 data_specific$look_child_phone_records <- factor(data_specific$look_child_phone_records)
 
+data_specific$gender <- factor(survey_data$Child_gender, labels = c('Male','Female'))
 ```
+
 ```{r}
-ml <- lm(y ~ check_child_website + monitor_child_location + look_child_phone_records + age, data = na.omit(data_specific))
+ml <- glm(access_date_phone ~ check_child_website + monitor_child_location + look_child_phone_records + gender + age, family = "binomial", data = na.omit(data_specific))
 summary(ml)
+exp(ml$coefficients)
+
 ```
 
-It seems that parent monitoring child's location (parent's stalking behaviour), has a positive effect on teen having stalking behaviour (accessing phone or tracking location of someone they were dating or used to date).   
-  
-```{r, echo = FALSE}
-data_specific$gender <- survey_data$Child_gender
-```
+It seems that if parent monitors their child's location (parent's stalking behaviour), teens are around 190% more likely (at 90% confidence level) to access the phone of someone they were dating or used to date (child's stalking behaviour).   
+
+
 ```{r}
-data_specific_male <- data_specific[data_specific$gender == 1, ]
-ml_male <- lm(y ~ check_child_website + monitor_child_location + look_child_phone_records + age, data = na.omit(data_specific_male))
-
-data_specific_female <- data_specific[data_specific$gender == 2, ]
-ml_female <- lm(y ~ check_child_website + monitor_child_location + look_child_phone_records + age, data = na.omit(data_specific_female))
-
-stargazer(list(ml_male, ml_female), type = "text", digits = 2, title  = "Regression on male (model 1) and female (model 2) teens", dep.var.labels = "'Stalking' behaviour of teens wrt stalking behaviour of parents")
-
+ml <- glm(track_date_loc ~ check_child_website + monitor_child_location + look_child_phone_records + gender + age, family = "binomial", data = na.omit(data_specific))
+summary(ml)
+exp(ml$coefficients)
 
 ```
+
+It seems that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour).   
   
-For male teens, a parent monitoring child's location has a positive, statistically significant, impact on the teen exhibiting stalking behaviours.  Age has a negative (but small) impact on the teen exhibiting stalking behaviours; but its confidence level is at 90%. Perhaps this suggests that male teens are influenced by parents' behaviour, but older teens may be more mature and less prone to exhibiting stalking behaviour.  
-     
-For female teens, the coefficients are not statistically significant.  
+In both cases, parent monitoring child's location seemed correlated with both child's stalking behaviours (accessing phone and tracking GPS location).  
   
   
 ***
-  
-### Question 5  
- 
-5.	Is parent’s teaching on online behaviour effective?   
-  
-*Hypothesis: If parents talk to their child on appropriate behaviour, then teen is less likely to have inappropriate behaviour (e.g. sending flirty pictures)*    
-  
-<b>Background info - data cleaning and manipulation</b>
 
-For this question, the relevant dataset questions are:
-
-*[Dependent variables]*:  
-KF15: Have you ever had a fight with any of your friends that started because of something that happened online or because of a text?        
-1.Yes  
-2.No  
-  
-KRSNS4_B: Thinking again about your experiences on social media sites such as Facebook or Twitter... Have you ever unfriended or blocked someone who was flirting with you in a way that made you feel uncomfortable?        
-1.Yes  
-2.No  
-[Do not reverse the order for this question. 'Yes' is perceived to be good behaviour]
-  
-KDATE2_G: Have you ever done any of these things to let someone know you were attracted to them or interested in them? Have you sent them sexy or flirty pictures or videos of yourself?         
-1.Yes  
-2.No  
-  
-We could sum up the scores for these two questions to form our y / dependent variable.
-  
-*[Independent variables]*:  
-P15_A: How often do you talk with your child about what is appropriate or inappropriate  online behavior towards others?      
-1.Never  
-2.Rarely  
-3.Occasionally  
-4.Frequently  
-  
-P15_B:  How often do you talk with your child about what is appropriate or inappropriate  to share online?     
-1.Never  
-2.Rarely  
-3.Occasionally  
-4.Frequently  
-    
-P15_C:  How often do you talk with your child about what is appropriate or inappropriate  content for them to be viewing online?  
-1.Never  
-2.Rarely  
-3.Occasionally  
-4.Frequently  
-    
-P15_D:  How often do you talk with your child about what is appropriate or inappropriate behavior in their school, home and social lives?   
-1.Never  
-2.Rarely  
-3.Occasionally  
-4.Frequently  
-  
-P15_E:  How often do you talk with your child about what is appropriate or inappropriate content for them to be viewing/hearing/reading on TV, music, books or magazines or in other media?    
-1.Never  
-2.Rarely  
-3.Occasionally  
-4.Frequently  
-  
-We perform similar data cleaning and manipulation operations to get rid of invalid responses and to re-order values according from least to most.  
-  
-```{r, echo = FALSE}
-data_specific <- data.frame(
-  approp_online_behaviour = survey_data$P15_A, 
-  approp_share_behaviour = survey_data$P15_B, 
-  approp_online_content = survey_data$P15_C, 
-  approp_real_life_behaviour = survey_data$P15_D, 
-  approp_offline_content = survey_data$P15_E, 
-  fight_friends = survey_data$KF15, 
-  block_flirting_friends = survey_data$KRSNS4_B, 
-  flirt_messages = survey_data$KDATE2_G  )
-
-# set NA to invalid responses
-data_specific[ is.na(data_specific$approp_online_behaviour), ] <- NA
-data_specific[ is.na(data_specific$approp_share_behaviour), ] <- NA
-data_specific[ is.na(data_specific$approp_online_content), ] <- NA
-data_specific[ is.na(data_specific$approp_real_life_behaviour), ] <- NA
-data_specific[ is.na(data_specific$approp_offline_content), ] <- NA
-data_specific[ is.na(data_specific$fight_friends), ] <- NA
-data_specific[ is.na(data_specific$block_flirting_friends), ] <- NA
-data_specific[ is.na(data_specific$flirt_messages), ] <- NA
-
-# ---
-data_specific[ !is.na(data_specific$approp_online_behaviour) & (data_specific$approp_online_behaviour < 1 | data_specific$approp_online_behaviour > 4), ] <- NA  
-
-data_specific[ !is.na(data_specific$approp_share_behaviour) & (data_specific$approp_share_behaviour < 1 | data_specific$approp_share_behaviour > 4), ] <- NA  
-
-data_specific[ !is.na(data_specific$approp_online_content) & (data_specific$approp_online_content < 1 | data_specific$approp_online_content > 4), ] <- NA  
-
-data_specific[ !is.na(data_specific$approp_real_life_behaviour) & (data_specific$approp_real_life_behaviour < 1 | data_specific$approp_real_life_behaviour > 4), ] <- NA  
-
-data_specific[ !is.na(data_specific$approp_offline_content) & (data_specific$approp_offline_content < 1 | data_specific$approp_offline_content > 4), ] <- NA  
-
-data_specific[ !is.na(data_specific$fight_friends) & (data_specific$fight_friends < 1 | data_specific$fight_friends > 2), ] <- NA  
-
-data_specific[ !is.na(data_specific$block_flirting_friends) & (data_specific$block_flirting_friends < 1 | data_specific$block_flirting_friends > 2), ] <- NA  
-
-data_specific[ !is.na(data_specific$flirt_messages) & (data_specific$flirt_messages < 1 | data_specific$flirt_messages > 2), ] <- NA  
-
-# convert from 1(YES)-2(NO)
-#           to 0(NO)-1(YES)
-data_specific$fight_friends <- abs(data_specific$fight_friends - 3) - 1 
-data_specific$flirt_messages <- abs(data_specific$flirt_messages - 3) - 1
-# change from 1.Yes 2.No to 0.Yes 1.No  
-# [Do not reverse the order for this question. 'Yes' is perceived to be good behaviour]
-data_specific$block_flirting_friends <- data_specific$block_flirting_friends - 1
-
-data_specific$y <- data_specific$fight_friends + data_specific$block_flirting_friends + data_specific$flirt_messages
-
-data_specific$age <- survey_data$Child_age
-
-cat('after data cleaning, number of valid data records for analysis is: ', dim(na.omit(data_specific))[1])
-
-
-```
-
-<b>Findings</b>  
-    
-```{r, echo = FALSE}
-# convert to factor for linear regression
-data_specific$approp_online_behaviour <- factor(data_specific$approp_online_behaviour)
-
-data_specific$approp_share_behaviour <- factor(data_specific$approp_share_behaviour)
-
-data_specific$approp_online_content <- factor(data_specific$approp_online_content)
-
-data_specific$approp_real_life_behaviour <- factor(data_specific$approp_real_life_behaviour)
-
-data_specific$approp_offline_content <- factor(data_specific$approp_offline_content)
-
-```
-
-
-```{r}
-ml <- lm(y ~ approp_online_behaviour + approp_share_behaviour + approp_online_content + approp_real_life_behaviour + approp_offline_content + age, data = na.omit(data_specific))
-summary(ml)
-```
-
-No statistically significant coefficients at 95% confidence level.  
-Let us look at male and female teens separately.  
-  
-```{r, echo = FALSE}
-data_specific$gender <- survey_data$Child_gender
-```
-```{r}
-data_specific_male <- data_specific[data_specific$gender == 1, ]
-
-ml_male <- lm(y ~ approp_online_behaviour + approp_share_behaviour + approp_online_content + approp_real_life_behaviour + approp_offline_content + age, data = na.omit(data_specific_male))
-
-data_specific_female <- data_specific[data_specific$gender == 2, ]
-ml_female <- lm(y ~ approp_online_behaviour + approp_share_behaviour + approp_online_content + approp_real_life_behaviour + approp_offline_content + age, data = na.omit(data_specific_female))
-
-stargazer(list(ml_male, ml_female), type = "text", digits = 2, title  = "Regression on male (model 1) and female (model 2) teens", dep.var.labels = "Appropriate behaviour of teen")
-
-
-```
-  
-For male teens, a parent's teaching on online behaviour do not seem to affect whether teen exhibits appropriate behaviour. All regression coefficients are not statistically significant.  
-    
-For female teens, a parent talking with teen about what is appropriate or inappropriate content for them to be viewing online, and what to share online, have positive, statistically significant (95% confidence level), regression coefficients with teen's appropriate behaviour.  A positive coefficient means that, the more the parent speaks to the child on appropriate behaviour, the more probable the child exhibits *inappropriate* behaviour.   
-  
-***
-  
 ## Limitations
 
-{e.g. not many people replied to questions regarding significant others. not sure if this subset of data remains representative}  
+The analysis was limited to dependent variables with binary Yes/No oprtions. Ideally, dependent variables with more than 2 options should be considered as well. Perhaps polr function could be used, but there was insufficient time to investigate and understand this further.  
+
+<font color = red>Bilal to add on </font>  
   
 ***
 
 ## Conclusion
 
-{brief summary of everything}
+<font color = red> Bilal to add on </font>
 
 ## Possible future improvements
 
-{ideas on how we can improve the analysis - e.g. if we had more data on blah blah}
+<font color = red>{ideas on how we can improve the analysis - e.g. if we had more data on blah blah}</font>
