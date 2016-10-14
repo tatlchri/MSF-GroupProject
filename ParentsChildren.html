@@ -153,16 +153,22 @@ $(document).ready(function () {
 <hr />
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>The dataset had a number of questions to the teen’s parent, as well as similar questions to the teen.</p>
-<p>Hence we thought it would be interesting to investigate if there were any relationships between parent’s behaviours and the teen’s behaviours using social media.</p>
-<p>For example, parents were asked if they monitor their child’s location (sort of stalking behaviour), and whether the teen monitors someone they are dating or had dated (similar stalking behaviour). There were also questions on whether the parent talks to their teen child on appropriate online behaviours. We can then investigate if these teachings were effective.</p>
-<p>We had investigated 5 questions, with findings summarised in the section below.</p>
+<p>The dataset had a number of questions there were posed to the teen’s parent, and a number of similar questions posed to the teen.</p>
+<p>A number of hypotheses were investigated using this dataset, to see if there were any relationships between parent’s behaviours and the teen’s behaviours using social media.</p>
+<p>For example, parents were asked if they monitor their child’s location (could be considered as a form of stalking behaviour), and whether the teen monitored someone they were dating or had dated (similar stalking behaviour). This was an opportunity to investigate if teens were more likely to exhibit stalking behaviour if their parent did the same too.</p>
+<p>There were also questions on whether the parent blocks their child’s phone usage and whether the child sends sexy/flirty messages. One of the hypotheses was thus whether the child would send more likely sexy/flirty messages, if the parent blocks their child’s phone usage, which could suggest that the parent’s intervention might have triggered a rebellious behaviour (e.g. the stricter the parent, the more the child wants to be liberal).</p>
+<p><b>Methodology</b></p>
+<p>As the dependent variable for each investigation was a categorical variable (being responses of a survey question), logistic regression was used. Linear regression would not make sense as the coefficient of linear regression would not translate to anything meaningful. Dependent variables where the possible responses were “No” or “Yes”, i.e. binary 0 or 1 response, were chosen for analysis.</p>
+<p>The function <i>glm</i> was used, <i>model &lt;- glm(y ~ x1 + x2 + .. + xk, data = dataframe, family = “binomial”).</i></p>
+<p>In most cases, the independent variables were also survey responses that could have more than 2 options. e.g. 1.Yes, a lot, 2.Yes, a little, 3.No. Researching literature online, there were two possible approaches: (1) leave such variables as numeric (R would interpret them as continuous variables), or convert them as factors (R would interpret them as categorical variables, and regression would yield a coefficient for each possible option). Setting these variables as continuous variables might be contentious as the value of the variables were discrete in nature, and it might be difficult to explain why optioni 1 had value 1, and not 2 or 50 etc. Hence on balance, these variables were converted to factor, even though this would increase the total number of variables used in the regression and inflate the R<sup>2</sup> value (AIC value for logistic regression). All dependent and independent variables were reordered so that the higher the value, the higher the scale of the response. i.e. instead of 1 for Yes and 2 for No, we reordered it to 0 for No and 1 for Yes.</p>
+<p><font color="red"> Bilal: help to put in explanations on how to interpret the coefficients, and exp function. thanks!</font></p>
+<p>The 6 questions, their corresponding hypotheses, and their associated findings are summarised in the section below.</p>
 <hr />
 </div>
 <div id="executive-summary-of-findings" class="section level2">
 <h2>Executive summary of findings:</h2>
 <p><u>Effects of Parent and child behaviour, on teen’s use of social media</u></p>
-<p>The table below summarises the questions we studied, our initial hypothesis, and findings we had from the data.</p>
+<p>The table below summarises the questions studied, the initial hypothesis, and findings from the data.</p>
 <table>
 <colgroup>
 <col width="33%"></col>
@@ -178,205 +184,29 @@ $(document).ready(function () {
 </thead>
 <tbody>
 <tr class="odd">
-<td>1. Relationship between parents who are strict with their children and the teen’s usage of social media</td>
-<td>If teens are rebellious, then the stricter the parent, the more time teen will use social media</td>
-<td>There is significant evidence to show that parent’s strictness on teen’s usage of social media affects female teens - if the parent limits their female teen’s time spent with friends, the more time the female teen would spend on social media, suggesting that female teens may perhaps be more rebellious than male teens, or that they would turn to online interactions rather than physical interactions with friends. There is no significant evidence to show any impact of parent’s strictness on male teens’ time spent on social media</td>
-</tr>
-<tr class="even">
-<td>2. Relationship between parents blocking their child’s phone usage and their child’s online behaviour on sexy/flirty pictures</td>
+<td>1. Relationship between parents blocking their child’s phone usage and their child’s online behaviour on sexy/flirty pictures</td>
 <td>If teens are rebellious, then the stricter the parent, the more the child wants to be liberal and may be more inclined to send flirty pictures</td>
-<td>The regression results suggest that if parents took away their child’s cell phone or internet privileges as punishment, the teen is more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of parent using parental controls to restrict child’s use of his/her cell phone, and limiting the amount of time or times of day when child can go online</td>
-</tr>
-<tr class="odd">
-<td>3. Relationship on whether children self-censor their posts if they are friends with parents on social media</td>
-<td>Teens’ whose parents are friends with them on social media will likely not post details of their relationship online</td>
-<td>Teens who feel pressure to only post content that makes them look good to others, has a positive regression coefficient to him/her posting public affection towards his/her significant other. There is no significant statistical evidence to show that various teen’s parent’s behaviours, such as being friends with child in Facebook or other social media, have an effect on teen’s public affection behaviour. This seems to suggest that teens are more influenced by their self-perception, rather than their parent’s interventions, with respect to whether or not they post public affection towards his/her significant other.</td>
+<td>The regression results suggest that if parents took away their child’s cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of other parent’s strict behaviours: parent using parental controls to restrict child’s use of his/her cell phone, and limiting the amount of time or times of day when child can go online</td>
 </tr>
 <tr class="even">
-<td>4. Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend</td>
-<td>If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend</td>
-<td>For male teens, a parent monitoring child’s location has a positive, statistically significant, impact on the teen exhibiting stalking behaviours. Age has a negative (but small) impact on the teen exhibiting stalking behaviours; but its confidence level is at 90%. Perhaps this suggests that male teens are influenced by parents’ behaviour, but older teens may be more mature and less prone to exhibiting stalking behaviour. For female teens, the coefficients are not statistically significant.</td>
+<td>2. Relationship on whether children self-censor their posts if they are friends with parents on social media</td>
+<td>Teens’ whose parents are friends with them on social media will likely not post details of their relationship online</td>
+<td>There was no statiscally significant evidence to show that whether the parent was connected to their child on social media had an impact on child posting public affection for their significant other (proxy of whether child self-censors their posts). Upon adding more variables to the regression, the regression suggests that teens feeling pressure to only post content that makes them look good to others, were around 90% (“Yes, a little pressure”) to 214% (“Yes, a lot pressure”) more likely to post public affection towards his/her significant other. There is no significant statistical evidence to show that various teen’s parent’s behaviours (connecting with child on social media, being friends on Facebook, and checking child’s social media profile) have an effect on teen’s public affection behaviour. This seems to suggest that teens are more influenced by their self-perception, rather than their parent’s interventions, with respect to whether or not they post public affection towards his/her significant other.</td>
 </tr>
 <tr class="odd">
-<td>5. Is parent’s teaching his/her child about appropriate online behaviour effective?</td>
-<td>If parents talk to their child on appropriate behaviour, then teen is less likely to have inappropriate behaviour (e.g. sending flirty pictures, starting a fight due to online events)</td>
-<td>For male teens, a parent’s teaching of online behaviour do not seem to affect whether teen exhibits appropriate behaviour. All regression coefficients are not statistically significant. For female teens, a parent talking with teen about what is appropriate or inappropriate content for them to be viewing online, and what to share online, have positive, statistically significant, regression coefficients with teen’s appropriate behaviour</td>
+<td>3. Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend</td>
+<td>If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend</td>
+<td>It seemed that if parent monitors their child’s location (parent’s stalking behaviour), teens are around 190% more likely (at 90% confidence level) to access the phone of someone they were dating or used to date (child’s stalking behaviour). It seemed that if parent monitors their child’s location (parent’s stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child’s stalking behaviour). In both cases, parent monitoring child’s location seemed correlated with both child’s stalking behaviours (accessing phone and tracking GPS location).</td>
 </tr>
 </tbody>
 </table>
 <hr />
 </div>
-<div id="details-of-the-questions-we-investigated-and-findings" class="section level2">
-<h2>Details of the questions we investigated, and findings</h2>
+<div id="details-of-the-questions-investigated-and-findings" class="section level2">
+<h2>Details of the questions investigated, and findings</h2>
 <div id="question-1" class="section level3">
 <h3>Question 1</h3>
-<ol style="list-style-type: decimal">
-<li>Relationship between parents who are strict with their children and the teen’s usage of social media</li>
-</ol>
-<p><em>Hypothesis: If teens are rebellious, then the stricter the parent, the more time teen will use social media</em></p>
-<p><b>Background info - data cleaning and manipulation</b></p>
-<p>For this question, the relevant dataset questions are:</p>
-<p><em>[Dependent variable]</em>:<br />
-KFR11_H: How often do you spend time with friends posting on social media sites? The options respondents had were:<br />
-1.Every day,<br />
-2.Every few days,<br />
-3. Less often,<br />
-4. Never</p>
-<p><em>[Independent variables]</em>:<br />
-P4: Which comes closer to the way you approach the time your child spends with his/her friends? The options respondents had were:<br />
-1. He/She can spend as much time with his/her friends as he/she wants as long as it doesn’t interfere with other pre-planned activities,<br />
-2. I limit the time he/she spends with his/her friends, even if it doesn’t interfere with other pre-planned activities.</p>
-<p>We had also cleaned the data and removed rows with invalid responses by filling them with NA (e.g. if respondents were supposed to choose only options 1 or 2, but the data showed 3 or -1, these would be invalid responses).</p>
-<p>We first inverse the order of the options, so that the higher number represents the “most” choice. E.g. for question KFR11_H, the original order of choices that respondents can choose are:<br />
-1.Every day, 2.Every few days, 3. Less often, 4. Never<br />
-We re-order it to:<br />
-1.Never, 2. Less often, 3.Every few days, 4. Every day</p>
-<p>For questions with options as Yes/No only, we will order No as 0 and Yes as 1. For questions with options as Yes/No/Does not apply, for respondents who responded Does not apply, we will remove the data record (by filling it with NA), and order No as 0 and Yes as 1.</p>
-<p>This helps facilitate correlation or regression analysis.<br />
-We also convert numeric values into factor, for categorical variables for regression.</p>
-<pre><code>## after data cleaning, number of valid data records for analysis is:  774</code></pre>
-<p><b>Findings</b></p>
-<p>Let’s find out the correlation between question KFR11_H (time teen spends on social media) and question P4 (whether parent limits the time his/her child spends with friends).</p>
-<p>Correlation results:</p>
-<pre class="r"><code>cor.test(data_specific$parent_control_time, data_specific$y)</code></pre>
-<pre><code>## 
-##  Pearson's product-moment correlation
-## 
-## data:  data_specific$parent_control_time and data_specific$y
-## t = 2.3527, df = 772, p-value = 0.01889
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  0.01398758 0.15392796
-## sample estimates:
-##       cor 
-## 0.0843738</code></pre>
-<p>The p-value = 0.01889.<br />
-As p-value is less than 5%, we have 95% confidence to reject H0 where H0 is that correlation is 0.<br />
-It has a positive correlation of 0.0843738.</p>
-<p>This suggests that the stricter the parent, the more time child spends on social media (small effect).</p>
-<p>A boxplot summary of the responses:</p>
-<p><img src="data:image/png;base64,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ZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQZwhoktGAoiCgJRFQ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" width="672" /></p>
-<p>We now investigate if there are differences in responses by gender.</p>
-<pre class="r"><code># See if there are differences in gender
-data_specific[, &quot;gender&quot;] &lt;- survey_data$Child_gender
-# Correlation of x and y, given males. Male = option 1
-cor.test(data_specific[data_specific[,&quot;gender&quot;] == 1, &quot;parent_control_time&quot;], data_specific[data_specific[,&quot;gender&quot;] == 1, &quot;y&quot;])</code></pre>
-<pre><code>## 
-##  Pearson's product-moment correlation
-## 
-## data:  data_specific[data_specific[, &quot;gender&quot;] == 1, &quot;parent_control_time&quot;] and data_specific[data_specific[, &quot;gender&quot;] == 1, &quot;y&quot;]
-## t = 0.87472, df = 362, p-value = 0.3823
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  -0.05713541  0.14801885
-## sample estimates:
-##        cor 
-## 0.04592597</code></pre>
-<pre class="r"><code># Correlation of x and y, given males. Female = option 2
-cor.test(data_specific[data_specific[,&quot;gender&quot;] == 2, &quot;parent_control_time&quot;], data_specific[data_specific[,&quot;gender&quot;] == 2, &quot;y&quot;])</code></pre>
-<pre><code>## 
-##  Pearson's product-moment correlation
-## 
-## data:  data_specific[data_specific[, &quot;gender&quot;] == 2, &quot;parent_control_time&quot;] and data_specific[data_specific[, &quot;gender&quot;] == 2, &quot;y&quot;]
-## t = 2.7481, df = 408, p-value = 0.006259
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  0.03846643 0.22867322
-## sample estimates:
-##       cor 
-## 0.1348115</code></pre>
-<p>The p-value = 0.3823 for Males and<br />
-the ’p-value = 0.006259 for Females<br />
-This suggests that parent’s strictness may not affect male teen’s time spent on social media, whereas it may affect a female teen’s usage.<br />
-Moreover, we note that for female teens, the correlation coefficient = 0.1348115. The positive coefficient suggests that the stricter the parent, the more time a female teen spends on social media.</p>
-<p><img src="data:image/png;base64,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" width="672" /></p>
-<p>Besides question P4, there is another question that<br />
-may also be indicative of parent’s strictness<br />
-It is P13_A:<br />
-Have you ever used parental controls or other technological means of blocking, filtering or monitoring your child’s online activities? 1(YES)-2(NO)-3(does Not Apply)</p>
-<p>Let’s add this data (and clean it) into the local data set<br />
-and run a correlation test.</p>
-<pre><code>## after data cleaning, number of valid data records for analysis is:  762</code></pre>
-<pre class="r"><code>cor.test(data_specific$parent_block_online, data_specific$y)</code></pre>
-<pre><code>## 
-##  Pearson's product-moment correlation
-## 
-## data:  data_specific$parent_block_online and data_specific$y
-## t = -0.16393, df = 760, p-value = 0.8698
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  -0.07693622  0.06510360
-## sample estimates:
-##          cor 
-## -0.005946301</code></pre>
-<p>There is no significant evidence to reject H0 hypothesis that correlation between the two variables is 0.<br />
-This seems to suggest that whether or not a parent tries to block, filter or monitor their child’s online activities, does not have a correlated impact on the time that the child spends on social media.</p>
-<p>Now let’s run a regression to study the significance of question P4 (whether parent limits child’s time) and question P13_A (whether parent blocks child’s usage), as well as teen’s age (one may hypothesize that the older the child, the more obedient one might be), relating to the dependent variable question KFR11_H (teen’s time spent on social media).</p>
-<pre class="r"><code>ml &lt;- lm(y ~ parent_control_time + parent_block_online + age, data = na.omit(data_specific))
-summary(ml)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = y ~ parent_control_time + parent_block_online + 
-##     age, data = na.omit(data_specific))
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -1.95859 -0.80763  0.06914  1.05168  1.22550 
-## 
-## Coefficients:
-##                      Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)          2.660980   0.355944   7.476 2.12e-13 ***
-## parent_control_time2 0.138895   0.069372   2.002   0.0456 *  
-## parent_block_online1 0.010263   0.067818   0.151   0.8798    
-## age                  0.008732   0.023187   0.377   0.7066    
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 0.8971 on 758 degrees of freedom
-## Multiple R-squared:  0.00568,    Adjusted R-squared:  0.001745 
-## F-statistic: 1.443 on 3 and 758 DF,  p-value: 0.2289</code></pre>
-<p>The coefficients for parent_control is significant at 95% confidence level, whereas the parent_block_online and age coefficients are not statistically significant.<br />
-However, the coefficient for parent_control is POSITIVE.<br />
-This suggests that the stricter the parent, the more time the teen will spend on social media.<br />
-However, this is the aggregated result for both genders.</p>
-<p>Next, we shall run disaggregated linear regressions for male and female teens.</p>
-<pre><code>## 
-## Regression on male (model 1) and female (model 2) teens
-## ===========================================================
-##                               Dependent variable:          
-##                      --------------------------------------
-##                            Time spent on social media      
-##                             (1)                 (2)        
-## -----------------------------------------------------------
-## parent_control_time2        0.06              0.25***      
-##                            (0.10)             (0.09)       
-##                                                            
-## parent_block_online1        0.05               0.01        
-##                            (0.10)             (0.09)       
-##                                                            
-## age                         0.03               -0.01       
-##                            (0.03)             (0.03)       
-##                                                            
-## Constant                  2.26***             3.03***      
-##                            (0.54)             (0.47)       
-##                                                            
-## -----------------------------------------------------------
-## Observations                358                 404        
-## R2                         0.003               0.02        
-## Adjusted R2                -0.01               0.01        
-## Residual Std. Error   0.91 (df = 354)     0.87 (df = 400)  
-## F Statistic          0.36 (df = 3; 354) 2.48* (df = 3; 400)
-## ===========================================================
-## Note:                           *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
-<p>The coefficients are not statistically significant for male teens. For female teens, only the parent_control_time variable is statistically significant at least at the 99% confidence level. Parents who limit the time their female teen spends with his/her friends, would increase the female teen’s time spent with friends posting on social media sites. Perhaps parents are only able to limit time spent by their teen physically interacting with friends (e.g. can only go out within certain times), and this may lead to female teens spending more time with friends online instead.</p>
-<p>We conclude that parent’s strictness affect female teens and not male teens. One would originally think that female teens may be more obedient and hence the coefficient should be negative. However, the coefficient is positive (with a large coefficient and high statistical significance), suggesting that female teens might perhaps be rebellious - in that the more the parent wishes to limit her time, the more time she spends on social media.</p>
-<hr />
-</div>
-<div id="question-2" class="section level3">
-<h3>Question 2</h3>
-<ol start="2" style="list-style-type: decimal">
-<li>Relationship between parents blocking their child’s phone usage and their child’s online behaviour on sexy/flirty pictures</li>
-</ol>
+<p>Question: Relationship between parents blocking their child’s phone usage and their child’s online behaviour on sexy/flirty pictures</p>
 <p><em>Hypothesis: The stricter the parent, the more the child wants to be liberal.</em></p>
 <p><b>Background info - data cleaning and manipulation</b></p>
 <p>For this question, the relevant dataset questions are:</p>
@@ -397,43 +227,60 @@ P14_F: Have you ever used parental controls to restrict your child’s use of hi
 1.Yes<br />
 2.No<br />
 3.Does Not Apply</p>
-<p>We perform similar data cleaning and manipulation operations to get rid of invalid responses and to re-order values according from least to most.</p>
+<p><b> Data cleaning </b></p>
+<p>Rows with invalid responses were removed by filling them with NA (e.g. if respondents were supposed to choose only options 1 or 2, but the data showed 3 or -1, these would be invalid responses).</p>
+<p>The order of the options were reversed, so that the higher number represents the “most” choice, and 0 for No or None. E.g. for if the question’s original order of choices that respondents could choose from were:<br />
+1.Yes, 2.No<br />
+The responses’ order were re-ordered to:<br />
+0.No, 1. Yes</p>
+<p>For questions with options as Yes/No/Does not apply, for respondents who responded Does not apply, the data record was removed (by filling it with NA), and order No as 0 and Yes as 1.</p>
 <pre><code>## after data cleaning, number of valid data records for analysis is:  830</code></pre>
 <p><b>Findings</b></p>
-<p>Let’s find out the correlation between whether teen sends flirty messages, and the strictness of parents: (i) by controlling cell phone, (ii) taking away privileges, (iii) limiting time spent online.</p>
-<pre class="r"><code>ml &lt;- lm(y ~ parent_controls_cell_phone + take_away_privileges + limit_time_online + age, data = na.omit(data_specific))
+<p>The regression between whether teen sends flirty messages, and the strictness of parents: (i) by controlling cell phone, (ii) taking away privileges, (iii) limiting time spent online, and (iv) age, is shown below.</p>
+<pre class="r"><code>ml &lt;- glm(y ~ parent_controls_cell_phone + take_away_privileges + limit_time_online + age, family = &quot;binomial&quot;, data = na.omit(data_specific))
+
 summary(ml)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = y ~ parent_controls_cell_phone + take_away_privileges + 
-##     limit_time_online + age, data = na.omit(data_specific))
+## glm(formula = y ~ parent_controls_cell_phone + take_away_privileges + 
+##     limit_time_online + age, family = &quot;binomial&quot;, data = na.omit(data_specific))
 ## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.18189 -0.12127 -0.07881 -0.04662  0.96553 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.6945  -0.4843  -0.3711  -0.3008   2.5599  
 ## 
 ## Coefficients:
-##                              Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                 -0.406151   0.115254  -3.524 0.000449 ***
-## parent_controls_cell_phone1 -0.008339   0.026350  -0.316 0.751721    
-## take_away_privileges1        0.072765   0.022974   3.167 0.001596 ** 
-## limit_time_online1          -0.014030   0.022184  -0.632 0.527283    
-## age                          0.030310   0.007276   4.166 3.43e-05 ***
+##                             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                 -8.95810    1.59326  -5.622 1.88e-08 ***
+## parent_controls_cell_phone1 -0.10125    0.32216  -0.314  0.75330    
+## take_away_privileges1        0.98933    0.32537   3.041  0.00236 ** 
+## limit_time_online1          -0.16482    0.26913  -0.612  0.54026    
+## age                          0.39233    0.09717   4.038 5.40e-05 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.2846 on 825 degrees of freedom
-## Multiple R-squared:  0.03191,    Adjusted R-squared:  0.02722 
-## F-statistic: 6.799 on 4 and 825 DF,  p-value: 2.194e-05</code></pre>
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 508.20  on 829  degrees of freedom
+## Residual deviance: 480.41  on 825  degrees of freedom
+## AIC: 490.41
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>exp(ml$coefficients)</code></pre>
+<pre><code>##                 (Intercept) parent_controls_cell_phone1 
+##                0.0001286901                0.9037054546 
+##       take_away_privileges1          limit_time_online1 
+##                2.6894332059                0.8480453622 
+##                         age 
+##                1.4804232140</code></pre>
 <p>The take_away_privileges variable is statistically significant with 99% confidence level.</p>
-<p>The regression results suggest that if parents took away their child’s cell phone or internet privileges as punishment, the teen is more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of parent using parental controls to restrict child’s use of his/her cell phone, and limiting the amount of time or times of day when child can go online.</p>
+<p>The regression results suggest that if parents took away their child’s cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of parent using parental controls to restrict child’s use of his/her cell phone, and limiting the amount of time or times of day when child can go online.</p>
+<p>Given that take_away_privileges was significant, the results suggest that parent’s strictness behaviour did affect teen’s behaviour on social media. However, to be more conclusive, more aspects of parental strict behaviour, and more teen’s possible rebellious behaviour, could be looked at if time permitted, and if more data was available. For example, there was a lack of data on other proxies of rebellious behaviour or desire to be more liberal due to strictness of parent, besides sending flirty messages. Perhaps the survey could have included questions on whether the child had found alternative ways to access social media, such as using their friend’s internet device or lie to parents that they were in school studying but were actually using a library computer to use social media. With more data, the investigation could be more comprehensive to determine whether parents being strict had made the situation worse than if parents did not intervene.</p>
 <hr />
 </div>
-<div id="question-3" class="section level3">
-<h3>Question 3</h3>
-<ol start="3" style="list-style-type: decimal">
-<li>Relationship on whether children self-censor their posts if they are friends with parents on social media.</li>
-</ol>
+<div id="question-2" class="section level3">
+<h3>Question 2</h3>
+<p>Question: Relationship on whether children self-censor their posts if they are friends with parents on social media.</p>
 <p><em>Hypothesis: Teens’ whose parents are friends with them on social media will likely not post details of their relationship online.</em></p>
 <p><b>Background info - data cleaning and manipulation</b></p>
 <p>For this question, the relevant dataset questions are:</p>
@@ -445,7 +292,7 @@ KRSNS3_C: When you use social media do you ever tell your boyfriend, girlfriend 
 P10: Are you connected with your child on any social media sites?<br />
 1.Yes<br />
 2.No</p>
-<p>We perform similar data cleaning and manipulation operations to get rid of invalid responses and to re-order values according from least to most.</p>
+<p>Similar data cleaning and manipulation operations were performed to get rid of invalid responses and to re-order values according from least to most.</p>
 <pre><code>## after data cleaning, number of valid data records for analysis is:  313</code></pre>
 <p><b>Findings</b></p>
 <pre class="r"><code>cor.test(data_specific$parent_connect_child, data_specific$teen_public_affection)</code></pre>
@@ -461,37 +308,44 @@ P10: Are you connected with your child on any social media sites?<br />
 ##        cor 
 ## 0.06199316</code></pre>
 <p>As the p-value is 0.2742, there is no statistically significant evidence to show that the two variables are correlated.</p>
-<pre class="r"><code># convert to factor for linear regression
+<pre class="r"><code># convert to factor for regression
 data_specific$parent_connect_child &lt;- factor(data_specific$parent_connect_child)
 
-ml &lt;- lm(teen_public_affection ~ parent_connect_child + age, data = na.omit(data_specific))
+ml &lt;- glm(teen_public_affection ~ parent_connect_child + age, family = &quot;binomial&quot;, data = na.omit(data_specific))
 summary(ml)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = teen_public_affection ~ parent_connect_child + age, 
-##     data = na.omit(data_specific))
+## glm(formula = teen_public_affection ~ parent_connect_child + 
+##     age, family = &quot;binomial&quot;, data = na.omit(data_specific))
 ## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -0.4765 -0.4001 -0.3998  0.5998  0.6002 
+## Deviance Residuals: 
+##    Min      1Q  Median      3Q     Max  
+## -1.138  -1.011  -1.010   1.353   1.354  
 ## 
 ## Coefficients:
-##                         Estimate Std. Error t value Pr(&gt;|t|)
-## (Intercept)            0.4024041  0.3280588   1.227    0.221
-## parent_connect_child1  0.0761248  0.0702375   1.084    0.279
-## age                   -0.0001544  0.0209768  -0.007    0.994
+##                         Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)           -0.3955314  1.3493661  -0.293    0.769
+## parent_connect_child1  0.3098837  0.2857402   1.084    0.278
+## age                   -0.0006381  0.0862793  -0.007    0.994
 ## 
-## Residual standard error: 0.4942 on 310 degrees of freedom
-## Multiple R-squared:  0.003843,   Adjusted R-squared:  -0.002583 
-## F-statistic: 0.598 on 2 and 310 DF,  p-value: 0.5505</code></pre>
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 424.89  on 312  degrees of freedom
+## Residual deviance: 423.70  on 310  degrees of freedom
+## AIC: 429.7
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>exp(ml$coefficients)</code></pre>
+<pre><code>##           (Intercept) parent_connect_child1                   age 
+##             0.6733221             1.3632666             0.9993621</code></pre>
 <p>The factor of parent connecting to child is not statistically significant.</p>
-<p>Let’s examine the data:</p>
+<p>Further examination of the data:</p>
 <pre class="r"><code>data_specific$teen_public_affection_factor &lt;- factor(data_specific$teen_public_affection)
 
 ggplot(data = na.omit(data_specific)) + geom_bar(aes(x = parent_connect_child, fill = teen_public_affection_factor), position = &quot;dodge&quot;)</code></pre>
 <p><img src="data:image/png;base64,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" width="672" /></p>
-<p>It seems that when the parent is connected to the child (option 1 / “Yes”), the proportion of teens who express their affection for their significant other publicly, is higher.<br />
-Let’s do a proportion test:</p>
+<p>It seems that when the parent is connected to the child (option 1 / “Yes”), the proportion of teens who express their affection for their significant other publicly, is higher.</p>
+<p>A further a proportion test is done:</p>
 <pre class="r"><code>prob_table &lt;- table(data_specific$parent_connect_child, data_specific$teen_public_affection)
 # inverse the columns, as success is option 2 for teen_public_affection
 prob_table &lt;- cbind(prob_table[, 2], prob_table[, 1])
@@ -509,7 +363,7 @@ prop.test(prob_table)</code></pre>
 ##    prop 1    prop 2 
 ## 0.4000000 0.4761905</code></pre>
 <p>The p-value = 0.3402, which suggests that there is no statistically significant evidence to show that the two proportions differ. i.e. similar to the correlation tests, it suggests that the parent social media connection with the child, does not have significant effect on whether the teen shows public affection for significant other on social media.</p>
-<p>Let us add more variables to the linear regression model:</p>
+<p>Given these intial results, more variables which may relate to the hypothesis, were added to the regression model:</p>
 <p>KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others? 1.Yes, a lot,2.Yes, a little,3.No<br />
 <em>To test if child’s self perception is more strongly correlated to his/her behaviour regarding posting public affection for significant other</em></p>
 <p>P8: Are you friends with your child on Facebook? 1.Yes, 2.No<br />
@@ -517,41 +371,51 @@ prop.test(prob_table)</code></pre>
 <p>P13_C: Have you ever checked your child’s profile on a social networking site? 1(YES)-2(NO)-3(does Not Apply)<br />
 <em>To see if parent checking child’s profile is a significant factor. Perhaps if the child knows that his/her parent checks his/her profile, he/she will be more restrained in his/her post.</em></p>
 <pre><code>## after data cleaning, number of valid data records for analysis is:  223</code></pre>
-<pre class="r"><code>ml &lt;- lm(teen_public_affection ~ parent_connect_child + age + feel_pressure + friends_facebook + check_child_profile, data = na.omit(data_specific))
+<pre class="r"><code>ml &lt;- glm(teen_public_affection ~ parent_connect_child + age + feel_pressure + friends_facebook + check_child_profile, family = &quot;binomial&quot;, data = na.omit(data_specific))
 summary(ml)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = teen_public_affection ~ parent_connect_child + age + 
-##     feel_pressure + friends_facebook + check_child_profile, data = na.omit(data_specific))
+## glm(formula = teen_public_affection ~ parent_connect_child + 
+##     age + feel_pressure + friends_facebook + check_child_profile, 
+##     family = &quot;binomial&quot;, data = na.omit(data_specific))
 ## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -0.6950 -0.3671 -0.3002  0.5060  0.7075 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.5361  -0.9536  -0.8478   1.1872   1.5624  
 ## 
 ## Coefficients:
-##                       Estimate Std. Error t value Pr(&gt;|t|)   
-## (Intercept)            0.73785    0.44471   1.659  0.09853 . 
-## parent_connect_child1  0.02744    0.08674   0.316  0.75207   
-## age                   -0.02487    0.02644  -0.941  0.34790   
-## feel_pressure2         0.15291    0.07554   2.024  0.04418 * 
-## feel_pressure3         0.27555    0.10383   2.654  0.00855 **
-## friends_facebook1      0.01721    0.09448   0.182  0.85566   
-## check_child_profile1  -0.03974    0.08791  -0.452  0.65168   
+##                       Estimate Std. Error z value Pr(&gt;|z|)   
+## (Intercept)            1.03173    1.87908   0.549  0.58296   
+## parent_connect_child1  0.11567    0.36829   0.314  0.75346   
+## age                   -0.10619    0.11194  -0.949  0.34278   
+## feel_pressure1         0.63988    0.31683   2.020  0.04342 * 
+## feel_pressure2         1.14303    0.44113   2.591  0.00957 **
+## friends_facebook1      0.07365    0.40218   0.183  0.85469   
+## check_child_profile1  -0.17095    0.37311  -0.458  0.64682   
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.4879 on 216 degrees of freedom
-## Multiple R-squared:  0.05141,    Adjusted R-squared:  0.02506 
-## F-statistic: 1.951 on 6 and 216 DF,  p-value: 0.07398</code></pre>
-<p>The regression suggests that teen feeling pressure to only post content that makes you look good to others, has a positive regression coefficient to him/her posting public affection towards his/her significant other. There is no significant statistical evidence to show that various teen’s parent’s behaviours have an effect on teen’s public affection behaviour.</p>
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 302.98  on 222  degrees of freedom
+## Residual deviance: 291.48  on 216  degrees of freedom
+## AIC: 305.48
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>exp(ml$coefficients)</code></pre>
+<pre><code>##           (Intercept) parent_connect_child1                   age 
+##             2.8059157             1.1226306             0.8992518 
+##        feel_pressure1        feel_pressure2     friends_facebook1 
+##             1.8962579             3.1362414             1.0764333 
+##  check_child_profile1 
+##             0.8428603</code></pre>
+<p>The regression suggests that teens feeling pressure to only post content that makes them look good to others, were around 90% (“Yes, a little pressure”) to 214% (“Yes, a lot pressure”) more likely to post public affection towards his/her significant other. There is no significant statistical evidence to show that various teen’s parent’s behaviours (connecting with child on social media, being friends on Facebook, and checking child’s social media profile) have an effect on teen’s public affection behaviour.</p>
 <p>This seems to suggest that teens are more influenced by their self-perception, rather than their parent’s interventions, with respect to whether or not they post public affection towards his/her significant other.</p>
 <hr />
 </div>
-<div id="question-4" class="section level3">
-<h3>Question 4</h3>
-<ol start="4" style="list-style-type: decimal">
-<li>Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend.</li>
-</ol>
+<div id="question-3" class="section level3">
+<h3>Question 3</h3>
+<p>Question: Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend.</p>
 <p><em>Hypothesis: If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend</em></p>
 <p><b>Background info - data cleaning and manipulation</b></p>
 <p>For this question, the relevant dataset questions are:</p>
@@ -562,7 +426,6 @@ KR13_C: Have you ever done any of the following to someone you were dating or us
 <p>KR13_F: Have you ever done any of the following to someone you were dating or used to date. Downloaded a GPS or tracking program to their cell phone without them knowing<br />
 1.Yes<br />
 2.No</p>
-<p>We could sum up the scores for these two questions to form our y / dependent variable.</p>
 <p><em>[Independent variables]</em>:<br />
 P13_B: Have you ever checked which websites your child visited?<br />
 1.Yes<br />
@@ -576,256 +439,103 @@ P13_B: Have you ever checked which websites your child visited?<br />
 1.Yes<br />
 2.No<br />
 3.Does Not Apply</p>
-<p>We perform similar data cleaning and manipulation operations to get rid of invalid responses and to re-order values according from least to most.</p>
+<p>Similar data cleaning and manipulation operations were performed to get rid of invalid responses and to re-order values according from least to most.</p>
 <pre><code>## after data cleaning, number of valid data records for analysis is:  317</code></pre>
 <p><b>Findings</b></p>
-<pre class="r"><code>ml &lt;- lm(y ~ check_child_website + monitor_child_location + look_child_phone_records + age, data = na.omit(data_specific))
+<pre class="r"><code>ml &lt;- glm(access_date_phone ~ check_child_website + monitor_child_location + look_child_phone_records + gender + age, family = &quot;binomial&quot;, data = na.omit(data_specific))
 summary(ml)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = y ~ check_child_website + monitor_child_location + 
-##     look_child_phone_records + age, data = na.omit(data_specific))
+## glm(formula = access_date_phone ~ check_child_website + monitor_child_location + 
+##     look_child_phone_records + gender + age, family = &quot;binomial&quot;, 
+##     data = na.omit(data_specific))
 ## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.29619 -0.10074 -0.08968 -0.08068  1.91563 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8697  -0.4799  -0.3788  -0.3060   2.5490  
 ## 
 ## Coefficients:
-##                            Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                0.139686   0.265275   0.527 0.598867    
-## check_child_website1       0.008572   0.047920   0.179 0.858149    
-## monitor_child_location1    0.191765   0.056241   3.410 0.000736 ***
-## look_child_phone_records1  0.004112   0.048688   0.084 0.932741    
-## age                       -0.003688   0.016538  -0.223 0.823692    
+##                           Estimate Std. Error z value Pr(&gt;|z|)  
+## (Intercept)                -4.9877     2.4699  -2.019   0.0434 *
+## check_child_website1        0.2666     0.4489   0.594   0.5525  
+## monitor_child_location1     1.0593     0.4148   2.554   0.0107 *
+## look_child_phone_records1   0.2878     0.4626   0.622   0.5339  
+## genderFemale                0.6471     0.3979   1.626   0.1039  
+## age                         0.1147     0.1521   0.754   0.4509  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.3802 on 312 degrees of freedom
-## Multiple R-squared:  0.03935,    Adjusted R-squared:  0.02703 
-## F-statistic: 3.195 on 4 and 312 DF,  p-value: 0.01361</code></pre>
-<p>It seems that parent monitoring child’s location (parent’s stalking behaviour), has a positive effect on teen having stalking behaviour (accessing phone or tracking location of someone they were dating or used to date).</p>
-<pre class="r"><code>data_specific_male &lt;- data_specific[data_specific$gender == 1, ]
-ml_male &lt;- lm(y ~ check_child_website + monitor_child_location + look_child_phone_records + age, data = na.omit(data_specific_male))
-
-data_specific_female &lt;- data_specific[data_specific$gender == 2, ]
-ml_female &lt;- lm(y ~ check_child_website + monitor_child_location + look_child_phone_records + age, data = na.omit(data_specific_female))
-
-stargazer(list(ml_male, ml_female), type = &quot;text&quot;, digits = 2, title  = &quot;Regression on male (model 1) and female (model 2) teens&quot;, dep.var.labels = &quot;'Stalking' behaviour of teens wrt stalking behaviour of parents&quot;)</code></pre>
-<pre><code>## 
-## Regression on male (model 1) and female (model 2) teens
-## ==========================================================================================
-##                                                 Dependent variable:                       
-##                           ----------------------------------------------------------------
-##                           'Stalking' behaviour of teens wrt stalking behaviour of parents 
-##                                          (1)                             (2)              
-## ------------------------------------------------------------------------------------------
-## check_child_website1                    0.03                            -0.01             
-##                                        (0.06)                           (0.08)            
-##                                                                                           
-## monitor_child_location1                0.28***                           0.12             
-##                                        (0.07)                           (0.08)            
-##                                                                                           
-## look_child_phone_records1               -0.05                            0.04             
-##                                        (0.06)                           (0.08)            
-##                                                                                           
-## age                                    -0.04*                            0.02             
-##                                        (0.02)                           (0.03)            
-##                                                                                           
-## Constant                                0.60*                           -0.25             
-##                                        (0.33)                           (0.41)            
-##                                                                                           
-## ------------------------------------------------------------------------------------------
-## Observations                             159                             158              
-## R2                                      0.10                             0.02             
-## Adjusted R2                             0.08                            -0.003            
-## Residual Std. Error                0.33 (df = 154)                 0.42 (df = 153)        
-## F Statistic                     4.31*** (df = 4; 154)             0.88 (df = 4; 153)      
-## ==========================================================================================
-## Note:                                                          *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
-<p>For male teens, a parent monitoring child’s location has a positive, statistically significant, impact on the teen exhibiting stalking behaviours. Age has a negative (but small) impact on the teen exhibiting stalking behaviours; but its confidence level is at 90%. Perhaps this suggests that male teens are influenced by parents’ behaviour, but older teens may be more mature and less prone to exhibiting stalking behaviour.</p>
-<p>For female teens, the coefficients are not statistically significant.</p>
-<hr />
-</div>
-<div id="question-5" class="section level3">
-<h3>Question 5</h3>
-<ol start="5" style="list-style-type: decimal">
-<li>Is parent’s teaching on online behaviour effective?</li>
-</ol>
-<p><em>Hypothesis: If parents talk to their child on appropriate behaviour, then teen is less likely to have inappropriate behaviour (e.g. sending flirty pictures)</em></p>
-<p><b>Background info - data cleaning and manipulation</b></p>
-<p>For this question, the relevant dataset questions are:</p>
-<p><em>[Dependent variables]</em>:<br />
-KF15: Have you ever had a fight with any of your friends that started because of something that happened online or because of a text?<br />
-1.Yes<br />
-2.No</p>
-<p>KRSNS4_B: Thinking again about your experiences on social media sites such as Facebook or Twitter… Have you ever unfriended or blocked someone who was flirting with you in a way that made you feel uncomfortable?<br />
-1.Yes<br />
-2.No<br />
-[Do not reverse the order for this question. ‘Yes’ is perceived to be good behaviour]</p>
-<p>KDATE2_G: Have you ever done any of these things to let someone know you were attracted to them or interested in them? Have you sent them sexy or flirty pictures or videos of yourself?<br />
-1.Yes<br />
-2.No</p>
-<p>We could sum up the scores for these two questions to form our y / dependent variable.</p>
-<p><em>[Independent variables]</em>:<br />
-P15_A: How often do you talk with your child about what is appropriate or inappropriate online behavior towards others?<br />
-1.Never<br />
-2.Rarely<br />
-3.Occasionally<br />
-4.Frequently</p>
-<p>P15_B: How often do you talk with your child about what is appropriate or inappropriate to share online?<br />
-1.Never<br />
-2.Rarely<br />
-3.Occasionally<br />
-4.Frequently</p>
-<p>P15_C: How often do you talk with your child about what is appropriate or inappropriate content for them to be viewing online?<br />
-1.Never<br />
-2.Rarely<br />
-3.Occasionally<br />
-4.Frequently</p>
-<p>P15_D: How often do you talk with your child about what is appropriate or inappropriate behavior in their school, home and social lives?<br />
-1.Never<br />
-2.Rarely<br />
-3.Occasionally<br />
-4.Frequently</p>
-<p>P15_E: How often do you talk with your child about what is appropriate or inappropriate content for them to be viewing/hearing/reading on TV, music, books or magazines or in other media?<br />
-1.Never<br />
-2.Rarely<br />
-3.Occasionally<br />
-4.Frequently</p>
-<p>We perform similar data cleaning and manipulation operations to get rid of invalid responses and to re-order values according from least to most.</p>
-<pre><code>## after data cleaning, number of valid data records for analysis is:  766</code></pre>
-<p><b>Findings</b></p>
-<pre class="r"><code>ml &lt;- lm(y ~ approp_online_behaviour + approp_share_behaviour + approp_online_content + approp_real_life_behaviour + approp_offline_content + age, data = na.omit(data_specific))
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 207.42  on 316  degrees of freedom
+## Residual deviance: 193.82  on 311  degrees of freedom
+## AIC: 205.82
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>exp(ml$coefficients)</code></pre>
+<pre><code>##               (Intercept)      check_child_website1 
+##               0.006821593               1.305573261 
+##   monitor_child_location1 look_child_phone_records1 
+##               2.884326470               1.333468483 
+##              genderFemale                       age 
+##               1.910007714               1.121517752</code></pre>
+<p>It seems that if parent monitors their child’s location (parent’s stalking behaviour), teens are around 190% more likely (at 90% confidence level) to access the phone of someone they were dating or used to date (child’s stalking behaviour).</p>
+<pre class="r"><code>ml &lt;- glm(track_date_loc ~ check_child_website + monitor_child_location + look_child_phone_records + gender + age, family = &quot;binomial&quot;, data = na.omit(data_specific))
 summary(ml)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = y ~ approp_online_behaviour + approp_share_behaviour + 
-##     approp_online_content + approp_real_life_behaviour + approp_offline_content + 
-##     age, data = na.omit(data_specific))
+## glm(formula = track_date_loc ~ check_child_website + monitor_child_location + 
+##     look_child_phone_records + gender + age, family = &quot;binomial&quot;, 
+##     data = na.omit(data_specific))
 ## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -1.35755 -0.19214 -0.06500  0.02782  2.09532 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.0646  -0.2186  -0.1659  -0.1138   3.0206  
 ## 
 ## Coefficients:
-##                             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                  1.19498    0.30450   3.924  9.5e-05 ***
-## approp_online_behaviour2    -0.13892    0.13692  -1.015   0.3106    
-## approp_online_behaviour3    -0.04672    0.13446  -0.347   0.7283    
-## approp_online_behaviour4    -0.04112    0.14718  -0.279   0.7800    
-## approp_share_behaviour2      0.15632    0.15629   1.000   0.3175    
-## approp_share_behaviour3      0.14716    0.15583   0.944   0.3453    
-## approp_share_behaviour4      0.02903    0.16885   0.172   0.8635    
-## approp_online_content2      -0.15306    0.17081  -0.896   0.3705    
-## approp_online_content3      -0.32289    0.18089  -1.785   0.0747 .  
-## approp_online_content4      -0.32355    0.19061  -1.697   0.0900 .  
-## approp_real_life_behaviour2 -0.23645    0.20255  -1.167   0.2434    
-## approp_real_life_behaviour3 -0.00557    0.19529  -0.029   0.9773    
-## approp_real_life_behaviour4  0.01805    0.20137   0.090   0.9286    
-## approp_offline_content2     -0.07430    0.16453  -0.452   0.6517    
-## approp_offline_content3     -0.03217    0.16754  -0.192   0.8478    
-## approp_offline_content4     -0.08952    0.17730  -0.505   0.6138    
-## age                          0.01461    0.01659   0.880   0.3790    
+##                           Estimate Std. Error z value Pr(&gt;|z|)  
+## (Intercept)                 4.1906     4.1111   1.019   0.3080  
+## check_child_website1       -0.5984     0.8501  -0.704   0.4814  
+## monitor_child_location1     1.8977     0.7771   2.442   0.0146 *
+## look_child_phone_records1  -0.7579     0.8398  -0.902   0.3668  
+## genderFemale                0.4984     0.7610   0.655   0.5125  
+## age                        -0.5275     0.2713  -1.945   0.0518 .
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.6386 on 749 degrees of freedom
-## Multiple R-squared:  0.03352,    Adjusted R-squared:  0.01288 
-## F-statistic: 1.624 on 16 and 749 DF,  p-value: 0.05726</code></pre>
-<p>No statistically significant coefficients at 95% confidence level.<br />
-Let us look at male and female teens separately.</p>
-<pre class="r"><code>data_specific_male &lt;- data_specific[data_specific$gender == 1, ]
-
-ml_male &lt;- lm(y ~ approp_online_behaviour + approp_share_behaviour + approp_online_content + approp_real_life_behaviour + approp_offline_content + age, data = na.omit(data_specific_male))
-
-data_specific_female &lt;- data_specific[data_specific$gender == 2, ]
-ml_female &lt;- lm(y ~ approp_online_behaviour + approp_share_behaviour + approp_online_content + approp_real_life_behaviour + approp_offline_content + age, data = na.omit(data_specific_female))
-
-stargazer(list(ml_male, ml_female), type = &quot;text&quot;, digits = 2, title  = &quot;Regression on male (model 1) and female (model 2) teens&quot;, dep.var.labels = &quot;Appropriate behaviour of teen&quot;)</code></pre>
-<pre><code>## 
-## Regression on male (model 1) and female (model 2) teens
-## =====================================================================
-##                                        Dependent variable:           
-##                             -----------------------------------------
-##                                   Appropriate behaviour of teen      
-##                                     (1)                  (2)         
-## ---------------------------------------------------------------------
-## approp_online_behaviour2           -0.07                -0.08        
-##                                   (0.20)               (0.21)        
-##                                                                      
-## approp_online_behaviour3           0.05                 -0.01        
-##                                   (0.19)               (0.21)        
-##                                                                      
-## approp_online_behaviour4           0.26                 -0.19        
-##                                   (0.21)               (0.22)        
-##                                                                      
-## approp_share_behaviour2            -0.02                0.30         
-##                                   (0.23)               (0.23)        
-##                                                                      
-## approp_share_behaviour3            -0.11                0.39*        
-##                                   (0.22)               (0.23)        
-##                                                                      
-## approp_share_behaviour4            -0.22                0.30         
-##                                   (0.24)               (0.25)        
-##                                                                      
-## approp_online_content2             -0.06                -0.25        
-##                                   (0.26)               (0.23)        
-##                                                                      
-## approp_online_content3             -0.10               -0.62**       
-##                                   (0.27)               (0.25)        
-##                                                                      
-## approp_online_content4             -0.10               -0.63**       
-##                                   (0.28)               (0.26)        
-##                                                                      
-## approp_real_life_behaviour2        -0.14                -0.35        
-##                                   (0.30)               (0.29)        
-##                                                                      
-## approp_real_life_behaviour3        0.17                 -0.20        
-##                                   (0.29)               (0.29)        
-##                                                                      
-## approp_real_life_behaviour4        0.04                 -0.01        
-##                                   (0.29)               (0.30)        
-##                                                                      
-## approp_offline_content2            -0.21                -0.01        
-##                                   (0.23)               (0.24)        
-##                                                                      
-## approp_offline_content3            -0.31                0.19         
-##                                   (0.24)               (0.25)        
-##                                                                      
-## approp_offline_content4            -0.39                0.11         
-##                                   (0.26)               (0.25)        
-##                                                                      
-## age                                0.03                 0.001        
-##                                   (0.02)               (0.02)        
-##                                                                      
-## Constant                          1.05**               1.35***       
-##                                   (0.45)               (0.42)        
-##                                                                      
-## ---------------------------------------------------------------------
-## Observations                        365                  401         
-## R2                                 0.05                 0.07         
-## Adjusted R2                        0.003                0.03         
-## Residual Std. Error           0.64 (df = 348)      0.64 (df = 384)   
-## F Statistic                 1.08 (df = 16; 348) 1.74** (df = 16; 384)
-## =====================================================================
-## Note:                                     *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
-<p>For male teens, a parent’s teaching on online behaviour do not seem to affect whether teen exhibits appropriate behaviour. All regression coefficients are not statistically significant.</p>
-<p>For female teens, a parent talking with teen about what is appropriate or inappropriate content for them to be viewing online, and what to share online, have positive, statistically significant (95% confidence level), regression coefficients with teen’s appropriate behaviour. A positive coefficient means that, the more the parent speaks to the child on appropriate behaviour, the more probable the child exhibits <em>inappropriate</em> behaviour.</p>
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 74.668  on 316  degrees of freedom
+## Residual deviance: 64.901  on 311  degrees of freedom
+## AIC: 76.901
+## 
+## Number of Fisher Scoring iterations: 7</code></pre>
+<pre class="r"><code>exp(ml$coefficients)</code></pre>
+<pre><code>##               (Intercept)      check_child_website1 
+##                66.0622783                 0.5496711 
+##   monitor_child_location1 look_child_phone_records1 
+##                 6.6704953                 0.4686308 
+##              genderFemale                       age 
+##                 1.6461638                 0.5900521</code></pre>
+<p>It seems that if parent monitors their child’s location (parent’s stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child’s stalking behaviour).</p>
+<p>In both cases, parent monitoring child’s location seemed correlated with both child’s stalking behaviours (accessing phone and tracking GPS location).</p>
 <hr />
 </div>
 </div>
 <div id="limitations" class="section level2">
 <h2>Limitations</h2>
-<p>{e.g. not many people replied to questions regarding significant others. not sure if this subset of data remains representative}</p>
+<p>The analysis was limited to dependent variables with binary Yes/No oprtions. Ideally, dependent variables with more than 2 options should be considered as well. Perhaps polr function could be used, but there was insufficient time to investigate and understand this further.</p>
+<p><font color="red">Bilal to add on </font></p>
 <hr />
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>
-<p>{brief summary of everything}</p>
+<p><font color="red"> Bilal to add on </font></p>
 </div>
 <div id="possible-future-improvements" class="section level2">
 <h2>Possible future improvements</h2>
-<p>{ideas on how we can improve the analysis - e.g. if we had more data on blah blah}</p>
+<p>A more robust analysis on the trends of the effect of parents’ behaviours on teen’s behaviours with regard to social media usage (e.g. stalking behaviour, defiance / urge to be liberalised etc) could be conducted if we had more data. Perhaps more questions could be asked to parent and teen in this aspect, to further tease out these possible relationships between parent and teen. More historical data, not just for one year, could be collated and analysed to discover if there were any trends, or whether these parent-child relationships were consistent over time, for 13-17 year old teenage groups across cohorts. It would also be interesting if the survey was conducted for older children, beyond 17 year olds, to test if certain hypotheses or relationships between parent and child persist beyond these ages. For example, if data suggest that parent’s stalking behaviour positively correlate with teen’s stalking behaviour, it would be interesting to investigate whether the teen’s stalking behaviour persist even when he/she is 25 years old. If so, it would suggest that parents should be educated to let them realise what appropriate interventions they should be making, and sometimes well-intended interventions, if executed in the wrong way, could perhaps lead to more permanent adverse impact on the teen.</p>
+<p><font color="red">{ideas on how we can improve the analysis - e.g. if we had more data on blah blah}</font></p>
 </div>
 
 
