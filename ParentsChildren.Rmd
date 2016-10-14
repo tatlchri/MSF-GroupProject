@@ -464,10 +464,97 @@ exp(ml$coefficients)
 
 ```
 
-It seems that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour).   
+It seems that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour). It is interesting to note that the coefficient for this is much higher than the previous child stalking behaviour (accessing phone of significant other). This seems to indicate that a parent's behaviour would more strongly correlate to child's similar behaviour (both tracking location).    
   
 In both cases, parent monitoring child's location seemed correlated with both child's stalking behaviours (accessing phone and tracking GPS location).  
-  
+
+Given that only one of the three parent's stalking behaviour was statistically significally, a possible alternate hypothesis would be that teen's stalking behaviour was influenced more by his/her own characteristics. Various other questions regarding the teen was explored, and the associated hypothesis (i.e. why these questions were studied), are as listed below. 
+
+KR8: How frequently you expect to hear from your boyfriend/girlfriend/significant other in some way? 1.Hourly,2.Every few hours,3.Once a day,4.A few times a week,5.Once a week,6.Less often  
+
+* Hypothesis: the more frequent, the more likely teen would stalk his/her date as the teen may be more emotionally needy. 
+
+KR3_A: Have you ever searched for information online about someone you were currently dating or were interested in dating? 1(YES)-2(NO)
+
+KR3_C: Have you ever searched for information online about someone you dated or hooked up with in the past? 1(YES)-2(NO)
+
+* Hypothesis: These two questions are proxies of teen's desire to know more about their significant other that presumably the date(s) did not reveal, otherwise he/she would not be searching for more info. So if these questions were answered Yes, perhaps the more likely the teen would exhibit stalking behaviour.
+
+KF15: Have you ever had a fight with any of your friends that started because of something that happened online or because of a text? 1(YES)-2(NO)
+
+* Hypothesis: If the teen was emotionally less stable / unable to control emotions well, perhaps he/she may be more likely to stalk others (emotionally less controlled)
+
+KFSNS1_B: In general, does social media make you feel worse about your own life because of what you see from other friends on social media? 1.Yes, a lot,2.Yes, a little,3.No
+
+* Hypothesis: If teen feels worse, perhaps lower self-esteem may correlate to stalking behaviours (needs to always feel secure)
+
+KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others? 1.Yes, a lot,2.Yes, a little,3.No
+
+* Hypothesis: Perhaps if one feel frequently pressured to look good, he/she would also frequently check if his significant other was doing things that 'betray' him/her and hence more likely to stalk.
+
+
+```{r, echo = FALSE}
+
+#KR8: How frequentlyyou expect to hear from your boyfriend/girlfriend/significant other in some way? 1.Hourly,2.Every few hours,3.Once a day,4.A few times a week,5.Once a week,6.Less often
+data_specific$freq_expectn_SO <- survey_data$KR8
+data_specific[ is.na(data_specific$freq_expectn_SO), ] <- NA
+data_specific[ !is.na(data_specific$freq_expectn_SO) & (data_specific$freq_expectn_SO < 1 | data_specific$freq_expectn_SO > 6), ] <- NA  
+data_specific$freq_expectn_SO <- abs( data_specific$freq_expectn_SO - 7)
+
+data_specific$freq_expectn_SO <- factor(data_specific$freq_expectn_SO)
+
+#KR3_A: Have you ever searched for information online about someone you were currently dating or were interested in dating? 1(YES)-2(NO)
+data_specific$search_abt_date <- survey_data$KR3_A
+data_specific[ is.na(data_specific$search_abt_date), ] <- NA
+data_specific[ !is.na(data_specific$search_abt_date) & (data_specific$search_abt_date < 1 | data_specific$search_abt_date > 2), ] <- NA  
+data_specific$search_abt_date <- abs( data_specific$search_abt_date - 3) - 1
+
+data_specific$search_abt_date <- factor(data_specific$search_abt_date)
+
+#KR3_C: Have you ever searched for information online about someone you dated or hooked up with in the past? 1(YES)-2(NO)
+data_specific$search_abt_date_past <- survey_data$KR3_C
+data_specific[ is.na(data_specific$search_abt_date_past), ] <- NA
+data_specific[ !is.na(data_specific$search_abt_date_past) & (data_specific$search_abt_date_past < 1 | data_specific$search_abt_date_past > 2), ] <- NA  
+data_specific$search_abt_date_past <- abs( data_specific$search_abt_date_past - 3) - 1
+
+data_specific$search_abt_date_past <- factor(data_specific$search_abt_date_past)
+
+#KF15: Have you ever had a fight with any of your friends that started because of something that happened online or because of a text? 1(YES)-2(NO)
+data_specific$had_fight <- survey_data$KF15
+data_specific[ is.na(data_specific$had_fight), ] <- NA
+data_specific[ !is.na(data_specific$had_fight) & (data_specific$had_fight < 1 | data_specific$had_fight > 2), ] <- NA  
+data_specific$had_fight <- abs( data_specific$had_fight - 3) - 1
+
+data_specific$had_fight <- factor(data_specific$had_fight)
+
+
+# KFSNS1_B: In general, does social media make you feel worse about your own life because of what you see from other friends on social media? 1.Yes, a lot,2.Yes, a little,3.No
+data_specific$feel_worse <- survey_data$KFSNS1_B
+data_specific[ is.na(data_specific$feel_worse), ] <- NA
+data_specific[ !is.na(data_specific$feel_worse) & (data_specific$feel_worse < 1 | data_specific$feel_worse > 3), ] <- NA  
+data_specific$feel_worse <- abs( data_specific$feel_worse - 4) - 1
+
+data_specific$feel_worse <- factor(data_specific$feel_worse)
+
+#KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others? 1.Yes, a lot,2.Yes, a little,3.No
+data_specific$feel_pressured <- survey_data$KFSNS1_E
+data_specific[ is.na(data_specific$feel_pressured), ] <- NA
+data_specific[ !is.na(data_specific$feel_pressured) & (data_specific$feel_pressured < 1 | data_specific$feel_pressured > 3), ] <- NA  
+data_specific$feel_pressured <- abs( data_specific$feel_pressured - 4) - 1
+
+data_specific$feel_pressured <- factor(data_specific$feel_pressured)
+
+
+#ml <- glm(track_date_loc ~ check_child_website + monitor_child_location + look_child_phone_records + freq_expectn_SO + search_abt_date + search_abt_date_past + had_fight + feel_worse + feel_pressured + gender + age, family = "binomial", data = na.omit(data_specific))
+
+ml <- glm(track_date_loc ~ check_child_website + monitor_child_location + look_child_phone_records + feel_worse + gender + age, family = "binomial", data = na.omit(data_specific))
+
+summary(ml)
+exp(ml$coefficients)
+
+```
+
+After testing for these various questions, only the "feel worse" question was statistically significant. It is interesting to see that feeling a lot worse (feel_worse_2) had a much higher coefficient. So perhaps if one had lower self esteem, he/she would be more likely to stalk his/her significant other. It is also interesting to note that adding the feel_worse variable made the parent monitor_child_location variable no longer statistically significant.  
   
 ***
 

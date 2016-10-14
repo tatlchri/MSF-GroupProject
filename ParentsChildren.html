@@ -517,8 +517,69 @@ summary(ml)</code></pre>
 ##                 6.6704953                 0.4686308 
 ##              genderFemale                       age 
 ##                 1.6461638                 0.5900521</code></pre>
-<p>It seems that if parent monitors their child’s location (parent’s stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child’s stalking behaviour).</p>
+<p>It seems that if parent monitors their child’s location (parent’s stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child’s stalking behaviour). It is interesting to note that the coefficient for this is much higher than the previous child stalking behaviour (accessing phone of significant other). This seems to indicate that a parent’s behaviour would more strongly correlate to child’s similar behaviour (both tracking location).</p>
 <p>In both cases, parent monitoring child’s location seemed correlated with both child’s stalking behaviours (accessing phone and tracking GPS location).</p>
+<p>Given that only one of the three parent’s stalking behaviour was statistically significally, a possible alternate hypothesis would be that teen’s stalking behaviour was influenced more by his/her own characteristics. Various other questions regarding the teen was explored, and the associated hypothesis (i.e. why these questions were studied), are as listed below.</p>
+<p>KR8: How frequently you expect to hear from your boyfriend/girlfriend/significant other in some way? 1.Hourly,2.Every few hours,3.Once a day,4.A few times a week,5.Once a week,6.Less often</p>
+<ul>
+<li>Hypothesis: the more frequent, the more likely teen would stalk his/her date as the teen may be more emotionally needy.</li>
+</ul>
+<p>KR3_A: Have you ever searched for information online about someone you were currently dating or were interested in dating? 1(YES)-2(NO)</p>
+<p>KR3_C: Have you ever searched for information online about someone you dated or hooked up with in the past? 1(YES)-2(NO)</p>
+<ul>
+<li>Hypothesis: These two questions are proxies of teen’s desire to know more about their significant other that presumably the date(s) did not reveal, otherwise he/she would not be searching for more info. So if these questions were answered Yes, perhaps the more likely the teen would exhibit stalking behaviour.</li>
+</ul>
+<p>KF15: Have you ever had a fight with any of your friends that started because of something that happened online or because of a text? 1(YES)-2(NO)</p>
+<ul>
+<li>Hypothesis: If the teen was emotionally less stable / unable to control emotions well, perhaps he/she may be more likely to stalk others (emotionally less controlled)</li>
+</ul>
+<p>KFSNS1_B: In general, does social media make you feel worse about your own life because of what you see from other friends on social media? 1.Yes, a lot,2.Yes, a little,3.No</p>
+<ul>
+<li>Hypothesis: If teen feels worse, perhaps lower self-esteem may correlate to stalking behaviours (needs to always feel secure)</li>
+</ul>
+<p>KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others? 1.Yes, a lot,2.Yes, a little,3.No</p>
+<ul>
+<li>Hypothesis: Perhaps if one feel frequently pressured to look good, he/she would also frequently check if his significant other was doing things that ‘betray’ him/her and hence more likely to stalk.</li>
+</ul>
+<pre><code>## 
+## Call:
+## glm(formula = track_date_loc ~ check_child_website + monitor_child_location + 
+##     look_child_phone_records + feel_worse + gender + age, family = &quot;binomial&quot;, 
+##     data = na.omit(data_specific))
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.4557  -0.1925  -0.1552  -0.1155   3.0441  
+## 
+## Coefficients:
+##                           Estimate Std. Error z value Pr(&gt;|z|)  
+## (Intercept)                 2.6636     4.6562   0.572   0.5673  
+## check_child_website1       -0.6114     0.9956  -0.614   0.5391  
+## monitor_child_location1     0.8966     0.9302   0.964   0.3351  
+## look_child_phone_records1  -0.8473     0.9826  -0.862   0.3885  
+## feel_worse1                 0.3441     1.2156   0.283   0.7771  
+## feel_worse2                 2.4532     1.0162   2.414   0.0158 *
+## genderFemale                0.0326     0.8686   0.038   0.9701  
+## age                        -0.4163     0.2988  -1.393   0.1635  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 65.315  on 276  degrees of freedom
+## Residual deviance: 51.912  on 269  degrees of freedom
+## AIC: 67.912
+## 
+## Number of Fisher Scoring iterations: 7</code></pre>
+<pre><code>##               (Intercept)      check_child_website1 
+##                14.3484541                 0.5425950 
+##   monitor_child_location1 look_child_phone_records1 
+##                 2.4512708                 0.4285541 
+##               feel_worse1               feel_worse2 
+##                 1.4107123                11.6257104 
+##              genderFemale                       age 
+##                 1.0331405                 0.6594689</code></pre>
+<p>After testing for these various questions, only the “feel worse” question was statistically significant. So perhaps if one had lower self esteem, he/she would be more likely to stalk his/her significant other. It is also interesting to note that adding the feel_worse variable made the parent monitor_child_location variable no longer statistically significant.</p>
 <hr />
 </div>
 </div>
