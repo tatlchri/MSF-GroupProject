@@ -1,0 +1,311 @@
+---
+title: "Teen & Close Friends / Significant Others"
+author: "Yiu Fong Christopher Ying 00821967"
+date: "10/15/2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## 3.2 Findings on relationship between teenagers and their close friends / significant others
+
+### Introduction
+
+```{r, echo=FALSE}
+library(ggplot2)
+load('cleaned_data.Rdata')
+```
+
+The dataset had a number of questions there were posed to the teen about their close friends and relationships with their significant others. 
+  
+A number of hypotheses were investigated using this dataset, to see if there were any relationships between teen's behaviours and their relationship with close friends / significant others.  
+  
+For example, teens were asked about the amount of time they spend with their closest friends (either online or face-to-face) and what social media accounts do they own. This was an opportunity to investigate if social media accounts have an effect on the amount of time teenagers spend with their friends. 
+
+### Executive summary of findings:
+  
+  
+<u>Effects of Social Media to Teens Relation with Friends and Girlfriends/Boyfriends</u>
+
+The table below summarises the questions being studied, our initial hypothesis, and findings drew from the data.  
+  
+Question                               |  Hypothesis   |  Findings
+-------------------------------------  |  ------------------------------------- | -------------------------------------
+1. Number of friends and followers on social media varies by gender    |  Female teens seem more attached to social media rather than male, thus number of friends and followers of female users might be higher than male  | On average, female teens has more friends on Facebook and more followers on Instagram than male teens. Number of social media accounts that female teens use is also slightly higher than male. 
+2. Relationship between number of social media account teens have and number of electronic device teens possess with how much time they spend with their close friends   |  The more social media accounts/electronic devices a teen has then the more time he/she spend with their close friends | Test shows a positive correlation between the two variables. Teens tend to spend more time with their close friends - either face-to-face, by phone, or any other media - when they have more social media accounts or electronic devices. This might indicate that social media and electronic devices help teens to communicate or get along with their friends.     
+3.	Relationship between teens online dating experiences with their perception about other people's image in social media   |   Teens who think that people tend to show different side of themselves in the social media would be less likely to experience online dating  | Results show that there is a correlation between those two variables. One might think that people would be less likely to do online dating when they aware that other people is showing a different side of themselves. However, teens in fact do online dating even though they aware that other people might not be his/herself but yet never met the girlfriend/boyfriend in person.
+4.	Does teens send flirtatious messages or flirty picture or videos when they are attracted to someone?  |  Teens in age 13-17 will less likely to send flirty messages, pictures, or videos to someone they find attractive |  It turned out that teens with african american background and japanese background have a positive tendency to send flirtatious messages, pictures, or videos to show their interest to somebody else       
+5.	How would teens react when they break up with their girlfriend/boyfriend? Will they do such thing as block or unfriend ex in social media or even remove ex from phone address book?  |  Younger teenagers might do such things when they break up but this behavior will diminish as they get older  |  Result shows that female teens tend to unfriend/block her ex than male teens. It also can be seen that the older the teens then the more likely he/she to remove her ex from phone address book. This is a contrast of what one would expect to see before testing.   
+
+***
+### Details of the questions investigated, and findings
+
+#### Question 1
+
+1. Number of friends and followers on social media varies by gender   
+  
+*Hypothesis: Female teens seem more attached to social media rather than male, thus number of friends and followers of female users might be higher than male*  
+  
+<b>Background info</b>
+
+For this question, the relevant dataset questions are:  
+
+K6_1: Which of the following social media do you use? Facebook?    
+K6_2: Which of the following social media do you use? Twitter?    
+K6_3: Which of the following social media do you use? Instagram?   
+K6_4: Which of the following social media do you use? Google+?    
+K6_5: Which of the following social media do you use? Snapchat?    
+K6_6: Which of the following social media do you use? Vine?  
+K6_7: Which of the following social media do you use? Tumbler?  
+The options respondents had were:  
+1. Yes  
+2. No    
+Number of social media accounts a person has can be calculated by summing up all "Yes" answer  
+
+KFB1A: How many friends do you have on Facebook? The options respondents had were ranging from 0 to 9999   
+KFB1B: How many followers do you have on Instagram? The options respondents had were ranging from 0 to 9999
+KFB1C: How many followers do you have on Instagram? The options respondents had were ranging from 0 to 9999  
+Child_gender: Is your child (the user of social media) male or female? The options respondents had were:   
+1. Male   
+2. Female   
+
+
+<b>Findings</b>  
+
+Social media behavior may vary by gender. In general, female is assumed to be more active in social media rather than male. In term of friends or followers in social media, female indeed has more friends or followers compared to male.  
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable x1: "Child_gender" Q: Is your child (the user of social media) male or female? Answer = 1: Male, 2: Female
+# Variable y: "KFB1A" Q: How many friends do you have on Facebook? Answer = 0 to 9999
+
+data_specific <- data.frame(x1 = survey_data$Child_gender, y = survey_data$KFB1A)
+# Remove rows where there is any NA in one or both cell
+data_specific <- data_specific[ !is.na(data_specific$x1) & !is.na(data_specific$y), ]
+# Remove rows where rows for "x1" are not 1 to 2 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$x1 >= 1 & data_specific$x1 <= 2, ]
+# Remove rows where rows for "y" are not between 0 and 9999 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$y >= 0 & data_specific$y <= 9999, ]
+# Rename 1 for "Male" and 2 for "Female"
+data_specific$x1  <- ifelse(data_specific$x1 == 1, "Male", "Female")
+
+# Count number of female and male
+summary(as.factor(data_specific$x1))
+```
+
+Data from survey out of 249 female and 231 male shows that number of Facebook friends of female users is considerabably higher than number of Facebook friends that male users have.   
+
+```{r, echo = FALSE}
+
+ggplot(data_specific, aes(y = data_specific$y,x = data_specific$x1)) + geom_boxplot() + labs(x = " ", y = "Number of Facebook Friends")
+```
+
+Female on average has 304 friends on Facebook while male has 221 friends. The median is also slightly lower for male, which is only 100 friends while female has 56 more friends. It can be seen from the graph that female has wider range of Facebook friends, with maximum number of friends 5000. This must be because Facebook policy that limit friends of Facebook to a maximum of 5000. In this case, it is assumed that user will only have one Facebook account and will not create a new one for having friends more than 5000. From the t test it can be concluded that mean of Facebook friends of female teen users is higher than male teen users as the p-value is 0.03822 in 95% confidence interval. 
+
+Besides Facebook, there is another social media account that is currently popular among teenagers: Instagram. Data from survey out of 206 female and 112 male who uses Instagram shows that number of Instagram followers of female users is also higher than number of Instagram followers that male users have.
+
+This can be counted through survey questions that indicate the gender of social media user and the number of Instagram followers that particular user has.   
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable x1: "Child_gender" Q: Is your child (the user of social media) male or female? Answer = 1: Male, 2: Female
+# Variable y: "KFB1C" Q: How many followers do you have on Instagram? Answer = 0 to 9999
+
+data_specific <- data.frame(x1 = survey_data$Child_gender, y = survey_data$KFB1C)
+# Remove rows where there is any NA in one or both cell
+data_specific <- data_specific[ !is.na(data_specific$x1) & !is.na(data_specific$y), ]
+# Remove rows where rows for "x1" are not 1 to 2 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$x1 >= 1 & data_specific$x1 <= 2, ]
+# Rename 1 for "Male" and 2 for "Female"
+data_specific$x1  <- ifelse(data_specific$x1 == 1, "Male", "Female")
+# Remove rows where rows for "y" are not between 0 and 9999 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$y >= 0 & data_specific$y <= 9999, ]
+# Show number of female and male users
+summary(as.factor(data_specific$x1))
+```
+
+```{r, echo = FALSE}
+
+ggplot(data_specific, aes(y = data_specific$y,x = data_specific$x1)) + geom_boxplot() + labs(x = " ", y = "Number of Instagram Followers")
+```
+
+
+On average, female has more followers with a number of 417 compared to male with only 280 followers in Instagram. And again, female has a wider range of quartile than male. The lower quantile of female is 68 followers and the upper is 450 while male has a lower quantile with only 34 followers and the upper is around 200 followers lower than female's.  
+
+Instagram is slightly different than Facebook. Using Instagram let you have followers rather than friends. This means that user A can follow user B even though B does not follow A back. On Facebook, friends are the other users that are recognized or accepted as your friends. So if A is a friend of B then B must be a friend of A. This might explain why on average, number Instagram followers is higher than number of Facebook friends for both female and male users.   
+
+Average Number of Friends/Followers      |  Facebook  |  Instagram
+---------  |  --------- |  ---------
+Female User    | 304     |  417 
+Male User   |  221  |  280
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Calculate number of social media accounts a teen has
+
+# Variable x1: "K6_1" Q: Which of the following social media do you use? Facebook. Answer = 1: Yes 2: No
+# Variable x2: "K6_2" Q: Which of the following social media do you use? Twitter. Answer = 1: Yes 2: No
+# Variable x3: "K6_3" Q: Which of the following social media do you use? Instagram. Answer = 1: Yes 2: No
+# Variable x4: "K6_4" Q: Which of the following social media do you use? Google+. Answer = 1: Yes 2: No
+# Variable x5: "K6_5" Q: Which of the following social media do you use? Snapchat. Answer = 1: Yes 2: No
+# Variable x6: "K6_6" Q: Which of the following social media do you use? Vine. Answer = 1: Yes 2: No
+# Variable x7: "K6_7" Q: Which of the following social media do you use? Tumbler. Answer = 1: Yes 2: No
+# Variable s1: "Child_gender" Q: Is your child (the user of social media) male or female? Answer = 1: Male, 2: Female 
+
+data_specific <- data.frame(x1 = survey_data$K6_1, x2 = survey_data$K6_2, x3 = survey_data$K6_3, x4 = survey_data$K6_4, x5 = survey_data$K6_5, x6 = survey_data$K6_6, x7 = survey_data$K6_7, s1 = survey_data$Child_gender )
+# Remove rows where there is any NA in one or both cell
+data_specific <- data_specific[ !is.na(data_specific$x1) &!is.na(data_specific$x2) & !is.na(data_specific$x3) & !is.na(data_specific$x4) & !is.na(data_specific$x5) & !is.na(data_specific$x6) & !is.na(data_specific$x7) & !is.na(data_specific$s1), ]
+# Remove rows where rows for "x1/2/3/4/5/6/7" are not 1 to 2 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$x1 >= 1 & data_specific$x1 <= 2 & data_specific$x2 >= 1 & data_specific$x2 <= 2 & data_specific$x3 >= 1 & data_specific$x3 <= 2 & data_specific$x4 >= 1 & data_specific$x4 <= 2 & data_specific$x5 >= 1 & data_specific$x5 <= 2 & data_specific$x6 >= 1 & data_specific$x6 <= 2 & data_specific$x7 >= 1 & data_specific$x7 <= 2 , ]
+# Remove rows where rows for gender "s1" are not 1 to 2 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$s1 >=1 & data_specific$s1 <= 2, ]
+# Calculate total number of social media accounts that a person has
+# The answer for question "x1/2/3/4/5/6/7" is 1 for "Yes" and 2 for "No" thus convert this number into the the "real" number by multiplying sum of total by -1 and add it by 14 then add this into new variable "n"
+data_specific[ ,'n'] <- -1*(data_specific$x1 + data_specific$x2 + data_specific$x3 + data_specific$x4 + data_specific$x5 + data_specific$x6 + data_specific$x7) + 14
+# Rename 1 for "Male" and 2 for "Female"
+data_specific$s2 <- ifelse(data_specific$s1 == 1, "Male", "Female")
+```
+
+Plot below shows that most female has up to four social media accounts and male up to three accounts. The median for female is also higher than male as female has three social media account while male has two. This might explain why female tends to have more friends and followers in social media. People usually put link of all social medias that she/he has in the profile, for example, put link of his/her Snapchat account in Instagram profile. Thus the more social media accounts a person has, the more likely a person will be recognized online. 
+
+```{r, echo = FALSE}
+
+ggplot(data = data_specific, aes(x = data_specific$s2, y = data_specific$n)) + geom_boxplot() + labs(x = " ", y = "Number of social media accounts")
+
+mean(data_specific[data_specific[ ,'s2'] == "Female", 'n'])
+mean(data_specific[data_specific[ ,'s2'] == "Male", 'n'])
+```
+
+Number of Facebook friends that a teen has can be predicted using number of followers on Instagram and Twitter. Regression result shows that this regression formula has an R-squared of 0.3396 which means that the variation in number of Facebook friends can be explained as much as 33.9% by having the number of Instagram and Twitter followers.  
+
+```{r, echo = FALSE}
+
+data <- data.frame(FBFriends = survey_data$KFB1A, TwitterFol = survey_data$KFB1B, IGFol = survey_data$KFB1C) 
+reg = lm(data = data, FBFriends ~ IGFol+ TwitterFol)
+summary(reg)
+```
+
+This regression could be improved by having another continuous variables that might correlated with the number of Facebook friends in the next survey such as how much time spent on Facebook, how many friends he/she has in real life e.g. number of school mates, et cetera.
+
+
+#### Question 2
+
+2. Relationship between number of social media account teens have and number of electronic device teens possess with how much time they spend with their close friends   
+  
+*Hypothesis: The more social media accounts/electronic devices a teen has then the more time he/she spend with their close friends*  
+  
+<b>Background info</b>
+
+For this question, the relevant dataset questions are:
+
+KF12: Now, thinking again about friends, please think about the friend you are closest to ?? someone you can talk to about things that are really important to you, but who is not a boyfriend or girlfriend. How often are you in touch with this person? The options respondents had were:     
+1. Many times a day   
+2. Once a day  
+3. A few times a week   
+4. Once a week   
+5. Once every few weeks   
+6. Less often   
+7. Do not have a close friend   
+
+In order to ease interpretation, it is better to convert the answer scale of the communication frequency question - 1 for the least and 7 for the most frequent. After converting the scale would change into the following:   
+1. Do not have a close friend  
+2. Less often  
+3. Once every few weeks   
+4. Once a week   
+5. A few times a week   
+6. Once a day  
+7. Many times a day 
+
+K6_1: Which of the following social media do you use? Facebook?   
+K6_2: Which of the following social media do you use? Twitter?  
+K6_3: Which of the following social media do you use? Instagram?   
+K6_4: Which of the following social media do you use? Google+?   
+K6_5: Which of the following social media do you use? Snapchat?    
+K6_6: Which of the following social media do you use? Vine?   
+K6_7: Which of the following social media do you use? Tumbler?    
+The options respondents had were:  
+1. Yes  
+2. No    
+Number of social media accounts a person has can be calculated by summing up all "Yes" answer  
+ 
+K3_A: Do you have a smartphone?  
+K3_B: Do you have a cell phone that is not a smartphone?  
+K3_C: Do you have a desktop or laptop computer?  
+K3_D: Do you have a tablet computer like an iPad, Samsung Galaxy or Kindle Fire?    
+K3_E: Do you have a gaming console like an Xbox, PlayStation or Wii?  
+The options respondents had were yes or no.  
+Calculate total type of electronic devices that a person possesses by summing up all "Yes" answer. Store the total number in a new variable call "x".   
+
+
+<b>Findings</b>  
+
+People frequently relates social media with friendship, particularly how it might affects time he/she spend with their close friends. People might be interested in this area since there were no social media in few years back and now it has fastly grown into so many kind of social medias such as Facebook, Snapchat, and  Google+.   
+
+In the survey, social media users are asked regarding how much time he/she spent with their close friends. This includes face-to-face, on the phone, text messaging and all the other ways you might talk to this person.   
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable y: "KF12" Q:Now, thinking again about friends, please think about the friend you are closest to ?? someone you can talk to about things that are really important to you, but who is not a boyfriend or girlfriend. How often are you in touch with this person? This includes face-to-face, on the phone, text messaging and all the other ways you might talk to this person # Answer: 1: Many times a day 2: Once a day 3: A few times a week 4: Once a week 5: Once every few weeks 6: Less often 7: Do not have a close friend   
+
+# Variable x1/2/3/4/5/6/7: "K6_1/2/3/4/5/6/7" Q: How many social media accounts do you have (twitter facebook instagram google+ snapchat vine tumblr)
+
+# Input all related variables and convert KF12 answer become 1: Do not have a close friend ... 7: Many times a day by multiplying by -1 and adding +8
+data_specific <- data.frame(x1 = survey_data$K6_1, x2 = survey_data$K6_2, x3 = survey_data$K6_3, x4 = survey_data$K6_4, x5 = survey_data$K6_5, x6 = survey_data$K6_6, x7 = survey_data$K6_7, y = ((-1)* survey_data$KF12)+8 )
+# Remove all incomplete rows
+data_specific <- data_specific[ !is.na(data_specific$x1) &!is.na(data_specific$x2) &!is.na(data_specific$x3) &!is.na(data_specific$x4) &!is.na(data_specific$x5) &!is.na(data_specific$x6) &!is.na(data_specific$x7) & !is.na(data_specific$y), ]
+# Remove rows where rows for "x1/2/3/4/5/6/7" are not 1 to 2 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$x1 >= 1 & data_specific$x1 <= 2 & data_specific$x2 >= 1 & data_specific$x2 <= 2 & data_specific$x3 >= 1 & data_specific$x3 <= 2 & data_specific$x4 >= 1 & data_specific$x4 <= 2 & data_specific$x5 >= 1 & data_specific$x5 <= 2 & data_specific$x6 >= 1 & data_specific$x6 <= 2 & data_specific$x7 >= 1 & data_specific$x7 <= 2 , ]
+data_specific <- data_specific[ data_specific$y >= 1 & data_specific$y <= 7, ]
+# Calculate total number of social media accounts that a person has
+# The answer for question "x1/2/3/4/5/6/7" is 1 for "Yes" and 2 for "No" thus convert this number into the the "real" number by multiplying sum of total by -1 and add it by 14 then add this into new variable "n"
+data_specific[,'x'] <- -1*(data_specific$x1 + data_specific$x2 + data_specific$x3 + data_specific$x4 + data_specific$x5 + data_specific$x6 + data_specific$x7) + 14
+```
+  
+Correlation between total number of social media accounts a person has can be calculated against how often a person interact with their close friends through any media.  
+
+```{r, echo = FALSE}
+
+cor.test(data_specific$y,data_specific$x)
+```
+
+The correlation of those two variables is 0.256 and the p value from the correlation test is < 2.2e-16 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between 0.20 to 0.31 which also shows that there exists a positive relationship between number of social media accounts the child has and how much time he/she spends with his close friends. Thus the more social media accounts a person has then the more time he/she spends with his close friends, either face-to-face or communicate using the social media.  
+
+Another correlation that might exists is relationship between number of electronic devices type someone has with time spent with their close friends. This includes face-to-face communication and any other way someone may interact with their close friends.  
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable y: "KF12" Q:Now, thinking again about friends, please think about the friend you are closest to ?? someone you can talk to about things that are really important to you, but who is not a boyfriend or girlfriend. How often are you in touch with this person? This includes face-to-face, on the phone, text messaging and all the other ways you might talk to this person # Answer: 1: Many times a day 2: Once a day 3: A few times a week 4: Once a week 5: Once every few weeks 6: Less often 7: Do not have a close friend   
+
+# Variable x1/2/3/4/5: "K3_A/B/C/D/E" Q: Do you have the following type of device?  
+# A: smartphone B: phone that is not a smartphone C: desktop or laptop computer D: tablet E: gaming console
+
+# Input all related variables and convert KF12 answer become 1: Do not have a close friend ... 7: Many times a day by multiplying by -1 and adding +8
+data_specific <- data.frame(x1 = survey_data$K3_A, x2 = survey_data$K3_B, x3 = survey_data$K3_C, x4 = survey_data$K3_D, x5 = survey_data$K3_E, y = ((-1)*survey_data$KF12)+8 )
+# Remove all incomplete rows
+data_specific <- data_specific[ !is.na(data_specific$x1) & !is.na(data_specific$x2) & !is.na(data_specific$x3) & !is.na(data_specific$x4) & !is.na(data_specific$x5) & !is.na(data_specific$y), ]
+# Remove rows where rows for "x1/2/3/4/5" are not 1 to 2 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$x1 >= 1 & data_specific$x1 <=2 & data_specific$x2 >= 1 & data_specific$x2 <=2 & data_specific$x3 >= 1 & data_specific$x3 <=2 & data_specific$x4 >= 1 & data_specific$x4 <=2 & data_specific$x5 >= 1 & data_specific$x5 <=2, ]
+# Remove row where y is not 1,2,3,4,5,6 or 7
+data_specific <- data_specific[ data_specific$y >= 1 & data_specific$y <= 7, ]
+# Convert "Yes" answer into 1 and "No" into 0 to ease calculation
+data_specific$x1 <- ifelse(data_specific$x1 == 1, 1, 0)
+data_specific$x2 <- ifelse(data_specific$x2 == 1, 1, 0)
+data_specific$x3 <- ifelse(data_specific$x3 == 1, 1, 0)
+data_specific$x4 <- ifelse(data_specific$x4 == 1, 1, 0)
+data_specific$x5 <- ifelse(data_specific$x5 == 1, 1, 0)
+# Calculate total number of electronic devices type that a person has
+data_specific[ ,'TotalDeviceType'] <- data_specific$x1 + data_specific$x2 + data_specific$x3 + data_specific$x4 + data_specific$x5
+```
+
+Test correlation between time child spent with close friends and number of electronic device type the child possesses:   
+
+```{r, echo = FALSE}
+
+cor.test(data_specific$y, data_specific$TotalDeviceType)
+```
+
+The correlation of those two variables is 0.146 and the p value from the correlation test is 1.812e-06 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between 0.09 to 0.20 which also shows that there exists a positive relationship between number of electronic devices type the child has and how much time he/she spends with his close friends. This might be because electronic devices such as smartphone or laptop help you to communicate more intense with your close friends and because gaming consoles might become a way to spend time together with close friends. 
+
+This findings actually can be improved to be more precise. It would be better if survey split up the question of time spent with close friends into two questions: "How much time spent with close friends face-to-face (e.g. having lunch together, playing basketball, playing games)?" and "How much time spent with close friends through any other way (e.g. text messaging, Facebook chats, phone calls)?"
+
