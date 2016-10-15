@@ -32,7 +32,7 @@ Team discussion on 11 Oct 2016:
 #Relationship between parents and children (Kelvin/Bilal)
 
 # ==========================
-# Kelvin's beta code (START)
+# Kelvin's/Bilal's beta code (START)
 # ==========================
 
 # Load globally cleaned data file
@@ -42,6 +42,9 @@ load("cleaned_data.Rdata")
 # load needed libraries
 library(ggplot2)
 library(stargazer)
+library(gridExtra)
+library(scales)
+
 ```
 
 
@@ -67,7 +70,7 @@ In most cases, the independent variables were also survey responses that could h
 
 <font color = red> Bilal: help to put in explanations on how to interpret the coefficients, and exp function. thanks!</font>
   
-The 6 questions, their corresponding hypotheses, and their associated findings are summarised in the section below.  
+The 5 questions, their corresponding hypotheses, and their associated findings are summarised in the section below.  
   
 ***
 
@@ -83,6 +86,9 @@ Question                               |  Hypothesis   |  Findings
 1. Relationship between parents blocking their child’s phone usage and their child’s online behaviour on sexy/flirty pictures   |  If teens are rebellious, then the stricter the parent, the more the child wants to be liberal and may be more inclined to send flirty pictures | The regression results suggest that if parents took away their child’s cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of other parent's strict behaviours: parent using parental controls to restrict child’s use of his/her cell phone, and limiting the amount of time or times of day when child can go online   
 2.	Relationship on whether children self-censor their posts if they are friends with parents on social media   |   Teens’ whose parents are friends with them on social media will likely not post details of their relationship online  | There was no statiscally significant evidence to show that whether the parent was connected to their child on social media had an impact on child posting public affection for their significant other (proxy of whether child self-censors their posts). Upon adding more variables to the regression, the regression suggests that teens feeling pressure to only post content that makes them look good to others, were around 90% ("Yes, a little pressure") to 214% ("Yes, a lot pressure") more likely to post public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours (connecting with child on social media, being friends on Facebook, and checking child's social media profile) have an effect on teen's public affection behaviour.  This seems to suggest that teens are more influenced by their self-perception, rather than their parent's interventions, with respect to whether or not they post public affection towards his/her significant other.     
 3.	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend |  If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend | It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 190% more likely (at 90% confidence level) to access the phone of someone they were dating or used to date (child's stalking behaviour).  It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour).  In both cases, parent monitoring child's location seemed correlated with both child's stalking behaviours (accessing phone and tracking GPS location).      
+4. Relationship between the parent using internet / social media themselves vs. them talking to their child about inappropriate online behavior | Parents are likely to be in a better position to advise their children on online behavior if they themselves use internet or are on social media | ....    
+5. How more likely are children to trust their significant others and not have the urge to constantly monitor their activities if their parents are more trusting of them? | Children are likely to have healthier relationships and not have insecurities regarding their significant others if they are trusted by their parents | ....    
+
 
 ***
 ## Details of the questions investigated, and findings
@@ -556,7 +562,373 @@ exp(ml$coefficients)
 
 After testing for these various questions, only the "feel worse" question was statistically significant. It is interesting to see that feeling a lot worse (feel_worse_2) had a much higher coefficient. So perhaps if one had lower self esteem, he/she would be more likely to stalk his/her significant other. It is also interesting to note that adding the feel_worse variable made the parent monitor_child_location variable no longer statistically significant.  
   
+****
+
+### Question 4  
+
+Question:	Relationship between the parent using internet / social media themselves vs. them talking to their child about inappropriate online behavior.  
+    *Hypothesis: Parents are likely to be in a better position to advise their children on online behavior if they themselves use internet or are on social media*   
+
+
+<b>Background info - data cleaning and manipulation</b>
+
+For this question, the relevant dataset questions are:
+
+*[Dependent variable]*:  
+
+parents_advice_score: This is a calculated column, which is basically the sum of P15_B and P15_C. It is a measure of how often a parent talks to his/her child about appropriate/inappropriate online behavior in general.  
+Takes values between 2 (lowest) and 8(highest)   
+
+P15_B: How often do you talk with your child about what is appropriate or inappropriateto share online?  
+1.Never  
+2.Rarely   
+3.Occasionally  
+4.Frequently  
+
+P15_C: How often do you talk with your child about what is appropriate or inappropriatecontent for them to be viewing online?   
+1.Never  
+2.Rarely   
+3.Occasionally  
+4.Frequently  
+
+*[Independent variables]*:  
+P2_A: Do you ever use Facebook?  
+1.Yes  
+2.No  
+
+P2_B: Do you ever use Twitter?  
+1.Yes  
+2.No  
+
+P2_C: Do you ever access the internet on a cell phone, tablet or other mobile handheld device, at least occasionally?   
+1.Yes  
+2.No  
+
+P2_D: Do you ever use some other social media site?    
+1.Yes  
+2.No  
+
+  
+<b> Data cleaning </b>  
+  
+Invalid responses were removed by filling them with NA (e.g. if respondents were supposed to choose only options 1 or 2, but the data showed 3 or -1, these would be invalid responses).    
+  
+The numeric coding was changed such that 0 represented a 'No' and 1 a 'Yes'. E.g. if the question's original order of choices that respondents could choose from were:  
+  1.Yes,  2.No  
+The responses' order were re-ordered to:  
+  0.No,  1. Yes  
+  
+For questions with options Yes/No/Does not apply, 'Does not apply' was treated as an NA.  
+
+```{r, echo = FALSE}
+local_data4 <- data.frame(use_facebook = survey_data$P2_A, use_twitter = survey_data$P2_B, use_internet = survey_data$P2_C, use_other_social_media = survey_data$P2_D,  P15_B = survey_data$P15_B, P15_C = survey_data$P15_C, age = survey_data$Child_age, gender = survey_data$Child_gender)
+
+
+# Replace everything except 1 and 2 with NA
+local_data4$use_facebook[ !is.na(local_data4$use_facebook) & (local_data4$use_facebook < 1 | local_data4$use_facebook > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data4$use_twitter[ !is.na(local_data4$use_twitter) & (local_data4$use_twitter < 1 | local_data4$use_twitter > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data4$use_internet[ !is.na(local_data4$use_internet) & (local_data4$use_internet < 1 | local_data4$use_internet > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data4$use_other_social_media[ !is.na(local_data4$use_other_social_media) & (local_data4$use_other_social_media < 1 | local_data4$use_other_social_media > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+
+# Replace everything except 1 to 4 with NA
+local_data4$P15_B[ !is.na(local_data4$P15_B) & (local_data4$P15_B < 1 | local_data4$P15_B > 4)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data4$P15_C[ !is.na(local_data4$P15_C) & (local_data4$P15_C < 1 | local_data4$P15_C > 4)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+#Calculated Variable based on P15_B and P15_C
+local_data4$parents_advice_score = 2*rowMeans(local_data4[, c("P15_B", "P15_C")], na.rm = TRUE)
+
+
+# convert from 1(YES)-2(NO)
+#           to 0(NO)-1(YES)
+local_data4$use_facebook <- abs(local_data4$use_facebook - 2)
+local_data4$use_twitter <- abs(local_data4$use_twitter - 2)
+local_data4$use_internet <- abs(local_data4$use_internet - 2)
+local_data4$use_other_social_media <- abs(local_data4$use_other_social_media - 2)
+
+# convert from 1(Male)-2(Female)
+#           to 0(Female)-1(Male)
+local_data4$gender <- abs(local_data4$gender - 2)
+
+
+cat('After data cleaning, the number of valid data records for analysis is: ', dim(na.omit(local_data4))[1])
+
+
+```
+
+
+Correlation Matrix:
+
+```{r}  
+cor(local_data4[,"parents_advice_score"], local_data4[,c("parents_advice_score","use_facebook", "use_twitter", "use_other_social_media", "use_internet")], use = "pairwise.complete.obs")
+
+```
+
+Correlation tests were run on each of these and only the correlation of use_internet came out to be significantly different from 0 at 5% confidence level. Its results are shown below: 
+
+```{r}
+cor.test(local_data4$parents_advice_score, local_data4$use_internet)
+```
+
+
+```{r, echo = FALSE} 
+
+# convert binomial variables to factors for plotting etc.
+local_data4$gender <- factor(local_data4$gender, levels = c('0', '1'), labels = c('Female','Male'))
+
+local_data4$use_facebook <- factor(local_data4$use_facebook, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data4$use_twitter <- factor(local_data4$use_twitter, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data4$use_internet <- factor(local_data4$use_internet, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data4$use_other_social_media <- factor(local_data4$use_other_social_media, levels = c('0', '1'), labels = c('No','Yes'))
+
+```
+
+
+
+Plotting
+
+```{r}
+
+g1 <- ggplot(data = na.omit(local_data4[,c("gender","parents_advice_score")])) + geom_bar(aes(x = gender, fill = factor(parents_advice_score)), position = "fill") + scale_y_continuous(labels=percent)
+
+g2 <- ggplot(data = na.omit(local_data4[,c("age","parents_advice_score")])) + geom_bar(aes(x = age, fill = factor(parents_advice_score)), position = "fill") + scale_y_continuous(labels=percent)
+
+grid.arrange(g1, g2, ncol = 1)
+
+```
+
+
+Mean test for gender:
+
+
+```{r}
+
+t.test(x = local_data4$parents_advice_score[local_data4$gender == "Male"], y = local_data4$parents_advice_score[local_data4$gender == "Female"], alternative = "less")
+
+```
+
+
+Mean test for age:
+
+```{r}
+
+t.test(local_data4$parents_advice_score[local_data4$age == 13 | local_data4$age == 14 | local_data4$age == 15], local_data4$parents_advice_score[local_data4$age == 16 | local_data4$age == 17], alternative = "greater")
+
+```
+
+Divided into two clusters for testing whether there is a difference in means. 13-15 and 16-17.
+
+
+Initial Regression Model:
+
+```{r}
+#Initial Model
+m4 <- lm(parents_advice_score ~ use_facebook + use_twitter + use_internet + use_other_social_media + age + gender, data = local_data4)
+
+summary(m4)
+```
+
+
+Final Model:
+```{r}
+m4 <- lm(parents_advice_score ~ use_facebook + use_internet + age + gender, data = local_data4)
+
+
+summary(m4)
+```
+
+Only use_internet and age are significant at 5%. Parents talk less as children grow older.
+
+Facebook usage and Gender are close to being significant at 10% level. More data might make these two variables significant in this model as well.
+
 ***
+
+### Question 5
+
+Question: How more likely are children to trust their significant others and not have the urge to constantly monitor their activities if their parents are more trusting of them?  
+    *Hypothesis: Children are likely to have healthier relationships and not have insecurities regarding their significant others if they are trusted by their parents*  
+
+<b>Background info - data cleaning and manipulation</b>
+
+For this question, the relevant dataset questions are:
+
+*[Dependent variable]*:  
+KRSNS3_A: When you use social media do you ever keep track of where your boyfriend, girlfriend or significant other is or what they are doing? 
+1.Yes  
+2.No  
+  
+*[Independent variables]*:  
+P13_A: Have you ever used parental controls or other technological means of blocking, filtering or monitoring your child's online activities?  
+1.Yes  
+2.No  
+3.Does Not Apply  
+
+P13_B: Have you ever checked which websites your child visited?  
+1.Yes  
+2.No  
+3.Does Not Apply  
+
+P14_G: Have you ever used monitoring tools to track your child's location with his/her cell phone?   
+1.Yes  
+2.No  
+3.Does Not Apply  
+
+P14_H: Have you ever looked at the phone call records or messages on your child's phone?    
+1.Yes  
+2.No  
+3.Does Not Apply  
+
+  
+<b> Data cleaning </b>  
+  
+Similar data cleaning and manipulation operations were performed to get rid of invalid responses and to re-order values according from least to most.  
+
+```{r, echo = FALSE}
+local_data5 <- data.frame(used_parental_controls = survey_data$P13_A, checked_websites_visited = survey_data$P13_B, tracked_childs_location = survey_data$P14_G, tracked_calls_and_messages = survey_data$P14_H,  kid_tracking_significant_others_activity = survey_data$KRSNS3_A, age = survey_data$Child_age, gender = survey_data$Child_gender)
+
+# set NA to invalid responses
+#local_data5[ is.na(local_data5$used_parental_controls), ] <- NA
+#local_data5[ is.na(local_data5$checked_websites_visited), ] <- NA
+#local_data5[ is.na(local_data5$tracked_childs_location), ] <- NA
+#local_data5[ is.na(local_data5$tracked_calls_and_messages), ] <- NA
+#local_data5[ is.na(local_data5$kid_tracking_significant_others_activity), ] <- NA
+
+# Replace values where respondents replied "Does not apply" and everything except 1 and 2 with NA
+local_data5$used_parental_controls[ !is.na(local_data5$used_parental_controls) & (local_data5$used_parental_controls < 1 | local_data5$used_parental_controls > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data5$used_parental_controls[ !is.na(local_data5$checked_websites_visited) & (local_data5$checked_websites_visited < 1 | local_data5$checked_websites_visited > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data5$used_parental_controls[ !is.na(local_data5$tracked_childs_location) & (local_data5$tracked_childs_location < 1 | local_data5$tracked_childs_location > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data5$used_parental_controls[ !is.na(local_data5$tracked_calls_and_messages) & (local_data5$tracked_calls_and_messages < 1 | local_data5$tracked_calls_and_messages > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data5$used_parental_controls[ !is.na(local_data5$kid_tracking_significant_others_activity) & (local_data5$kid_tracking_significant_others_activity < 1 | local_data5$kid_tracking_significant_others_activity > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+
+# convert from 1(YES)-2(NO)
+#           to 0(NO)-1(YES)
+local_data5$used_parental_controls <- abs(local_data5$used_parental_controls - 2)
+local_data5$checked_websites_visited <- abs(local_data5$checked_websites_visited - 2)
+local_data5$tracked_childs_location <- abs(local_data5$tracked_childs_location - 2)
+local_data5$tracked_calls_and_messages <- abs(local_data5$tracked_calls_and_messages - 2)
+local_data5$kid_tracking_significant_others_activity <- abs(local_data5$kid_tracking_significant_others_activity - 2)
+
+# convert from 1(Male)-2(Female)
+#           to 0(Female)-1(Male)
+local_data5$gender <- abs(local_data5$gender - 2)
+
+
+cat('After data cleaning, the number of valid data records for analysis is: ', dim(na.omit(local_data5))[1])
+
+```
+
+
+Correlation Matrix:
+
+```{r}
+cor(local_data5[,"kid_tracking_significant_others_activity"], local_data5[,c("kid_tracking_significant_others_activity","used_parental_controls", "checked_websites_visited", "tracked_childs_location", "tracked_calls_and_messages")], use = "pairwise.complete.obs")
+
+
+```
+
+Correlation tests were run to see if there is significant statistical evidence that the correlation is different from 0 for any of these variables. Only tracked_childs_location came out to be different from 0 and its results are shown below:
+
+```{r}
+cor.test(local_data5$kid_tracking_significant_others_activity, local_data5$tracked_childs_location)
+```
+
+
+```{r, echo = FALSE}
+
+# convert binomial variables to factors for plotting etc.
+local_data5$gender <- factor(local_data5$gender, levels = c('0', '1'), labels = c('Female','Male'))
+
+local_data5$used_parental_controls <- factor(local_data5$used_parental_controls, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data5$checked_websites_visited <- factor(local_data5$checked_websites_visited, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data5$tracked_childs_location <- factor(local_data5$tracked_childs_location, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data5$tracked_calls_and_messages <- factor(local_data5$tracked_calls_and_messages, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data5$kid_tracking_significant_others_activity <- factor(local_data5$kid_tracking_significant_others_activity, levels = c('0', '1'), labels = c('No','Yes'))
+
+```
+
+
+
+Plotting y
+
+```{r}
+
+g1 <- ggplot(data = na.omit(local_data5)) + geom_bar(aes(x = gender, fill = kid_tracking_significant_others_activity), position = "dodge")
+
+g2 <- ggplot(data = na.omit(local_data5)) + geom_bar(aes(x = gender, fill = kid_tracking_significant_others_activity), position = "fill") + scale_y_continuous(labels=percent)
+
+
+grid.arrange(g1, g2, ncol = 1)
+
+```
+
+Plotting x
+
+```{r}
+
+g3 <- ggplot(data = na.omit(local_data5)) + geom_bar(aes(x = gender, fill = used_parental_controls), position = "fill") + scale_y_continuous(labels=percent)
+
+g4 <- ggplot(data = na.omit(local_data5)) + geom_bar(aes(x = gender, fill = checked_websites_visited), position = "fill") + scale_y_continuous(labels=percent)
+
+g5 <- ggplot(data = na.omit(local_data5)) + geom_bar(aes(x = gender, fill = tracked_childs_location), position = "fill") + scale_y_continuous(labels=percent)
+
+g6 <- ggplot(data = na.omit(local_data5)) + geom_bar(aes(x = gender, fill = tracked_calls_and_messages), position = "fill") + scale_y_continuous(labels=percent)
+
+grid.arrange(g3, g4, g5, g6, ncol = 2)
+
+```
+
+
+Prop test:
+
+
+```{r}
+
+prop.test(table(local_data5$kid_tracking_significant_others_activity, local_data5$gender), alternative = "less")
+```
+
+Reveals that males are less likely to keep track of their significant other on social media. which might go against our general perception, which usually is that females tend to trust their partners more. The behavior on social mediaappears to be otherwise howevver. It may also mean however that females tend to give more importance to their relationships than their counterparts in general, whereas men may give more time to other things n social media.
+
+Regression:
+
+```{r}
+#Initial Model
+m5 <- glm(kid_tracking_significant_others_activity ~ used_parental_controls + checked_websites_visited + tracked_childs_location + tracked_calls_and_messages + age + gender, data = local_data5, family = "binomial")
+
+```
+
+
+```{r}
+#Final Model after trying different combinations
+m5 <- glm(kid_tracking_significant_others_activity ~ checked_websites_visited + tracked_childs_location + age + gender, data = local_data5, family = "binomial")
+
+summary(m5)
+
+exp (m5$coefficients)
+```
+
+tracked child location is coming out significant at 1% and gender at 5%.
+
+However, it is important to note here that The number of people who use monitoring tools to track their child's location is not particularly big in this survey, as compared to the other ways used by parents to track their child. So further research would be needed to see if the effect holds in relatively larger samples.
+
+
+***
+
 
 ## Limitations
 
