@@ -1,0 +1,265 @@
+---
+title: 'BA1820: Group Project'
+author: "Team 3"
+date: ''
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+load("cleaned_data.Rdata")
+library(ggplot2)
+library(stargazer)
+
+```
+
+
+***
+
+## Executive summary of findings:
+  
+  
+<u>Effects of Social Media to Teens Relation with Friends and Girlfriends/Boyfriends</u>
+
+The table below summarises the questions we studied, our initial hypothesis, and findings we had from the data.  
+  
+Question                               |  Hypothesis   |  Findings
+-------------------------------------  |  ------------------------------------- | -------------------------------------
+1. Number of friends and followers on social media varies by gender    |  Female teens seem more attached to social media rather than male, thus number of friends and followers of female users might be higher than male  | On average, female teens has more friends on Facebook and more followers on Instagram than male teens. Number of social media accounts that female teens use is also slightly higher than male. 
+2. Relationship between number of social media account teens have and number of electronic device teens possess with how much time they spend with their close friends   |  The more social media accounts/electronic devices a teen has then the more time he/she spend with their close friends | Test shows a positive correlation between the two variables. Teens tend to spend more time with their close friends - either face-to-face, by phone, or any other media - when they have more social media accounts or electronic devices. This might indicate that social media and electronic devices help teens to communicate or get along with their friends.     
+3.	Relationship between teens online dating experiences with their perception about other people's image in social media   |   Teens who think that people tend to show different side of themselves in the social media would be less likely to experience online dating  | Results show that there is a correlation between those two variables. People might think that a person would be less likely to do online dating when they aware that other people is showing a different side of themselves. However, teens in fact do online dating even though they aware that other people might not be his/herself but yet never met the girlfriend/boyfriend in person.
+4.	Does teens send flirtatious messages or flirty picture or videos when they are attracted to someone?  |  Teens in age 13-17 will less likely to send flirty messages, pictures, or videos to someone they find attractive |  It turned out that teens with african american background and japanese background have a positive tendency to send flirtatious messages, pictures, or videos to show their interest to somebody else      
+5.	How would teens react when they break up with their girlfriend/boyfriend? Do they have a tendency to block or unfriend ex in social media or even remove ex from phone address book?  |  Younger teenagers might block or unfriend ex girlfriend/boyfriend when they break up but this behavior will diminish as they get older  |  Result shows that female teens tend to unfriend/block her ex than male teens. It also can be seen that the older the teens then the more likely he/she to remove her ex from phone address book. This is a contrast of what people in general think: teens should be getting wiser reacting to break up as they get older. 
+
+***
+## Details of the questions we investigated, and findings
+
+### Question 3
+
+3. Relationship between teens online dating experiences with their perception about other people's image in social media   
+  
+*Hypothesis: Teens who think that people tend to show different side of themselves in the social media would be less likely to experience online dating*  
+  
+<b>Background info - data cleaning and manipulation</b>
+
+For this question, the relevant dataset questions are:   
+
+KFSNS3_A: Do you agree or disagree with each of the following statements? People get to show different sides of themselves on social media that they can't show offline? The options respondents had were:
+1. Strongly agree   
+2. Agree   
+3. Disagree   
+4. Strongy disagree   
+
+KR2: Have you ever had a boyfriend, girlfriend or significant other that you first met online, but never met in person? The options respondents had were:   
+1. Yes  
+2. No    
+
+
+<b>Findings</b>  
+
+Social media is not only capturing child's relationship with friends but also his/her relationship with girlfriend/boyfriend. One that is interesting is their experiences finding boyfriend/girlfriend thorugh social media.  
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable x1: "KFSNS3_A" Q: Do you agree or disagree with each of the following statements? People get to show different sides of themselves on social media that they can't show offline? Answer = 1: Strongly agree 2: Agree 3: Disagree 4:Strongly disagree
+
+# Variable y: "KR2" Q: Have you ever had a boyfriend, girlfriend or significant other that you first met online, but never met in person? Answer = 1: Yes 2: No
+
+data_specific <- data.frame(x1 = survey_data$KFSNS3_A, y = survey_data$KR2)
+# Remove incomplete rows
+data_specific <- data_specific[ !is.na(data_specific$x1) & !is.na(data_specific$y), ]
+# Remove invalid replies as answer should be 1/2/3/4
+data_specific <- data_specific[ data_specific$x1 >= 1 & data_specific$x1 <= 4 , ]
+data_specific <- data_specific[ data_specific$y >= 1 & data_specific$y <= 4, ]
+```
+
+```{r}
+
+cor.test(data_specific$x1,data_specific$y)
+```
+
+The correlation between those variables turned out to be positive. Teens who perceived that other people show different side of themselves that they can not show offline is more likely to experience having relationship with somebody they met online and never met in person. This mean that they find a person more interesting online and hence fall for that person, or maybe one is more able to present the more charming side and true self on social media instead of meeting in person. 
+
+
+### Question 4
+
+4. Does teens send flirtatious messages or flirty picture or videos when they are attracted to someone?   
+  
+*Hypothesis: Teens in age 13-17 will less likely to send flirty messages, pictures, or videos to someone they find attractive*  
+  
+<b>Background info - data cleaning and manipulation</b>
+
+For this question, the relevant dataset questions are:   
+
+KDATE2_D: Have you ever done any of these things to let someone know you were attracted to them or interested in them? Have you sent them flirtatious messages? The options respondents had were:   
+1. Yes  
+2. No    
+
+KDATE2_G: Have you ever done any of these things to let someone know you were attracted to them or interested in them? Have you sent them sexy or flirty pictures or videos of yourself? The options respondents had were:  
+1. Yes  
+2. No    
+
+QS10_1-15: Please check one or more categories below to indicate what race(s) you consider yourself to be. 
+
+Child_gender: Is your child (the user of social media) male or female? The options respondents had were:   
+1. Male   
+2. Female   
+
+
+<b>Findings</b>  
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# KDATE2_D: Have you ever done any of these things to let someone know you were attracted to them or interested in them? Have you sent them flirtatious messages? The options respondents had were yes or no.   
+# KDATE2_G: Have you ever done any of these things to let someone know you were attracted to them or interested in them? Have you sent them sexy or flirty pictures or videos of yourself? The options respondents had were yes or no.  
+# QS10_1-15: Please check one or more categories below to indicate what race(s) you consider yourself to be. 
+# Child_gender: Is your child (the user of social media) male or female? The options respondents had were: 1. Male 2. Female   
+
+data_specific <- data.frame(a = survey_data$KDATE2_D,b = survey_data$KDATE2_G, x15 = survey_data$QS10_15, x1 = survey_data$QS10_1, x2 = survey_data$QS10_2, x3 = survey_data$QS10_3, x4 = survey_data$QS10_4, x5 = survey_data$QS10_5, x6 = survey_data$QS10_6, x7 = survey_data$QS10_7, x9 = survey_data$QS10_9, x10 = survey_data$QS10_10, x11 = survey_data$QS10_11,  x13 = survey_data$QS10_13, x14 = survey_data$QS10_14, y = survey_data$Child_gender)
+# Remove incomplete rows
+data_specific <- data_specific[ !is.na(data_specific$a) & !is.na(data_specific$b) & !is.na(data_specific$x1) & !is.na(data_specific$x2) & !is.na(data_specific$x3) & !is.na(data_specific$x4) & !is.na(data_specific$x5) & !is.na(data_specific$x6) & !is.na(data_specific$x7)  & !is.na(data_specific$x9) & !is.na(data_specific$x10) & !is.na(data_specific$x11)  & !is.na(data_specific$x13) & !is.na(data_specific$x14) & !is.na(data_specific$x15) & !is.na(data_specific$y), ]
+# Remove invalid replies
+data_specific <- data_specific[ data_specific$y >= 1 & data_specific$y <= 2, ]
+data_specific <- data_specific[ data_specific$a >= 1 & data_specific$a <= 2, ]
+data_specific <- data_specific[ data_specific$b >= 1 & data_specific$b <= 2, ]
+data_specific <- data_specific[ data_specific$x1 >= 0 & data_specific$x1 <= 1 & data_specific$x2 >= 0 & data_specific$x2 <= 1 & data_specific$x3 >= 0 & data_specific$x3 <= 1 & data_specific$x4 >= 0 & data_specific$x4 <= 1 & data_specific$x5 >= 0 & data_specific$x5 <= 1 & data_specific$x6 >= 0 & data_specific$x6 <= 1 & data_specific$x7 >= 0 & data_specific$x7 <= 1  & data_specific$x9 >= 0 & data_specific$x9 <= 1 & data_specific$x10 >= 0 & data_specific$x10 <= 1 & data_specific$x11 >= 0 & data_specific$x11 <= 1  & data_specific$x13 >= 0 & data_specific$x13 <= 1 & data_specific$x14 >= 0 & data_specific$x14 <= 1 & data_specific$x15 >= 0 & data_specific$x15 <= 1, ]
+# Change "Male" from 1 to 0 and "Female" from 2 to 1
+data_specific$y <- data_specific$y -1
+```
+
+Correlation between sending flirty messages and black/african american teens:  
+
+```{r}
+
+cor.test(data_specific$x2,data_specific$a)
+```
+
+Correlation between sending flirty messages and japanese teens:  
+
+```{r}
+
+cor.test(data_specific$x7,data_specific$a)
+```
+
+Correlation between sending flirty videos and japanese teens:  
+
+```{r}
+
+cor.test(data_specific$x7,data_specific$b)
+```
+
+The correlation of those two variables is -0.068 and the p value from the correlation test is 0.02801 which means that null hypothesis can be rejected (null hypothesis: correlation is equal to 0). The 95% confidence interval is between -0.127 to -0.028. Correlation test results show that there are negative correlations - except african americans: need a 10% level test. This means that japanese and black/african american were more likely to send flirtatious pictures, videos and messages among all other race such as white, asian indian, chinese, filipino, korean, and some other races. 
+
+
+### Question 5
+
+5. How would teens react when they break up with their girlfriend/boyfriend? Will they do such thing as block or unfriend ex in social media or even remove ex from phone address book?   
+  
+*Hypothesis: How would teens react when they break up with their girlfriend/boyfriend? Will they do such thing as block or unfriend ex in social media or even remove ex from phone address book?*  
+  
+<b>Background info - data cleaning and manipulation</b>
+
+For this question, the relevant dataset questions are:   
+
+KRSNS4_A: Have you ever unfriended or blocked someone that you used to be in a relationship with? The options respondents had were:
+1. Yes  
+2. No    
+
+KRCELL_D: Have you ever removed someone that you used to be in a relationship with from your phone address book? The options respondents had were:   
+1. Yes  
+2. No    
+
+Child_gender: Is your child (the user of social media) male or female? The options respondents had were:  
+1. Male
+2. Female
+
+Child_age: How old is your child (user of social media)? The options respondents had were 13/14/15/16/17 years old.  
+
+
+<b>Findings</b>  
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable y1: "KRSNS4_A" Q: Have you ever unfriended or blocked someone that you used to be in a relationship with? Answer = 1: Yes 2: No
+# Variable s1: "Child_gender" Q: Q: Is your child (the user of social media) male or female? Answer = 1: Male, 2: Female
+
+data_specific <- data.frame(s1 = survey_data$Child_gender, y1 = survey_data$KRSNS4_A)
+data_specific <- data_specific[ !is.na(data_specific$s1) & !is.na(data_specific$y1), ]
+data_specific <- data_specific[ data_specific$s1 >= 1 & data_specific$s1 <= 2, ]
+data_specific$Gender  <- ifelse(data_specific$s1 == 1, "Male", "Female")
+data_specific <- data_specific[ data_specific$y1 >= 1 & data_specific$y1 <= 3, ]
+```
+
+Here is the graph showing responses of question "Have you ever unfriended or blocked someone that you used to be in a relationship with?" by gender:   
+
+```{r}
+
+ggplot(data = data_specific, aes(data_specific$y1)) + geom_bar(aes(fill = Gender), position = "dodge") + scale_x_discrete(labels = c("1" = "Yes", "2" = "No")) + labs(x = " ", y = "Count", title = "Have you ever unfriended/blocked your ex?")
+```
+
+It can be seen that male is more unlikely to unfriended or blocked an ex in social media. This might be because female teens are a little bit more emotional than male teens especially after breaking up.   
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable y1: "KRCELL_D" Q: Have you ever removed someone that you used to be in a relationship with from your phone address book? Answer = 1: Yes 2: No
+# Variable s1: "Child_gender" Q: Q: Is your child (the user of social media) male or female? Answer = 1: Male, 2: Female
+
+data_specific <- data.frame(s1 = survey_data$Child_gender, y1 = survey_data$KRCELL_D)
+# Remove incomplete rows
+data_specific <- data_specific[ !is.na(data_specific$s1) & !is.na(data_specific$y1), ]
+# Remove invalid replies
+data_specific <- data_specific[ data_specific$s1 >= 1 & data_specific$s1 <= 2, ]
+# Convert 1 into "Male" and 2 into "Female"
+data_specific$Gender  <- ifelse(data_specific$s1 == 1, "Male", "Female")
+# Remove invalid replies
+data_specific <- data_specific[ data_specific$y1 >= 1 & data_specific$y1 <= 3, ]
+```
+
+Again it can be seen that male has less probability to removed his ex from phone address book rather than female towards her ex.  
+
+This is another response of question "Have you ever removed someone that you used to be in a relationship with from your phone address book?":   
+
+```{r}
+ 
+ggplot(data = data_specific, aes(data_specific$y1)) + geom_bar(aes(fill = Gender), position = "dodge") + scale_x_discrete() + labs(x = " ", y = "Count", title = "Have you ever removed your ex from your phone book address?")
+
+# + scale_x_discrete(labs = c("1" = "Yes", "2" = "No"))
+```
+
+As responses to this question might differ by teens age, graph below shows how each of age group (13/14/15/16/17) responded. 
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable y1: "KRCELL_D" Q: Have you ever removed someone that you used to be in a relationship with from your phone address book? Answer = 1: Yes 2: No
+# Variable s1: "Child_age" Q: How old is your child (user of social media)? Answer = 13/14/15/16/17 years old
+
+data_specific <- data.frame(age = survey_data$Child_age, y1 = survey_data$KRCELL_D)
+# Remove incomplete rows
+data_specific <- data_specific[ !is.na(data_specific$age) & !is.na(data_specific$y1), ]
+# Remove invalid replies
+data_specific <- data_specific[ data_specific$y1 >= 1 & data_specific$y1 <= 2, ]
+data_specific$y1 <- ifelse(data_specific$y1 == 1, "Yes", "No")
+data_specific <- data_specific[ data_specific$age >= 13 & data_specific$age <= 17, ]
+# Convert variable y1 answer into factor to enable plotting
+data_specific$Answer <- factor(data_specific$y1)
+```
+
+```{r}
+
+ggplot(data = data_specific, aes(x = age)) + geom_bar(aes(fill = Answer), position = "dodge") + labs(x = "Age", y = "Count", title = "Have you ever removed your ex from your phone book address?")
+```
+
+Graph shows that only a few of teens in age 13-14 that ever experienced removing ex from phone address book, while older teens seem more likely to remove ex. Using correlation test between this particular question against teens age reveals that there is a negative correlation between those variables.  
+
+```{r}
+
+cor.test(survey_data$Child_age, survey_data$KRCELL_D) 
+```
+
+Pearson correlation test of those two variables is -0.11 and the p value from the correlation test is 0.04032 which means that the null hypothesis can be rejected (null hypothesis: correlation is equal to 0). The 95% confidence interval is between -0.214 to -0.005. It shows that older teenagers will be more likely to remove ex from phone address book rather than younger teenagers. 
+
+
+
+
