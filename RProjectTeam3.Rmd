@@ -17,23 +17,23 @@ output:
 # 1 Introduction
 ### 1.1 Description of dataset
 
-The dataset is that this report is based on is called "Teen Relationship Survey Pretest", obtained from the URL:http://www.pewinternet.org/datasets/sep-25-oct-9-2014-and-feb-10-march-6-2015-teens/
+The dataset that this report is based on is called "Teen Relationship Survey Pretest", obtained from the URL:http://www.pewinternet.org/datasets/sep-25-oct-9-2014-and-feb-10-march-6-2015-teens/
 
 This survey is a KnowledgePanel research study conducted by the Pew Research Center and focused on asked questions on both an adult and his/her child aged 13 through 17. 
 
 With the teen specifically, the survey touched on a variety of topics related to teen friendships and romantic relationships, particularly the role technology (such as mobile phones, Facebook, etc.) plays in those relationships. On the other hand, with the parent, the survey asked about technology, and the ways the child and the parent use a variety of digital devices and social media platforms.
 
-The dataset has 1642 entries (number of adult who completed the survey) and 317 variables (answers of each question). 
+The dataset has 1642 entries (number of parents/kids who completed the survey) and 317 variables (answers of each question). 
 
 ### 1.2 Data Cleaning methodology
 
 In the r script or rmd code, one can find our full code for cleaning the original dataset. 
 In short, here are the several things which were done to eliminated invalid entries.
 
-* rows where caseID is not a valid number is removed, by coverting caseID from factor to character to integer and eliminated the NA entries
+* rows where caseID was not a valid number was removed, by coverting caseID from factor to character to integer and eliminating the NA entries
 * rows where the adults answered they do not have teenagers aged 13 through 17 live in their households at least 50% of the time, or gave an invalid answer, were removed since the rest of the survey was not answered
 * rows where the adults answered that they do not have teenagers aged 13 to 17 in their households where they are the parent or legal guardian of, or gave an invalid anwer, were removed since the rest of the survey is left unanswered
-* entries where the children are not 13-17 in age are removed
+* entries where the children were not 13-17 in age were removed
 
 ```{r, echo=FALSE, eval=FALSE}
 # Data cleaning
@@ -168,24 +168,24 @@ library(scales)
 ```
 ### Introduction
 
-The dataset had a number of questions there were posed to the teen's parent, and a number of similar questions posed to the teen.  
+The dataset had a number of questions that were posed to parents, and a number of similar questions posed to their teens.  
   
-A number of hypotheses were investigated using this dataset, to see if there were any relationships between parent's behaviours and the teen's behaviours using social media.  
+A number of hypotheses were investigated using this dataset, to see if there were any relationships between parent's behaviours and the teen's behaviours with respect to social media and technology usage.  
   
 For example, parents were asked if they monitor their child's location (could be considered as a form of stalking behaviour), and whether the teen monitored someone they were dating or had dated (similar stalking behaviour). This was an opportunity to investigate if teens were more likely to exhibit stalking behaviour if their parent did the same too.  
   
-There were also questions on whether the parent blocks their child's phone usage and whether the child sends sexy/flirty messages. One of the hypotheses was thus whether the child would send more likely sexy/flirty messages, if the parent blocks their child's phone usage, which could suggest that the parent's intervention might have triggered a rebellious behaviour (e.g. the stricter the parent, the more the child wants to be liberal).    
+There were also questions on, for example, whether the parent blocks their child's phone usage and whether the child sends sexy/flirty messages. One of the hypotheses was thus whether the child would be more likely to send sexy/flirty messages if the parent blocks their child's phone usage. This could suggest that the parent's intervention might have this effect of triggering a rebellious behaviour (e.g. the stricter the parent, the more the child wants to be liberal).    
 
 <b>Methodology</b>  
   
-As the dependent variable for each investigation was a categorical variable (being responses of a survey question), logistic regression was used. Linear regression would not make sense as the coefficient of linear regression would not translate to anything meaningful.  Dependent variables where the possible responses were "No" or "Yes", i.e. binary 0 or 1 response, were chosen for analysis.    
+As the dependent variables for most of our investigations were categorical variables (being responses of survey questions), logistic regression was used for regression analysis instead of linear regression. Linear regression would not have made sense as its coefficients would not translate into anything meaningful.  Dependent variables where the possible responses were "No" or "Yes", i.e. binary 0 or 1 response, were chosen for analysis.    
   
-The function <i>glm</i> was used, <i>model <- glm(y ~ x1 + x2 + .. + xk, data = dataframe, family = "binomial").</i>    
+For logistic regression, the function <i>glm</i> was used, <i>model <- glm(y ~ x1 + x2 + .. + xk, data = dataframe, family = "binomial").</i>    
   
-In most cases, the independent variables were also survey responses that could have more than 2 options. e.g. 1.Yes, a lot, 2.Yes, a little, 3.No.  Researching literature online, there were two possible approaches: (1) leave such variables as numeric (R would interpret them as continuous variables), or convert them as factors (R would interpret them as categorical variables, and regression would yield a coefficient for each possible option). Setting these variables as continuous variables might be contentious as the value of the variables were discrete in nature, and it might be difficult to explain why optioni 1 had value 1, and not 2 or 50 etc. Hence on balance, these variables were converted to factor, even though this would increase the total number of variables used in the regression and inflate the R<sup>2</sup> value (AIC value for logistic regression).  All dependent and independent variables were reordered so that the higher the value, the higher the scale of the response. i.e. instead of 1 for Yes and 2 for No, we reordered it to 0 for No and 1 for Yes.          
+In most cases, the independent variables were also survey responses that could have more than 2 options. e.g. 1.Yes, a lot, 2.Yes, a little, 3.No.  Researching literature online, there were two possible approaches: (1) leave such variables as numeric (R would interpret them as continuous variables), or convert them as factors (R would interpret them as categorical variables, and regression would yield a coefficient for each possible option by creating something like dummy variables). Setting these variables as continuous variables might be contentious as the values of the variables were discrete in nature, and we could not necessarily say that they the possible values were equally spaced. It might be difficult to explain why one option had value 1, and not 2 or 50 etc. Hence on balance, these variables were converted to factor, even though this would increase the total number of variables used in the regression and inflate the R<sup>2</sup> value (AIC value for logistic regression).  All dependent and independent variables were reordered so that the higher the value, the higher the scale of the response. i.e. instead of 1 for Yes and 2 for No, we reordered it to 0 for No and 1 for Yes.          
 
-<font color = red> Bilal: help to put in explanations on how to interpret the coefficients, and exp function. thanks!</font>
-  
+It's also important to note here that the models based on logistic regression had a different way of interpreting the coefficients
+
 The 5 questions, their corresponding hypotheses, and their associated findings are summarised in the section below.  
   
 ***
@@ -201,8 +201,8 @@ Question                               |  Hypothesis   |  Findings
 -------------------------------------  |  ------------------------------------- | -------------------------------------
 1. Relationship between parents blocking their child???s phone usage and their child???s online behaviour on sexy/flirty pictures   |  If teens are rebellious, then the stricter the parent, the more the child wants to be liberal and may be more inclined to send flirty pictures | The regression results suggest that if parents took away their child???s cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of other parent's strict behaviours: parent using parental controls to restrict child???s use of his/her cell phone, and limiting the amount of time or times of day when child can go online   
 2.	Relationship on whether children self-censor their posts if they are friends with parents on social media   |   Teens??? whose parents are friends with them on social media will likely not post details of their relationship online  | There was no statiscally significant evidence to show that whether the parent was connected to their child on social media had an impact on child posting public affection for their significant other (proxy of whether child self-censors their posts). Upon adding more variables to the regression, the regression suggests that teens feeling pressure to only post content that makes them look good to others, were around 90% ("Yes, a little pressure") to 214% ("Yes, a lot pressure") more likely to post public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours (connecting with child on social media, being friends on Facebook, and checking child's social media profile) have an effect on teen's public affection behaviour.  This seems to suggest that teens are more influenced by their self-perception, rather than their parent's interventions, with respect to whether or not they post public affection towards his/her significant other.     
-3.	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend |  If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend | It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 190% more likely (at 90% confidence level) to access the phone of someone they were dating or used to date (child's stalking behaviour).  It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour).  In both cases, parent monitoring child's location seemed correlated with both child's stalking behaviours (accessing phone and tracking GPS location).      
-4. Relationship between the parent using internet / social media themselves vs. them talking to their child about inappropriate online behavior | Parents are likely to be in a better position to advise their children on online behavior if they themselves use internet or are on social media | ....    
+3. Relationship between the parent using internet / social media themselves vs. them talking to their child about inappropriate online behavior | Parents are likely to be in a better position to advise their children on online behavior if they themselves use internet or are on social media | ....    
+4.	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend |  If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend | It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 190% more likely (at 90% confidence level) to access the phone of someone they were dating or used to date (child's stalking behaviour).  It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour).  In both cases, parent monitoring child's location seemed correlated with both child's stalking behaviours (accessing phone and tracking GPS location).      
 5. How more likely are children to trust their significant others and not have the urge to constantly monitor their activities if their parents are more trusting of them? | Children are likely to have healthier relationships and not have insecurities regarding their significant others if they are trusted by their parents | ....    
 
 
@@ -466,6 +466,194 @@ This seems to suggest that teens are more influenced by their self-perception, r
 ***
   
 #### Question 3  
+
+Question:	Relationship between the parent using internet / social media themselves vs. them talking to their child about inappropriate online behavior.  
+    *Hypothesis: Parents are likely to be in a better position to advise their children on online behavior if they themselves use internet or are on social media*   
+
+
+<b>Background info - data cleaning and manipulation</b>
+
+For this question, the relevant dataset questions are:
+
+*[Dependent variable]*:  
+
+parents_advice_score: This is a calculated column, which is basically the sum of P15_B and P15_C. It is a measure of how often a parent talks to his/her child about appropriate/inappropriate online behavior in general.  
+Takes values between 2 (lowest) and 8 (highest)   
+
+P15_B: How often do you talk with your child about what is appropriate or inappropriateto share online?  
+1.Never  
+2.Rarely   
+3.Occasionally  
+4.Frequently  
+
+P15_C: How often do you talk with your child about what is appropriate or inappropriatecontent for them to be viewing online?   
+1.Never  
+2.Rarely   
+3.Occasionally  
+4.Frequently  
+
+*[Independent variables]*:  
+P2_A: Do you ever use Facebook?  
+1.Yes  
+2.No  
+
+P2_B: Do you ever use Twitter?  
+1.Yes  
+2.No  
+
+P2_C: Do you ever access the internet on a cell phone, tablet or other mobile handheld device, at least occasionally?   
+1.Yes  
+2.No  
+
+P2_D: Do you ever use some other social media site?    
+1.Yes  
+2.No  
+
+  
+<b> Data cleaning </b>  
+  
+Invalid responses were removed by filling them with NA (e.g. if respondents were supposed to choose only options 1 or 2, but the data showed 3 or -1, these would be invalid responses).    
+  
+The numeric coding was changed such that 0 represented a 'No' and 1 a 'Yes'. E.g. if the question's original order of choices that respondents could choose from were:  
+  1.Yes,  2.No  
+The responses' order were re-ordered to:  
+  0.No,  1. Yes  
+  
+For questions with options Yes/No/Does not apply, 'Does not apply' was treated as an NA.  
+
+For the calculated column, 'parents_advice_score', if one of the two variables being summed was missing, the other was multiplied by 2 to get the parents_advice_score. If both of the variables had missing values in a row, 'parents_advice_score' was also treated as a missing value.
+
+```{r, echo = FALSE}
+local_data4 <- data.frame(use_facebook = survey_data$P2_A, use_twitter = survey_data$P2_B, use_internet = survey_data$P2_C, use_other_social_media = survey_data$P2_D,  P15_B = survey_data$P15_B, P15_C = survey_data$P15_C, age = survey_data$Child_age, gender = survey_data$Child_gender)
+
+
+# Replace everything except 1 and 2 with NA
+local_data4$use_facebook[ !is.na(local_data4$use_facebook) & (local_data4$use_facebook < 1 | local_data4$use_facebook > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data4$use_twitter[ !is.na(local_data4$use_twitter) & (local_data4$use_twitter < 1 | local_data4$use_twitter > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data4$use_internet[ !is.na(local_data4$use_internet) & (local_data4$use_internet < 1 | local_data4$use_internet > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data4$use_other_social_media[ !is.na(local_data4$use_other_social_media) & (local_data4$use_other_social_media < 1 | local_data4$use_other_social_media > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+
+# Replace everything except 1 to 4 with NA
+local_data4$P15_B[ !is.na(local_data4$P15_B) & (local_data4$P15_B < 1 | local_data4$P15_B > 4)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data4$P15_C[ !is.na(local_data4$P15_C) & (local_data4$P15_C < 1 | local_data4$P15_C > 4)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+#Calculated Variable based on P15_B and P15_C
+local_data4$parents_advice_score = 2*rowMeans(local_data4[, c("P15_B", "P15_C")], na.rm = TRUE)
+
+
+# convert from 1(YES)-2(NO)
+#           to 0(NO)-1(YES)
+local_data4$use_facebook <- abs(local_data4$use_facebook - 2)
+local_data4$use_twitter <- abs(local_data4$use_twitter - 2)
+local_data4$use_internet <- abs(local_data4$use_internet - 2)
+local_data4$use_other_social_media <- abs(local_data4$use_other_social_media - 2)
+
+# convert from 1(Male)-2(Female)
+#           to 0(Female)-1(Male)
+local_data4$gender <- abs(local_data4$gender - 2)
+
+
+cat('After data cleaning, the number of valid data records for analysis is: ', dim(na.omit(local_data4))[1])
+
+
+```
+
+
+First, we look at the correlations of the variables that we are interested in. Although Pearson's 
+
+```{r, echo = FALSE}  
+cor(local_data4[,"parents_advice_score"], local_data4[,c("parents_advice_score","use_facebook", "use_twitter", "use_other_social_media", "use_internet")], use = "pairwise.complete.obs")
+
+```
+
+Correlation tests were run on each of these and only the correlation of use_internet came out to be significantly different from 0 at 5% confidence level. Its results are shown below: 
+
+```{r, echo = FALSE}
+cor.test(local_data4$parents_advice_score, local_data4$use_internet)
+```
+
+
+```{r, echo = FALSE} 
+
+# convert binomial variables to factors for plotting etc.
+local_data4$gender <- factor(local_data4$gender, levels = c('0', '1'), labels = c('Female','Male'))
+
+local_data4$use_facebook <- factor(local_data4$use_facebook, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data4$use_twitter <- factor(local_data4$use_twitter, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data4$use_internet <- factor(local_data4$use_internet, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data4$use_other_social_media <- factor(local_data4$use_other_social_media, levels = c('0', '1'), labels = c('No','Yes'))
+
+```
+
+
+
+Plotting
+
+```{r, echo = FALSE}
+
+g1 <- ggplot(data = na.omit(local_data4[,c("gender","parents_advice_score")])) + geom_bar(aes(x = gender, fill = factor(parents_advice_score)), position = "fill") + scale_y_continuous(labels=percent)
+
+g2 <- ggplot(data = na.omit(local_data4[,c("age","parents_advice_score")])) + geom_bar(aes(x = age, fill = factor(parents_advice_score)), position = "fill") + scale_y_continuous(labels=percent)
+
+grid.arrange(g1, g2, ncol = 1)
+
+```
+
+
+Mean test for gender:
+
+
+```{r, echo = FALSE}
+
+t.test(x = local_data4$parents_advice_score[local_data4$gender == "Male"], y = local_data4$parents_advice_score[local_data4$gender == "Female"], alternative = "less")
+
+```
+
+
+Mean test for age:
+
+```{r, echo = FALSE}
+
+t.test(local_data4$parents_advice_score[local_data4$age == 13 | local_data4$age == 14 | local_data4$age == 15], local_data4$parents_advice_score[local_data4$age == 16 | local_data4$age == 17], alternative = "greater")
+
+```
+
+Divided into two clusters for testing whether there is a difference in means. 13-15 and 16-17.
+
+
+Initial Regression Model:
+
+```{r, echo = FALSE}
+#Initial Model
+m4 <- lm(parents_advice_score ~ use_facebook + use_twitter + use_internet + use_other_social_media + age + gender, data = local_data4)
+
+summary(m4)
+```
+
+
+Final Model:
+```{r, echo = FALSE}
+m4 <- lm(parents_advice_score ~ use_facebook + use_internet + age + gender, data = local_data4)
+
+
+summary(m4)
+```
+
+Only use_internet and age are significant at 5%. Parents talk less as children grow older.
+
+Facebook usage and Gender are close to being significant at 10% level. More data might make these two variables significant in this model as well.
+
+***
+
+#### Question 4  
  
 Question:	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend.   
   
@@ -680,192 +868,6 @@ After testing for these various questions, only the "feel worse" question was st
   
 ****
 
-#### Question 4  
-
-Question:	Relationship between the parent using internet / social media themselves vs. them talking to their child about inappropriate online behavior.  
-    *Hypothesis: Parents are likely to be in a better position to advise their children on online behavior if they themselves use internet or are on social media*   
-
-
-<b>Background info - data cleaning and manipulation</b>
-
-For this question, the relevant dataset questions are:
-
-*[Dependent variable]*:  
-
-parents_advice_score: This is a calculated column, which is basically the sum of P15_B and P15_C. It is a measure of how often a parent talks to his/her child about appropriate/inappropriate online behavior in general.  
-Takes values between 2 (lowest) and 8(highest)   
-
-P15_B: How often do you talk with your child about what is appropriate or inappropriateto share online?  
-1.Never  
-2.Rarely   
-3.Occasionally  
-4.Frequently  
-
-P15_C: How often do you talk with your child about what is appropriate or inappropriatecontent for them to be viewing online?   
-1.Never  
-2.Rarely   
-3.Occasionally  
-4.Frequently  
-
-*[Independent variables]*:  
-P2_A: Do you ever use Facebook?  
-1.Yes  
-2.No  
-
-P2_B: Do you ever use Twitter?  
-1.Yes  
-2.No  
-
-P2_C: Do you ever access the internet on a cell phone, tablet or other mobile handheld device, at least occasionally?   
-1.Yes  
-2.No  
-
-P2_D: Do you ever use some other social media site?    
-1.Yes  
-2.No  
-
-  
-<b> Data cleaning </b>  
-  
-Invalid responses were removed by filling them with NA (e.g. if respondents were supposed to choose only options 1 or 2, but the data showed 3 or -1, these would be invalid responses).    
-  
-The numeric coding was changed such that 0 represented a 'No' and 1 a 'Yes'. E.g. if the question's original order of choices that respondents could choose from were:  
-  1.Yes,  2.No  
-The responses' order were re-ordered to:  
-  0.No,  1. Yes  
-  
-For questions with options Yes/No/Does not apply, 'Does not apply' was treated as an NA.  
-
-```{r, echo = FALSE}
-local_data4 <- data.frame(use_facebook = survey_data$P2_A, use_twitter = survey_data$P2_B, use_internet = survey_data$P2_C, use_other_social_media = survey_data$P2_D,  P15_B = survey_data$P15_B, P15_C = survey_data$P15_C, age = survey_data$Child_age, gender = survey_data$Child_gender)
-
-
-# Replace everything except 1 and 2 with NA
-local_data4$use_facebook[ !is.na(local_data4$use_facebook) & (local_data4$use_facebook < 1 | local_data4$use_facebook > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
-
-local_data4$use_twitter[ !is.na(local_data4$use_twitter) & (local_data4$use_twitter < 1 | local_data4$use_twitter > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
-
-local_data4$use_internet[ !is.na(local_data4$use_internet) & (local_data4$use_internet < 1 | local_data4$use_internet > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
-
-local_data4$use_other_social_media[ !is.na(local_data4$use_other_social_media) & (local_data4$use_other_social_media < 1 | local_data4$use_other_social_media > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
-
-
-# Replace everything except 1 to 4 with NA
-local_data4$P15_B[ !is.na(local_data4$P15_B) & (local_data4$P15_B < 1 | local_data4$P15_B > 4)] <- NA  # needs the !is.na condition otherwise an error throws up
-
-local_data4$P15_C[ !is.na(local_data4$P15_C) & (local_data4$P15_C < 1 | local_data4$P15_C > 4)] <- NA  # needs the !is.na condition otherwise an error throws up
-
-#Calculated Variable based on P15_B and P15_C
-local_data4$parents_advice_score = 2*rowMeans(local_data4[, c("P15_B", "P15_C")], na.rm = TRUE)
-
-
-# convert from 1(YES)-2(NO)
-#           to 0(NO)-1(YES)
-local_data4$use_facebook <- abs(local_data4$use_facebook - 2)
-local_data4$use_twitter <- abs(local_data4$use_twitter - 2)
-local_data4$use_internet <- abs(local_data4$use_internet - 2)
-local_data4$use_other_social_media <- abs(local_data4$use_other_social_media - 2)
-
-# convert from 1(Male)-2(Female)
-#           to 0(Female)-1(Male)
-local_data4$gender <- abs(local_data4$gender - 2)
-
-
-cat('After data cleaning, the number of valid data records for analysis is: ', dim(na.omit(local_data4))[1])
-
-
-```
-
-
-Correlation Matrix:
-
-```{r, echo = FALSE}  
-cor(local_data4[,"parents_advice_score"], local_data4[,c("parents_advice_score","use_facebook", "use_twitter", "use_other_social_media", "use_internet")], use = "pairwise.complete.obs")
-
-```
-
-Correlation tests were run on each of these and only the correlation of use_internet came out to be significantly different from 0 at 5% confidence level. Its results are shown below: 
-
-```{r, echo = FALSE}
-cor.test(local_data4$parents_advice_score, local_data4$use_internet)
-```
-
-
-```{r, echo = FALSE} 
-
-# convert binomial variables to factors for plotting etc.
-local_data4$gender <- factor(local_data4$gender, levels = c('0', '1'), labels = c('Female','Male'))
-
-local_data4$use_facebook <- factor(local_data4$use_facebook, levels = c('0', '1'), labels = c('No','Yes'))
-
-local_data4$use_twitter <- factor(local_data4$use_twitter, levels = c('0', '1'), labels = c('No','Yes'))
-
-local_data4$use_internet <- factor(local_data4$use_internet, levels = c('0', '1'), labels = c('No','Yes'))
-
-local_data4$use_other_social_media <- factor(local_data4$use_other_social_media, levels = c('0', '1'), labels = c('No','Yes'))
-
-```
-
-
-
-Plotting
-
-```{r, echo = FALSE}
-
-g1 <- ggplot(data = na.omit(local_data4[,c("gender","parents_advice_score")])) + geom_bar(aes(x = gender, fill = factor(parents_advice_score)), position = "fill") + scale_y_continuous(labels=percent)
-
-g2 <- ggplot(data = na.omit(local_data4[,c("age","parents_advice_score")])) + geom_bar(aes(x = age, fill = factor(parents_advice_score)), position = "fill") + scale_y_continuous(labels=percent)
-
-grid.arrange(g1, g2, ncol = 1)
-
-```
-
-
-Mean test for gender:
-
-
-```{r, echo = FALSE}
-
-t.test(x = local_data4$parents_advice_score[local_data4$gender == "Male"], y = local_data4$parents_advice_score[local_data4$gender == "Female"], alternative = "less")
-
-```
-
-
-Mean test for age:
-
-```{r, echo = FALSE}
-
-t.test(local_data4$parents_advice_score[local_data4$age == 13 | local_data4$age == 14 | local_data4$age == 15], local_data4$parents_advice_score[local_data4$age == 16 | local_data4$age == 17], alternative = "greater")
-
-```
-
-Divided into two clusters for testing whether there is a difference in means. 13-15 and 16-17.
-
-
-Initial Regression Model:
-
-```{r, echo = FALSE}
-#Initial Model
-m4 <- lm(parents_advice_score ~ use_facebook + use_twitter + use_internet + use_other_social_media + age + gender, data = local_data4)
-
-summary(m4)
-```
-
-
-Final Model:
-```{r, echo = FALSE}
-m4 <- lm(parents_advice_score ~ use_facebook + use_internet + age + gender, data = local_data4)
-
-
-summary(m4)
-```
-
-Only use_internet and age are significant at 5%. Parents talk less as children grow older.
-
-Facebook usage and Gender are close to being significant at 10% level. More data might make these two variables significant in this model as well.
-
-***
-
 #### Question 5
 
 Question: How more likely are children to trust their significant others and not have the urge to constantly monitor their activities if their parents are more trusting of them?  
@@ -1046,25 +1048,28 @@ However, it is important to note here that The number of people who use monitori
 ***
 
 
-### Limitations
+### Conclusion and limitations
 
-The analysis was limited to dependent variables with binary Yes/No oprtions. Ideally, dependent variables with more than 2 options should be considered as well. Perhaps polr function could be used, but there was insufficient time to investigate and understand this further.  
+The analysis was limited to dependent variables with binary (Yes/No) options. Ideally, dependent variables with more than 2 options should also be considered. A few interesting hypotheses were considered in that respect as well for further study. However, since that would have required an implementation of ordinal logistic regression, perhaps using the polr function in the MASS library, the analysis was kept to these relatively simpler models in the interest of time. With additional time, it would have been interesting to investigate and understand this further.   
 
-<font color = red>Bilal to add on </font>  
-  
+Also, since there were a lot of missing values in the dataset, some of the models were based on a relatively small sample. With a larger number of complete observations, it might have been possible to get more interesting relationships that would come out to be statistically significant, which might not have been apparent in this relatively small number of complete responses.  
+
+
 ***
-
-### Conclusion
-
-<font color = red> Bilal to add on </font>
 
 ## Possible future improvements
 
-A more robust analysis on the trends of the effect of parents' behaviours on teen's behaviours with regard to social media usage (e.g. stalking behaviour, defiance / urge to be liberalised etc) could be conducted if we had more data. Perhaps more questions could be asked to parent and teen in this aspect, to further tease out these possible relationships between parent and teen. More historical data, not just for one year, could be collated and analysed to discover if there were any trends, or whether these parent-child relationships were consistent over time, for 13-17 year old teenage groups across cohorts. It would also be interesting if the survey was conducted for older children, beyond 17 year olds, to test if certain hypotheses or relationships between parent and child persist beyond these ages. For example, if data suggest that parent's stalking behaviour positively correlate with teen's stalking behaviour, it would be interesting to investigate whether the teen's stalking behaviour persist even when he/she is 25 years old. If so, it would suggest that parents should be educated to let them realise what appropriate interventions they should be making, and sometimes well-intended interventions, if executed in the wrong way, could perhaps lead to more permanent adverse impact on the teen.         
+A more robust analysis on the trends of the effect of parents' behaviours on teen's behaviours with regard to social media usage (e.g. stalking behaviour, defiance / urge to be liberalised etc) could be conducted if we had more data. Perhaps more questions could be asked to parent and teen in this aspect, to further tease out these possible relationships between parent and teen. More historical data, not just for one year, could be collated and analysed to discover if there were any trends, or whether these parent-child relationships were consistent over time, for 13-17 year old teenage groups across cohorts. It would also be interesting if the survey was conducted for older children, beyond 17 year olds, to test if certain hypotheses or relationships between parent and child persist beyond these ages. For example, if data suggest that parent's stalking behaviour positively correlate with teen's stalking behaviour, it would be interesting to investigate whether the teen's stalking behaviour persists even when he/she is, say, 25 years old. If so, it would suggest that parents should be educated to let them realise what appropriate interventions they should be making, and sometimes well-intended interventions, if executed in the wrong way, could perhaps lead to more permanent adverse impact on the teen.    
 
-<font color = red>{ideas on how we can improve the analysis - e.g. if we had more data on blah blah}</font>
+Regarding the analyses used in this section, the approach was rather simplistic where, for instance, not much attention was paid to the behavior of the residuals in the models to ascertain whether they were fairly normal or not. Ideally, this should not be the case and should be looked into to make sure any important variables are not being missed out, which might have led to some biased coefficient estimates in our analysis. Also, when more ordered factor or continuous variables are included to test further relationships, perhaps some transformations of the variables can lead to better fitted models.  
+
+In addition, since many of the variables in the dataset have binary responses, a phi coefficient (from psych library) can be a better measure of looking at the interdependence of different variables in the initial testing phase, instead of simply using Pearson's correlations, which are primarily suited for continuous variables.  
+
+Finally, as mentioned earlier, getting a larger set of complete responses by increasing the initial sample size and the use of ordinal logistic regression for exploring some additional relationships can lead to the identification of some more interesting patterns and relationships in the dataset.  
+
 
 ***
+
 ## 3.2 Findings on relationship between teenagers and their close friends / significant others
 
 ### Introduction
@@ -2297,7 +2302,7 @@ for(i in 1:10)
 Given the initial size of the entire set and the necessary cleaning, the cluster ended up being relatively small to make statistically significant observations. Furthermore the selected independent variables number of friends/followers and age must be evaluated under the following assumptions. Looking at dependent variables that are deeply connected to the psyche of human beings, given the age and the along going presumable changes in life of the respondents, using only these two variables is a strong reduction of complexity to explain highly connected and complex occurrences that are influenced by numerous factors. 
 Second, given the time restriction and scope of the project a deeper analysis was simply not possible. The overall aim of this analysis was to show how clustering by relevant parameters might lead to different results and insights, which will be quickly recaptured.
 
-Starting with the initial heat maps, that only had limited explanatory power, the clustering by tercile of friends and age let to more detailed and differentiated results, clearly showing that the correlations between the responses to the questions are also relying on the cluster criteria. Furthermore as discussed above, there is a correlation between feeling "worse about your own life because of what you see from other friends on social media" and feeling the pressure to "only post content that makes you look good to others". This observation addresses exactly what the author of the article initially describes with regards to her experience. Given the mentioned limitations regarding the dataset as well as the complexity of the human mind, the hypothesis must be rejected from a statistical point of view, nevertheless the observation showed as well, that exposure expressed in number of friends has an impact on the perception of social media.
+Starting with the initial heat maps, that only had limited explanatory power, the clustering by tercile of friends and age led to more detailed and differentiated results, clearly showing that the correlations between the responses to the questions are also relying on the cluster criteria. Furthermore as discussed above, there is a correlation between feeling "worse about your own life because of what you see from other friends on social media" and feeling the pressure to "only post content that makes you look good to others". This observation addresses exactly what the author of the article initially describes with regards to her experience. Given the mentioned limitations regarding the dataset as well as the complexity of the human mind, the hypothesis must be rejected from a statistical point of view, nevertheless the observation showed as well, that exposure expressed in number of friends has an impact on the perception of social media.
 
 
 

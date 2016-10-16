@@ -1,0 +1,2301 @@
+---
+title: 'Maths and Statistics Foundations Group Project'
+output:
+  html_document: default
+  pdf_document: default
+---
+####BA1820
+#### https://github.com/tatlchri/MSF-GroupProject.git
+#### 15/10/2016
+#####Team 3:
+#####Ahmad Bilal Aslam 01290213
+#####Salkha Marie Baraba 01293357
+#####Johannes Barth 01281291
+#####Chong Hock Kelvin Goh 01223454
+#####Christina Lefkothea Tatli 01231953
+#####Yiu Fong Christopher Ying 00821967
+ 
+# 1 Introduction
+### 1.1 Description of dataset
+
+The dataset that this report is based on is called "Teen Relationship Survey Pretest", obtained from the URL:http://www.pewinternet.org/datasets/sep-25-oct-9-2014-and-feb-10-march-6-2015-teens/
+
+This survey is a KnowledgePanel research study conducted by the Pew Research Center and focused on asked questions on both an adult and his/her child aged 13 through 17. 
+
+With the teen specifically, the survey touched on a variety of topics related to teen friendships and romantic relationships, particularly the role technology (such as mobile phones, Facebook, etc.) plays in those relationships. On the other hand, with the parent, the survey asked about technology, and the ways the child and the parent use a variety of digital devices and social media platforms.
+
+The dataset has 1642 entries (number of parents/kids who completed the survey) and 317 variables (answers of each question). 
+
+### 1.2 Data Cleaning methodology
+
+In the r script or rmd code, one can find the full code for cleaning the original dataset. 
+In short, here are the several things which were done to eliminate invalid entries.
+
+* rows where caseID was not a valid number was removed, by coverting caseID from factor to character to integer and eliminating the NA entries
+* rows where the adults answered they do not have teenagers aged 13 through 17 live in their households at least 50% of the time, or gave an invalid answer, were removed since the rest of the survey was not answered
+* rows where the adults answered that they do not have teenagers aged 13 to 17 in their households where they are the parent or legal guardian of, or gave an invalid anwer, were removed since the rest of the survey is left unanswered
+* entries where the children were not 13-17 in age were removed
+
+```{r, echo=FALSE, eval=FALSE}
+# Data cleaning
+# -------------
+
+# Open file
+survey_data <- read.csv("data.csv", header = TRUE, sep = ",", na.strings = "NA")
+# dim(survey_data) would indicate 1642 rows
+
+# remove rows where caseID is not a valid number
+# first convert caseID from Factor into a character vector, then into integer. Invalid entries will turn into NA
+case_id <- as.integer(as.character(survey_data$CaseID))
+survey_data <- survey_data[!is.na(case_id), ]
+
+# dim(survey_data) would indicate 1638 rows
+#   ---> 4 rows removed. Checked with csv manually. Removed rows matches with rows with string instead of integer
+
+# remove rows where parent answered 0 or empty response to QS1
+# QS1: How many teenagers aged 13 through 17 live in your household at least 50% of the time?  [IF QS1=0, INSERT STANDARD CLOSE AND TERMINATE]
+survey_data <- survey_data[!is.na(survey_data$QS1), ]
+survey_data <- survey_data[survey_data$QS1 > 0, ]
+# 1109 rows left ---> 529 additional rows removed
+# did a counter-check with Excel to ensure that it's correct
+#  rows with non valid QS1 responses have all the other columns empty
+
+# remove rows where parent answered 0 or empty response to QS2
+# QS2: For how many of the teenagers aged 13 to 17 in your household are you the parent or legal guardian?   [IF QS2=0, INSERT STANDARD CLOSE AND TERMINATE]
+survey_data <- survey_data[!is.na(survey_data$QS2), ]
+survey_data <- survey_data[survey_data$QS2 > 0, ]
+# 1093 rows left ---> 16 additional rows removed
+# did a counter-check with Excel to ensure that it's correct
+#  rows with non valid QS2 responses have all the other columns empty
+
+# remove rows where teen's age is not between 13 and 17.
+survey_data <- survey_data[!is.na(survey_data$Child_age), ]
+survey_data <- survey_data[(survey_data$Child_age >= 13 & survey_data$Child_age <= 17), ]
+# 1081 rows left ---> 12 additional rows removed
+# did a counter-check with Excel to ensure that it's correct
+
+save(survey_data, file = 'cleaned_data.Rdata')
+
+# TO USE:
+# type load('cleaned_data.Rdata') at the start of your code..
+# But with a merged Rmd file, this is not needed
+```
+
+# 2 Descriptive Statistics
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r cars, echo=FALSE, message = FALSE}
+load('cleaned_data.Rdata')
+library(ggplot2)
+library(plyr)
+library(plotly)
+```
+
+####1) Number of female and male that took part in the survey
+
+```{r, echo = FALSE}
+
+#Number of Female and Males that took part in the survey
+survey_data$Child_gender<-as.character(survey_data$Child_gender)
+survey_data$Child_gender<-revalue(survey_data$Child_gender, c("1"="Male", "2"="Female"))
+ggplot(data=survey_data,aes(x=Child_gender))+geom_bar()+labs(title="Number of Females and Males that took part in the survey",x="Child Gender")
+```
+
+####2) Overall racial background pie chart
+
+```{r, echo = FALSE}
+
+#Create racial background table
+races2<-data.frame(race=c("White","Black or African American","American Indian or Alaska Native","Asian Indian","Chinese","Filipino","Japanese","Korean","Vietnamese","Other Asian","Native Hawaiian
+","Guamanian or Chamorro
+","Samoan
+","Other Pacific Islander ","Other"),n=c(sum(survey_data$QS10_1==1,na.rm=TRUE),sum(survey_data$QS10_2==1,na.rm=TRUE),sum(survey_data$QS10_3==1,na.rm=TRUE),sum(survey_data$QS10_4==1,na.rm=TRUE),sum(survey_data$QS10_5==1,na.rm=TRUE),sum(survey_data$QS10_6==1,na.rm=TRUE),sum(survey_data$QS10_7==1,na.rm=TRUE),sum(survey_data$QS10_8==1,na.rm=TRUE),sum(survey_data$QS10_9==1,na.rm=TRUE),sum(survey_data$QS10_10==1,na.rm=TRUE),sum(survey_data$QS10_11==1,na.rm=TRUE),sum(survey_data$QS10_12==1,na.rm=TRUE),sum(survey_data$QS10_13==1,na.rm=TRUE),sum(survey_data$QS10_14==1,na.rm=TRUE),sum(survey_data$QS10_15==1,na.rm=TRUE)))
+
+#Plot racial background pie
+plot_ly(data=races2, labels = races2$race, values = races2$n, type = "pie") %>%
+  layout(title = "Racial Background")
+
+```
+
+####3) Child age analysis
+
+```{r, echo = FALSE}
+#Child age
+ggplot(data=survey_data,aes(x=Child_age))+geom_bar()+labs(title="Children age",x="Child Age")
+ggplot(data=survey_data,aes(x=Child_age,fill=Child_gender))+geom_bar(position="dodge")+labs(title="Children age",x="Child Age")
+```
+
+####4) Most used social media platforms
+
+```{r, echo = FALSE}
+#Most used social media
+famous_sm<-data.frame(sm=c("Facebook","Twitter ","Instagram ","Google+","Snapchat ","Vine ","Tumblr "),n=c(sum(survey_data$K6_1==1,na.rm=TRUE),sum(survey_data$K6_2==1,na.rm=TRUE),sum(survey_data$K6_3==1,na.rm=TRUE),sum(survey_data$K6_4==1,na.rm=TRUE),sum(survey_data$K6_5==1,na.rm=TRUE),sum(survey_data$K6_6==1,na.rm=TRUE),sum(survey_data$K6_7==1,na.rm=TRUE)))
+
+ggplot(data=famous_sm, aes(x=sm, y=n)) +
+  geom_bar(position="dodge", stat="identity",fill="steelblue") + 
+  coord_flip() +labs(title="Usage of social media",x="Social Media",y="")
+```
+
+***
+# 3 Key findings on dataset
+
+## 3.1 Findings on relationship between teenagers and their parents
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+load("cleaned_data.Rdata")
+library(ggplot2)
+library(stargazer)
+library(gridExtra)
+library(scales)
+
+```
+### Introduction
+
+The dataset had a number of questions that were posed to parents, and a number of similar questions posed to their teens.  
+  
+A number of hypotheses were investigated using this dataset, to see if there were any relationships between parent's behaviours and the teen's behaviours with respect to social media and technology usage.  
+  
+For example, parents were asked if they monitor their child's location (could be considered as a form of stalking behaviour), and whether the teen monitored someone they were dating or had dated (similar stalking behaviour). This was an opportunity to investigate if teens were more likely to exhibit stalking behaviour if their parent did the same too.  
+  
+There were also questions on, for example, whether the parent blocks their child's phone usage and whether the child sends sexy/flirty messages. One of the hypotheses was thus whether the child would be more likely to send sexy/flirty messages if the parent blocks their child's phone usage. This could suggest that the parent's intervention might have this effect of triggering a rebellious behaviour (e.g. the stricter the parent, the more the child wants to be liberal).    
+
+<b>Methodology</b>  
+  
+As the dependent variables for most of the investigations were categorical variables (being responses of survey questions), logistic regression was used for regression analysis instead of linear regression. Linear regression would not have made sense as its coefficients would not translate into anything meaningful.  Dependent variables where the possible responses were "No" or "Yes", i.e. binary 0 or 1 response, were chosen for analysis.    
+  
+For logistic regression, the function <i>glm</i> was used, <i>model <- glm(y ~ x1 + x2 + .. + xk, data = dataframe, family = "binomial").</i>    
+  
+In most cases, the independent variables were also survey responses that could have more than 2 options. e.g. 1.Yes, a lot, 2.Yes, a little, 3.No.  Researching literature online, there were two possible approaches: (1) leave such variables as numeric (R would interpret them as continuous variables), or convert them as factors (R would interpret them as categorical variables, and regression would yield a coefficient for each possible option by creating something like dummy variables). Setting these variables as continuous variables might be contentious as the values of the variables were discrete in nature, and one could not necessarily say that they the possible values were equally spaced. It might be difficult to explain why one option had value 1, and not 2 or 50 etc. Hence on balance, these variables were converted to factor, even though this would increase the total number of variables used in the regression and inflate the R<sup>2</sup> value (AIC value for logistic regression).  All dependent and independent variables were reordered so that the higher the value, the higher the scale of the response. i.e. instead of 1 for Yes and 2 for No, it was reordered to 0 for No and 1 for Yes.          
+
+It's also important to note here that the models based on logistic regression had a different way of interpreting the coefficients
+
+The 5 questions, their corresponding hypotheses, and their associated findings are summarised in the section below.  
+  
+***
+
+### Executive summary of findings:
+  
+  
+<u>Effects of Parent and child behaviour, on teen's use of social media</u>
+
+The table below summarises the questions studied, the initial hypothesis, and findings from the data.  
+  
+Question                               |  Hypothesis   |  Findings
+-------------------------------------  |  ------------------------------------- | -------------------------------------
+1. Relationship between parents blocking their child's phone usage and their child's online behaviour on sexy/flirty pictures   |  If teens are rebellious, then the stricter the parent, the more the child wants to be liberal and may be more inclined to send flirty pictures | The regression results suggest that if parents took away their child's cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of other parent's strict behaviours: parent using parental controls to restrict child's use of his/her cell phone, and limiting the amount of time or times of day when child can go online   
+2.	Relationship on whether children self-censor their posts if they are friends with parents on social media   |   Teens whose parents are friends with them on social media will likely not post details of their relationship online  | There was no statiscally significant evidence to show that whether the parent was connected to their child on social media had an impact on child posting public affection for their significant other (proxy of whether child self-censors their posts). Upon adding more variables to the regression, the regression suggests that teens feeling pressure to only post content that makes them look good to others, were around 90% ("Yes, a little pressure") to 214% ("Yes, a lot pressure") more likely to post public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours (connecting with child on social media, being friends on Facebook, and checking child's social media profile) have an effect on teen's public affection behaviour.  This seems to suggest that teens are more influenced by their self-perception, rather than their parent's interventions, with respect to whether or not they post public affection towards his/her significant other.     
+3. Relationship between the parent using internet / social media themselves vs. them talking to their child about inappropriate online behavior | Parents are likely to be in a better position to advise their children on online behavior if they themselves use internet or are on social media | ....    
+4.	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend |  If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend | It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 190% more likely (at 90% confidence level) to access the phone of someone they were dating or used to date (child's stalking behaviour).  It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour).  In both cases, parent monitoring child's location seemed correlated with both child's stalking behaviours (accessing phone and tracking GPS location).      
+5. How more likely are children to trust their significant others and not have the urge to constantly monitor their activities if their parents are more trusting of them? | Children are likely to have healthier relationships and not have insecurities regarding their significant others if they are trusted by their parents | ....    
+
+
+***
+### Details of the questions investigated, and findings
+  
+#### Question 1  
+ 
+Question: Relationship between parents blocking their child's phone usage and their child's online behaviour on sexy/flirty pictures   
+  
+*Hypothesis: The stricter the parent, the more the child wants to be liberal.*  
+  
+<b>Background info - data cleaning and manipulation</b>
+
+For this question, the relevant dataset questions are:
+
+*[Dependent variable]*:  
+KDATE2_G: Have you ever done any of these things to let someone know you were attracted to them or interested in them? Have you sent them sexy or flirty pictures or videos of yourself?  
+1.Yes  
+2.No  
+  
+*[Independent variables]*:  
+P14_F: Have you ever used parental controls to restrict your child's use of his/her cell phone?  
+1.Yes  
+2.No  
+3.Does Not Apply  
+
+P13_D: Have you ever taken away your child's cell phone or internet privileges as punishment?  
+1.Yes  
+2.No  
+3.Does Not Apply  
+
+P13_E: Have you ever limited the amount of time or times of day when your child can go online?    
+1.Yes  
+2.No  
+3.Does Not Apply  
+
+<b> Data cleaning </b>  
+  
+Rows with invalid responses were removed by filling them with NA (e.g. if respondents were supposed to choose only options 1 or 2, but the data showed 3 or -1, these would be invalid responses).    
+  
+The order of the options were reversed, so that the higher number represents the "most" choice, and 0 for No or None. E.g. for if the question's original order of choices that respondents could choose from were:  
+  1.Yes,  2.No  
+The responses' order were re-ordered to:  
+  0.No,  1. Yes  
+  
+For questions with options as Yes/No/Does not apply, for respondents who responded Does not apply, the data record was removed (by filling it with NA), and order No as 0 and Yes as  1.  
+  
+
+```{r, echo = FALSE}
+data_specific <- data.frame(parent_controls_cell_phone = survey_data$P14_F, take_away_privileges = survey_data$P13_D, limit_time_online = survey_data$P13_E, y = survey_data$KDATE2_G)
+
+# set NA to invalid responses
+data_specific[ is.na(data_specific$parent_controls_cell_phone), ] <- NA
+data_specific[ is.na(data_specific$take_away_privileges), ] <- NA
+data_specific[ is.na(data_specific$limit_time_online), ] <- NA
+data_specific[ is.na(data_specific$y), ] <- NA
+
+# Remove data records where respondents replied "Does not apply"
+# hence remove those >2 instead of >3
+data_specific[ !is.na(data_specific$parent_controls_cell_phone) & (data_specific$parent_controls_cell_phone < 1 | data_specific$parent_controls_cell_phone > 2), ] <- NA  # needs the !is.na condition otherwise an error throws up
+data_specific[ !is.na(data_specific$take_away_privileges) & (data_specific$take_away_privileges < 1 | data_specific$take_away_privileges > 2), ] <- NA  # needs the !is.na condition otherwise an error throws up
+data_specific[ !is.na(data_specific$limit_time_online) & (data_specific$limit_time_online < 1 | data_specific$limit_time_online > 2), ] <- NA  # needs the !is.na condition otherwise an error throws up
+data_specific[ !is.na(data_specific$y) & (data_specific$y < 1 | data_specific$y > 2), ] <- NA  # needs the !is.na condition otherwise an error throws up
+
+# only retain records that replied YES or NO
+# convert from 1(YES)-2(NO)-3(does Not Apply)
+#           to 0(NO)-1(YES)
+data_specific$parent_controls_cell_phone <- abs(data_specific$parent_controls_cell_phone - 3) - 1
+data_specific$take_away_privileges <- abs(data_specific$take_away_privileges - 3) - 1
+data_specific$limit_time_online <- abs(data_specific$limit_time_online - 3) - 1
+# convert from 1(YES)-2(NO)
+#           to 0(NO)-1(YES)
+data_specific$y <- abs( data_specific$y - 3 ) - 1
+
+cat('after data cleaning, number of valid data records for analysis is: ', dim(na.omit(data_specific))[1])
+
+# convert to factor for regression
+data_specific$parent_controls_cell_phone <- factor(data_specific$parent_controls_cell_phone)
+data_specific$take_away_privileges <- factor(data_specific$take_away_privileges)
+data_specific$limit_time_online <- factor(data_specific$limit_time_online)
+
+data_specific$age <- survey_data$Child_age
+
+```
+
+<b>Findings</b>  
+    
+The regression between whether teen sends flirty messages, and the strictness of parents: (i) by controlling cell phone, (ii) taking away privileges, (iii) limiting time spent online, and (iv) age, is shown below.    
+  
+```{r, echo = FALSE}
+ml <- glm(y ~ parent_controls_cell_phone + take_away_privileges + limit_time_online + age, family = "binomial", data = na.omit(data_specific))
+
+summary(ml)
+
+exp(ml$coefficients)
+
+
+```
+  
+The take_away_privileges variable is statistically significant with 99% confidence level.  
+  
+The regression results suggest that if parents took away their child's cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of parent using parental controls to restrict child's use of his/her cell phone, and limiting the amount of time or times of day when  child can go online.  
+  
+Given that take_away_privileges was significant, the results suggest that parent's strictness behaviour did affect teen's behaviour on social media.  However, to be more conclusive, more aspects of parental strict behaviour, and more teen's possible rebellious behaviour, could be looked at if time permitted, and if more data was available.  For example, there was a lack of data on other proxies of rebellious behaviour or desire to be more liberal due to strictness of parent, besides sending flirty messages. Perhaps the survey could have included questions on whether the child had found alternative ways to access social media, such as using their friend's internet device or lie to parents that they were in school studying but were actually using a library computer to use social media.  With more data, the investigation could be more comprehensive to determine whether parents being strict had made the situation worse than if parents did not intervene.                 
+      
+  
+***
+  
+#### Question 2  
+ 
+Question:  Relationship on whether children self-censor their posts if they are friends with parents on social media.    
+  
+*Hypothesis: Teens whose parents are friends with them on social media will likely not post details of their relationship online.*  
+  
+<b>Background info - data cleaning and manipulation</b>
+
+For this question, the relevant dataset questions are:
+
+*[Dependent variable]*:  
+KRSNS3_C: When you use social media do you ever tell your boyfriend, girlfriend or significant other how much you like them in a way that other people can see?  
+1.Yes  
+2.No  
+  
+*[Independent variables]*:  
+P10: Are you connected with your child on any  social media sites?  
+1.Yes  
+2.No  
+  
+Similar data cleaning and manipulation operations were performed to get rid of invalid responses and to re-order values according from least to most.  
+  
+```{r, echo = FALSE}
+data_specific <- data.frame(parent_connect_child = survey_data$P10, teen_public_affection = survey_data$KRSNS3_C)
+
+# set NA to invalid responses
+data_specific[ is.na(data_specific$parent_connect_child), ] <- NA
+data_specific[ is.na(data_specific$teen_public_affection), ] <- NA
+
+data_specific[ !is.na(data_specific$parent_connect_child) & (data_specific$parent_connect_child < 1 | data_specific$parent_connect_child > 3), ] <- NA  # needs the !is.na condition otherwise an error throws up
+data_specific[ !is.na(data_specific$teen_public_affection) & (data_specific$teen_public_affection < 1 | data_specific$teen_public_affection > 3), ] <- NA  # needs the !is.na condition otherwise an error throws up
+
+# convert from 1(YES)-2(NO)
+#           to 0(NO)-1(YES)
+data_specific$parent_connect_child <- abs(data_specific$parent_connect_child - 3) - 1
+
+data_specific$teen_public_affection <- abs(data_specific$teen_public_affection - 3) - 1
+
+cat('after data cleaning, number of valid data records for analysis is: ', dim(na.omit(data_specific))[1])
+
+data_specific$age <- survey_data$Child_age
+
+
+```
+
+<b>Findings</b>  
+    
+```{r, echo = FALSE}
+
+cor.test(data_specific$parent_connect_child, data_specific$teen_public_affection)
+
+```
+
+As the p-value is 0.2742, there is no statistically significant evidence to show that the two variables are correlated.
+
+
+```{r, echo = FALSE}
+# convert to factor for regression
+data_specific$parent_connect_child <- factor(data_specific$parent_connect_child)
+
+ml <- glm(teen_public_affection ~ parent_connect_child + age, family = "binomial", data = na.omit(data_specific))
+summary(ml)
+exp(ml$coefficients)
+
+```
+
+The factor of parent connecting to child is not statistically significant.  
+  
+Further examination of the data:
+
+```{r, echo = FALSE}
+data_specific$teen_public_affection_factor <- factor(data_specific$teen_public_affection)
+
+ggplot(data = na.omit(data_specific)) + geom_bar(aes(x = parent_connect_child, fill = teen_public_affection_factor), position = "dodge")
+
+```
+
+It seems that when the parent is connected to the child (option 1 / "Yes"), the proportion of teens who express their affection for their significant other publicly, is higher.  
+
+A further a proportion test is done:  
+
+```{r}
+prob_table <- table(data_specific$parent_connect_child, data_specific$teen_public_affection)
+# inverse the columns, as success is option 2 for teen_public_affection
+prob_table <- cbind(prob_table[, 2], prob_table[, 1])
+prop.test(prob_table)
+
+```
+
+The p-value = 0.3402, which suggests that there is no statistically significant evidence to show that the two proportions differ.
+i.e. similar to the correlation tests, it suggests that the parent social media connection with the child, does not have significant effect on whether the teen shows public affection for significant other on social media.   
+
+Given these intial results, more variables which may relate to the hypothesis, were added to the regression model:  
+  
+KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others? 1.Yes, a lot,2.Yes, a little,3.No  
+*To test if child's self perception is more strongly correlated to his/her behaviour regarding posting public affection for significant other*
+
+P8:	Are you friends with your child on Facebook? 1.Yes, 2.No  
+*To see if parent being friends on Facebook (compared to a more generic social media platform as asked by question P10), is a significant factor*
+  
+P13_C:  Have you ever checked your child's profile on a social networking site?  1(YES)-2(NO)-3(does Not Apply)  
+*To see if parent checking child's profile is a significant factor. Perhaps if the child knows that his/her parent checks his/her profile, he/she will be more restrained in his/her post.*
+
+```{r, echo = FALSE}
+data_specific$feel_pressure <- survey_data$KFSNS1_E
+data_specific[ is.na(data_specific$feel_pressure), ] <- NA
+
+data_specific[ !is.na(data_specific$feel_pressure) & (data_specific$feel_pressure < 1 | data_specific$feel_pressure > 3), ] <- NA  # needs the !is.na condition otherwise an error throws up
+# Change from 1.Yes, a lot,2.Yes, a little,3.No 
+#         to 0.No, 1.Yes, a little, 2.Yes, a lot
+data_specific$feel_pressure <- abs(data_specific$feel_pressure - 4) - 1 
+
+data_specific$friends_facebook <- survey_data$P8
+data_specific[ is.na(data_specific$friends_facebook), ] <- NA
+
+data_specific[ !is.na(data_specific$friends_facebook) & (data_specific$friends_facebook < 1 | data_specific$friends_facebook > 2), ] <- NA  # needs the !is.na condition otherwise an error throws up
+# convert from 1(YES)-2(NO)
+#           to 0(NO)-1(YES)
+data_specific$friends_facebook <- abs(data_specific$friends_facebook - 3) - 1
+
+data_specific$check_child_profile <- survey_data$P13_C
+data_specific[ is.na(data_specific$check_child_profile), ] <- NA
+
+# Remove data records where respondents replied "Does not apply"
+# hence remove >2 instead of >3
+data_specific[ !is.na(data_specific$check_child_profile) & (data_specific$check_child_profile < 1 | data_specific$check_child_profile > 2), ] <- NA  # needs the !is.na condition otherwise an error throws up
+# only retain records that replied YES or NO
+# convert from 1(YES)-2(NO)-3(does Not Apply)
+#           to 0(NO)-1(YES)
+data_specific$check_child_profile <- abs(data_specific$check_child_profile - 3) - 1 
+
+cat('after data cleaning, number of valid data records for analysis is: ', dim(na.omit(data_specific))[1])
+
+
+data_specific$feel_pressure <- factor(data_specific$feel_pressure)
+data_specific$friends_facebook <- factor(data_specific$friends_facebook)
+data_specific$check_child_profile <- factor(data_specific$check_child_profile)
+
+```
+
+```{r, echo = FALSE}
+ml <- glm(teen_public_affection ~ parent_connect_child + age + feel_pressure + friends_facebook + check_child_profile, family = "binomial", data = na.omit(data_specific))
+summary(ml)
+exp(ml$coefficients)
+
+```
+
+The regression suggests that teens feeling pressure to only post content that makes them look good to others, were around 90% ("Yes, a little pressure") to 214% ("Yes, a lot pressure") more likely to post public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours (connecting with child on social media, being friends on Facebook, and checking child's social media profile) have an effect on teen's public affection behaviour.  
+
+This seems to suggest that teens are more influenced by their self-perception, rather than their parent's interventions, with respect to whether or not they post public affection towards his/her significant other.  
+  
+***
+  
+#### Question 3  
+
+Question:	Relationship between the parent using internet / social media themselves vs. them talking to their child about inappropriate online behavior.  
+    *Hypothesis: Parents are likely to be in a better position to advise their children on online behavior if they themselves use internet or are on social media*   
+
+
+<b>Background info - data cleaning and manipulation</b>
+
+For this question, the relevant dataset questions are:
+
+*[Dependent variable]*:  
+
+parents_advice_score: This is a calculated column, which is basically the sum of P15_B and P15_C. It is a measure of how often a parent talks to his/her child about appropriate/inappropriate online behavior in general.  
+Takes values between 2 (lowest) and 8 (highest)   
+
+P15_B: How often do you talk with your child about what is appropriate or inappropriateto share online?  
+1.Never  
+2.Rarely   
+3.Occasionally  
+4.Frequently  
+
+P15_C: How often do you talk with your child about what is appropriate or inappropriatecontent for them to be viewing online?   
+1.Never  
+2.Rarely   
+3.Occasionally  
+4.Frequently  
+
+*[Independent variables]*:  
+P2_A: Do you ever use Facebook?  
+1.Yes  
+2.No  
+
+P2_B: Do you ever use Twitter?  
+1.Yes  
+2.No  
+
+P2_C: Do you ever access the internet on a cell phone, tablet or other mobile handheld device, at least occasionally?   
+1.Yes  
+2.No  
+
+P2_D: Do you ever use some other social media site?    
+1.Yes  
+2.No  
+
+  
+<b> Data cleaning </b>  
+  
+Invalid responses were removed by filling them with NA (e.g. if respondents were supposed to choose only options 1 or 2, but the data showed 3 or -1, these would be invalid responses).    
+  
+The numeric coding was changed such that 0 represented a 'No' and 1 a 'Yes'. E.g. if the question's original order of choices that respondents could choose from were:  
+  1.Yes,  2.No  
+The responses' order were re-ordered to:  
+  0.No,  1. Yes  
+  
+For questions with options Yes/No/Does not apply, 'Does not apply' was treated as an NA.  
+
+For the calculated column, 'parents_advice_score', if one of the two variables being summed was missing, the other was multiplied by 2 to get the parents_advice_score. If both of the variables had missing values in a row, 'parents_advice_score' was also treated as a missing value.
+
+```{r, echo = FALSE}
+local_data4 <- data.frame(use_facebook = survey_data$P2_A, use_twitter = survey_data$P2_B, use_internet = survey_data$P2_C, use_other_social_media = survey_data$P2_D,  P15_B = survey_data$P15_B, P15_C = survey_data$P15_C, age = survey_data$Child_age, gender = survey_data$Child_gender)
+
+
+# Replace everything except 1 and 2 with NA
+local_data4$use_facebook[ !is.na(local_data4$use_facebook) & (local_data4$use_facebook < 1 | local_data4$use_facebook > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data4$use_twitter[ !is.na(local_data4$use_twitter) & (local_data4$use_twitter < 1 | local_data4$use_twitter > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data4$use_internet[ !is.na(local_data4$use_internet) & (local_data4$use_internet < 1 | local_data4$use_internet > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data4$use_other_social_media[ !is.na(local_data4$use_other_social_media) & (local_data4$use_other_social_media < 1 | local_data4$use_other_social_media > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+
+# Replace everything except 1 to 4 with NA
+local_data4$P15_B[ !is.na(local_data4$P15_B) & (local_data4$P15_B < 1 | local_data4$P15_B > 4)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data4$P15_C[ !is.na(local_data4$P15_C) & (local_data4$P15_C < 1 | local_data4$P15_C > 4)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+#Calculated Variable based on P15_B and P15_C
+local_data4$parents_advice_score = 2*rowMeans(local_data4[, c("P15_B", "P15_C")], na.rm = TRUE)
+
+
+# convert from 1(YES)-2(NO)
+#           to 0(NO)-1(YES)
+local_data4$use_facebook <- abs(local_data4$use_facebook - 2)
+local_data4$use_twitter <- abs(local_data4$use_twitter - 2)
+local_data4$use_internet <- abs(local_data4$use_internet - 2)
+local_data4$use_other_social_media <- abs(local_data4$use_other_social_media - 2)
+
+# convert from 1(Male)-2(Female)
+#           to 0(Female)-1(Male)
+local_data4$gender <- abs(local_data4$gender - 2)
+
+
+cat('After data cleaning, the number of valid data records for analysis is: ', dim(na.omit(local_data4))[1])
+
+
+```
+
+
+First, the correlations of the variables are looked at. Although Pearson's 
+
+```{r, echo = FALSE}  
+cor(local_data4[,"parents_advice_score"], local_data4[,c("parents_advice_score","use_facebook", "use_twitter", "use_other_social_media", "use_internet")], use = "pairwise.complete.obs")
+
+```
+
+Correlation tests were run on each of these and only the correlation of use_internet came out to be significantly different from 0 at 5% confidence level. Its results are shown below: 
+
+```{r, echo = FALSE}
+cor.test(local_data4$parents_advice_score, local_data4$use_internet)
+```
+
+
+```{r, echo = FALSE} 
+
+# convert binomial variables to factors for plotting etc.
+local_data4$gender <- factor(local_data4$gender, levels = c('0', '1'), labels = c('Female','Male'))
+
+local_data4$use_facebook <- factor(local_data4$use_facebook, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data4$use_twitter <- factor(local_data4$use_twitter, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data4$use_internet <- factor(local_data4$use_internet, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data4$use_other_social_media <- factor(local_data4$use_other_social_media, levels = c('0', '1'), labels = c('No','Yes'))
+
+```
+
+
+
+Plotting
+
+```{r, echo = FALSE}
+
+g1 <- ggplot(data = na.omit(local_data4[,c("gender","parents_advice_score")])) + geom_bar(aes(x = gender, fill = factor(parents_advice_score)), position = "fill") + scale_y_continuous(labels=percent)
+
+g2 <- ggplot(data = na.omit(local_data4[,c("age","parents_advice_score")])) + geom_bar(aes(x = age, fill = factor(parents_advice_score)), position = "fill") + scale_y_continuous(labels=percent)
+
+grid.arrange(g1, g2, ncol = 1)
+
+```
+
+
+Mean test for gender:
+
+
+```{r, echo = FALSE}
+
+t.test(x = local_data4$parents_advice_score[local_data4$gender == "Male"], y = local_data4$parents_advice_score[local_data4$gender == "Female"], alternative = "less")
+
+```
+
+
+Mean test for age:
+
+```{r, echo = FALSE}
+
+t.test(local_data4$parents_advice_score[local_data4$age == 13 | local_data4$age == 14 | local_data4$age == 15], local_data4$parents_advice_score[local_data4$age == 16 | local_data4$age == 17], alternative = "greater")
+
+```
+
+Divided into two clusters for testing whether there is a difference in means. 13-15 and 16-17.
+
+
+Initial Regression Model:
+
+```{r, echo = FALSE}
+#Initial Model
+m4 <- lm(parents_advice_score ~ use_facebook + use_twitter + use_internet + use_other_social_media + age + gender, data = local_data4)
+
+summary(m4)
+```
+
+
+Final Model:
+```{r, echo = FALSE}
+m4 <- lm(parents_advice_score ~ use_facebook + use_internet + age + gender, data = local_data4)
+
+
+summary(m4)
+```
+
+Only use_internet and age are significant at 5%. Parents talk less as children grow older.
+
+Facebook usage and Gender are close to being significant at 10% level. More data might make these two variables significant in this model as well.
+
+***
+
+#### Question 4  
+ 
+Question:	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend.   
+  
+*Hypothesis: If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend*    
+  
+<b>Background info - data cleaning and manipulation</b>
+
+For this question, the relevant dataset questions are:
+
+*[Dependent variables]*:  
+KR13_C: Have you ever done any of the following to someone you were dating or used to date. Accessed their mobile phone or online accounts     
+1.Yes  
+2.No  
+  
+KR13_F: Have you ever done any of the following to someone you were dating or used to date. Downloaded a GPS or tracking program to their cell phone without them knowing      
+1.Yes  
+2.No  
+  
+
+*[Independent variables]*:  
+P13_B: Have you ever checked which websites your child visited?   
+1.Yes  
+2.No  
+3.Does Not Apply  
+  
+P14_G: Have you ever used monitoring tools to track your child's location with his/her cell phone?   
+1.Yes  
+2.No  
+3.Does Not Apply  
+
+P14_H: Have you ever looked at the phone call records or messages on your child's phone?   
+1.Yes  
+2.No  
+3.Does Not Apply  
+  
+Similar data cleaning and manipulation operations were performed to get rid of invalid responses and to re-order values according from least to most.  
+  
+```{r, echo = FALSE}
+data_specific <- data.frame(
+  check_child_website = survey_data$P13_B, 
+  monitor_child_location = survey_data$P14_G, 
+  look_child_phone_records = survey_data$P14_H, 
+  access_date_phone = survey_data$KR13_C, 
+  track_date_loc = survey_data$KR13_F  )
+
+# set NA to invalid responses
+data_specific[ is.na(data_specific$check_child_website), ] <- NA
+data_specific[ is.na(data_specific$monitor_child_location), ] <- NA
+data_specific[ is.na(data_specific$look_child_phone_records), ] <- NA
+data_specific[ is.na(data_specific$access_date_phone), ] <- NA
+data_specific[ is.na(data_specific$track_date_loc), ] <- NA
+
+# Remove data records where respondents replied "Does not apply"
+# hence remove >2 instead of >3
+
+data_specific[ !is.na(data_specific$check_child_website) & (data_specific$check_child_website < 1 | data_specific$check_child_website > 2), ] <- NA  
+
+data_specific[ !is.na(data_specific$monitor_child_location) & (data_specific$monitor_child_location < 1 | data_specific$monitor_child_location > 2), ] <- NA  
+
+data_specific[ !is.na(data_specific$look_child_phone_records) & (data_specific$look_child_phone_records < 1 | data_specific$look_child_phone_records > 2), ] <- NA  
+
+data_specific[ !is.na(data_specific$access_date_phone) & (data_specific$access_date_phone < 1 | data_specific$access_date_phone > 2), ] <- NA  
+
+data_specific[ !is.na(data_specific$track_date_loc) & (data_specific$track_date_loc < 1 | data_specific$track_date_loc > 2), ] <- NA  
+
+# only retain records that replied YES or NO
+# convert from 1(YES)-2(NO)-3(does Not Apply)
+#           to 0(NO)-1(YES)
+
+data_specific$check_child_website <- abs(data_specific$check_child_website - 3) - 1
+
+data_specific$monitor_child_location <- abs(data_specific$monitor_child_location - 3) - 1
+
+data_specific$look_child_phone_records <- abs(data_specific$look_child_phone_records - 3) - 1
+
+# convert from 1(YES)-2(NO)
+#           to 0(NO)-1(YES)
+data_specific$access_date_phone <- abs(data_specific$access_date_phone - 3) - 1
+
+data_specific$track_date_loc <- abs(data_specific$track_date_loc - 3) - 1
+
+#data_specific$y <- data_specific$access_date_phone + data_specific$track_date_loc
+
+data_specific$age <- survey_data$Child_age
+
+
+cat('after data cleaning, number of valid data records for analysis is: ', dim(na.omit(data_specific))[1])
+
+```
+
+<b>Findings</b>  
+    
+```{r, echo = FALSE}
+# convert to factor for regression
+data_specific$check_child_website <- factor(data_specific$check_child_website)
+
+data_specific$monitor_child_location <- factor(data_specific$monitor_child_location)
+
+data_specific$look_child_phone_records <- factor(data_specific$look_child_phone_records)
+
+data_specific$gender <- factor(survey_data$Child_gender, labels = c('Male','Female'))
+```
+
+```{r, echo = FALSE}
+ml <- glm(access_date_phone ~ check_child_website + monitor_child_location + look_child_phone_records + gender + age, family = "binomial", data = na.omit(data_specific))
+summary(ml)
+exp(ml$coefficients)
+
+```
+
+It seems that if parent monitors their child's location (parent's stalking behaviour), teens are around 190% more likely (at 90% confidence level) to access the phone of someone they were dating or used to date (child's stalking behaviour).   
+
+
+```{r, echo = FALSE}
+ml <- glm(track_date_loc ~ check_child_website + monitor_child_location + look_child_phone_records + gender + age, family = "binomial", data = na.omit(data_specific))
+summary(ml)
+exp(ml$coefficients)
+
+```
+
+It seems that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour). It is interesting to note that the coefficient for this is much higher than the previous child stalking behaviour (accessing phone of significant other). This seems to indicate that a parent's behaviour would more strongly correlate to child's similar behaviour (both tracking location).    
+  
+In both cases, parent monitoring child's location seemed correlated with both child's stalking behaviours (accessing phone and tracking GPS location).  
+
+Given that only one of the three parent's stalking behaviour was statistically significally, a possible alternate hypothesis would be that teen's stalking behaviour was influenced more by his/her own characteristics. Various other questions regarding the teen was explored, and the associated hypothesis (i.e. why these questions were studied), are as listed below. 
+
+KR8: How frequently you expect to hear from your boyfriend/girlfriend/significant other in some way? 1.Hourly,2.Every few hours,3.Once a day,4.A few times a week,5.Once a week,6.Less often  
+
+* Hypothesis: the more frequent, the more likely teen would stalk his/her date as the teen may be more emotionally needy. 
+
+KR3_A: Have you ever searched for information online about someone you were currently dating or were interested in dating? 1(YES)-2(NO)
+
+KR3_C: Have you ever searched for information online about someone you dated or hooked up with in the past? 1(YES)-2(NO)
+
+* Hypothesis: These two questions are proxies of teen's desire to know more about their significant other that presumably the date(s) did not reveal, otherwise he/she would not be searching for more info. So if these questions were answered Yes, perhaps the more likely the teen would exhibit stalking behaviour.
+
+KF15: Have you ever had a fight with any of your friends that started because of something that happened online or because of a text? 1(YES)-2(NO)
+
+* Hypothesis: If the teen was emotionally less stable / unable to control emotions well, perhaps he/she may be more likely to stalk others (emotionally less controlled)
+
+KFSNS1_B: In general, does social media make you feel worse about your own life because of what you see from other friends on social media? 1.Yes, a lot,2.Yes, a little,3.No
+
+* Hypothesis: If teen feels worse, perhaps lower self-esteem may correlate to stalking behaviours (needs to always feel secure)
+
+KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others? 1.Yes, a lot,2.Yes, a little,3.No
+
+* Hypothesis: Perhaps if one feel frequently pressured to look good, he/she would also frequently check if his significant other was doing things that 'betray' him/her and hence more likely to stalk.
+
+
+```{r, echo = FALSE}
+
+#KR8: How frequentlyyou expect to hear from your boyfriend/girlfriend/significant other in some way? 1.Hourly,2.Every few hours,3.Once a day,4.A few times a week,5.Once a week,6.Less often
+data_specific$freq_expectn_SO <- survey_data$KR8
+data_specific[ is.na(data_specific$freq_expectn_SO), ] <- NA
+data_specific[ !is.na(data_specific$freq_expectn_SO) & (data_specific$freq_expectn_SO < 1 | data_specific$freq_expectn_SO > 6), ] <- NA  
+data_specific$freq_expectn_SO <- abs( data_specific$freq_expectn_SO - 7)
+
+data_specific$freq_expectn_SO <- factor(data_specific$freq_expectn_SO)
+
+#KR3_A: Have you ever searched for information online about someone you were currently dating or were interested in dating? 1(YES)-2(NO)
+data_specific$search_abt_date <- survey_data$KR3_A
+data_specific[ is.na(data_specific$search_abt_date), ] <- NA
+data_specific[ !is.na(data_specific$search_abt_date) & (data_specific$search_abt_date < 1 | data_specific$search_abt_date > 2), ] <- NA  
+data_specific$search_abt_date <- abs( data_specific$search_abt_date - 3) - 1
+
+data_specific$search_abt_date <- factor(data_specific$search_abt_date)
+
+#KR3_C: Have you ever searched for information online about someone you dated or hooked up with in the past? 1(YES)-2(NO)
+data_specific$search_abt_date_past <- survey_data$KR3_C
+data_specific[ is.na(data_specific$search_abt_date_past), ] <- NA
+data_specific[ !is.na(data_specific$search_abt_date_past) & (data_specific$search_abt_date_past < 1 | data_specific$search_abt_date_past > 2), ] <- NA  
+data_specific$search_abt_date_past <- abs( data_specific$search_abt_date_past - 3) - 1
+
+data_specific$search_abt_date_past <- factor(data_specific$search_abt_date_past)
+
+#KF15: Have you ever had a fight with any of your friends that started because of something that happened online or because of a text? 1(YES)-2(NO)
+data_specific$had_fight <- survey_data$KF15
+data_specific[ is.na(data_specific$had_fight), ] <- NA
+data_specific[ !is.na(data_specific$had_fight) & (data_specific$had_fight < 1 | data_specific$had_fight > 2), ] <- NA  
+data_specific$had_fight <- abs( data_specific$had_fight - 3) - 1
+
+data_specific$had_fight <- factor(data_specific$had_fight)
+
+
+# KFSNS1_B: In general, does social media make you feel worse about your own life because of what you see from other friends on social media? 1.Yes, a lot,2.Yes, a little,3.No
+data_specific$feel_worse <- survey_data$KFSNS1_B
+data_specific[ is.na(data_specific$feel_worse), ] <- NA
+data_specific[ !is.na(data_specific$feel_worse) & (data_specific$feel_worse < 1 | data_specific$feel_worse > 3), ] <- NA  
+data_specific$feel_worse <- abs( data_specific$feel_worse - 4) - 1
+
+data_specific$feel_worse <- factor(data_specific$feel_worse)
+
+#KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others? 1.Yes, a lot,2.Yes, a little,3.No
+data_specific$feel_pressured <- survey_data$KFSNS1_E
+data_specific[ is.na(data_specific$feel_pressured), ] <- NA
+data_specific[ !is.na(data_specific$feel_pressured) & (data_specific$feel_pressured < 1 | data_specific$feel_pressured > 3), ] <- NA  
+data_specific$feel_pressured <- abs( data_specific$feel_pressured - 4) - 1
+
+data_specific$feel_pressured <- factor(data_specific$feel_pressured)
+
+
+#ml <- glm(track_date_loc ~ check_child_website + monitor_child_location + look_child_phone_records + freq_expectn_SO + search_abt_date + search_abt_date_past + had_fight + feel_worse + feel_pressured + gender + age, family = "binomial", data = na.omit(data_specific))
+
+ml <- glm(track_date_loc ~ check_child_website + monitor_child_location + look_child_phone_records + feel_worse + gender + age, family = "binomial", data = na.omit(data_specific))
+
+summary(ml)
+exp(ml$coefficients)
+
+```
+
+After testing for these various questions, only the "feel worse" question was statistically significant. It is interesting to see that feeling a lot worse (feel_worse_2) had a much higher coefficient. So perhaps if one had lower self esteem, he/she would be more likely to stalk his/her significant other. It is also interesting to note that adding the feel_worse variable made the parent monitor_child_location variable no longer statistically significant.  
+  
+****
+
+#### Question 5
+
+Question: How more likely are children to trust their significant others and not have the urge to constantly monitor their activities if their parents are more trusting of them?  
+    *Hypothesis: Children are likely to have healthier relationships and not have insecurities regarding their significant others if they are trusted by their parents*  
+
+<b>Background info - data cleaning and manipulation</b>
+
+For this question, the relevant dataset questions are:
+
+*[Dependent variable]*:  
+KRSNS3_A: When you use social media do you ever keep track of where your boyfriend, girlfriend or significant other is or what they are doing? 
+1.Yes  
+2.No  
+  
+*[Independent variables]*:  
+P13_A: Have you ever used parental controls or other technological means of blocking, filtering or monitoring your child's online activities?  
+1.Yes  
+2.No  
+3.Does Not Apply  
+
+P13_B: Have you ever checked which websites your child visited?  
+1.Yes  
+2.No  
+3.Does Not Apply  
+
+P14_G: Have you ever used monitoring tools to track your child's location with his/her cell phone?   
+1.Yes  
+2.No  
+3.Does Not Apply  
+
+P14_H: Have you ever looked at the phone call records or messages on your child's phone?    
+1.Yes  
+2.No  
+3.Does Not Apply  
+
+  
+<b> Data cleaning </b>  
+  
+Similar data cleaning and manipulation operations were performed to get rid of invalid responses and to re-order values according from least to most.  
+
+```{r, echo = FALSE}
+local_data5 <- data.frame(used_parental_controls = survey_data$P13_A, checked_websites_visited = survey_data$P13_B, tracked_childs_location = survey_data$P14_G, tracked_calls_and_messages = survey_data$P14_H,  kid_tracking_significant_others_activity = survey_data$KRSNS3_A, age = survey_data$Child_age, gender = survey_data$Child_gender)
+
+# set NA to invalid responses
+#local_data5[ is.na(local_data5$used_parental_controls), ] <- NA
+#local_data5[ is.na(local_data5$checked_websites_visited), ] <- NA
+#local_data5[ is.na(local_data5$tracked_childs_location), ] <- NA
+#local_data5[ is.na(local_data5$tracked_calls_and_messages), ] <- NA
+#local_data5[ is.na(local_data5$kid_tracking_significant_others_activity), ] <- NA
+
+# Replace values where respondents replied "Does not apply" and everything except 1 and 2 with NA
+local_data5$used_parental_controls[ !is.na(local_data5$used_parental_controls) & (local_data5$used_parental_controls < 1 | local_data5$used_parental_controls > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data5$used_parental_controls[ !is.na(local_data5$checked_websites_visited) & (local_data5$checked_websites_visited < 1 | local_data5$checked_websites_visited > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data5$used_parental_controls[ !is.na(local_data5$tracked_childs_location) & (local_data5$tracked_childs_location < 1 | local_data5$tracked_childs_location > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data5$used_parental_controls[ !is.na(local_data5$tracked_calls_and_messages) & (local_data5$tracked_calls_and_messages < 1 | local_data5$tracked_calls_and_messages > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+local_data5$used_parental_controls[ !is.na(local_data5$kid_tracking_significant_others_activity) & (local_data5$kid_tracking_significant_others_activity < 1 | local_data5$kid_tracking_significant_others_activity > 2)] <- NA  # needs the !is.na condition otherwise an error throws up
+
+
+# convert from 1(YES)-2(NO)
+#           to 0(NO)-1(YES)
+local_data5$used_parental_controls <- abs(local_data5$used_parental_controls - 2)
+local_data5$checked_websites_visited <- abs(local_data5$checked_websites_visited - 2)
+local_data5$tracked_childs_location <- abs(local_data5$tracked_childs_location - 2)
+local_data5$tracked_calls_and_messages <- abs(local_data5$tracked_calls_and_messages - 2)
+local_data5$kid_tracking_significant_others_activity <- abs(local_data5$kid_tracking_significant_others_activity - 2)
+
+# convert from 1(Male)-2(Female)
+#           to 0(Female)-1(Male)
+local_data5$gender <- abs(local_data5$gender - 2)
+
+
+cat('After data cleaning, the number of valid data records for analysis is: ', dim(na.omit(local_data5))[1])
+
+```
+
+
+Correlation Matrix:
+
+```{r, echo = FALSE}
+cor(local_data5[,"kid_tracking_significant_others_activity"], local_data5[,c("kid_tracking_significant_others_activity","used_parental_controls", "checked_websites_visited", "tracked_childs_location", "tracked_calls_and_messages")], use = "pairwise.complete.obs")
+
+
+```
+
+Correlation tests were run to see if there is significant statistical evidence that the correlation is different from 0 for any of these variables. Only tracked_childs_location came out to be different from 0 and its results are shown below:
+
+```{r, echo = FALSE}
+cor.test(local_data5$kid_tracking_significant_others_activity, local_data5$tracked_childs_location)
+```
+
+
+```{r, echo = FALSE}
+
+# convert binomial variables to factors for plotting etc.
+local_data5$gender <- factor(local_data5$gender, levels = c('0', '1'), labels = c('Female','Male'))
+
+local_data5$used_parental_controls <- factor(local_data5$used_parental_controls, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data5$checked_websites_visited <- factor(local_data5$checked_websites_visited, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data5$tracked_childs_location <- factor(local_data5$tracked_childs_location, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data5$tracked_calls_and_messages <- factor(local_data5$tracked_calls_and_messages, levels = c('0', '1'), labels = c('No','Yes'))
+
+local_data5$kid_tracking_significant_others_activity <- factor(local_data5$kid_tracking_significant_others_activity, levels = c('0', '1'), labels = c('No','Yes'))
+
+```
+
+
+
+Plotting y
+
+```{r, echo = FALSE}
+
+g1 <- ggplot(data = na.omit(local_data5)) + geom_bar(aes(x = gender, fill = kid_tracking_significant_others_activity), position = "dodge")
+
+g2 <- ggplot(data = na.omit(local_data5)) + geom_bar(aes(x = gender, fill = kid_tracking_significant_others_activity), position = "fill") + scale_y_continuous(labels=percent)
+
+
+grid.arrange(g1, g2, ncol = 1)
+
+```
+
+Plotting x
+
+```{r, echo = FALSE}
+
+g3 <- ggplot(data = na.omit(local_data5)) + geom_bar(aes(x = gender, fill = used_parental_controls), position = "fill") + scale_y_continuous(labels=percent)
+
+g4 <- ggplot(data = na.omit(local_data5)) + geom_bar(aes(x = gender, fill = checked_websites_visited), position = "fill") + scale_y_continuous(labels=percent)
+
+g5 <- ggplot(data = na.omit(local_data5)) + geom_bar(aes(x = gender, fill = tracked_childs_location), position = "fill") + scale_y_continuous(labels=percent)
+
+g6 <- ggplot(data = na.omit(local_data5)) + geom_bar(aes(x = gender, fill = tracked_calls_and_messages), position = "fill") + scale_y_continuous(labels=percent)
+
+grid.arrange(g3, g4, g5, g6, ncol = 2)
+
+```
+
+
+Prop test:
+
+
+```{r, echo = FALSE}
+
+prop.test(table(local_data5$kid_tracking_significant_others_activity, local_data5$gender), alternative = "less")
+```
+
+Reveals that males are less likely to keep track of their significant other on social media. which might go against one's general perception, which usually is that females tend to trust their partners more. The behavior on social mediaappears to be otherwise howevver. It may also mean however that females tend to give more importance to their relationships than their counterparts in general, whereas men may give more time to other things n social media.
+
+Regression:
+
+```{r, echo = FALSE}
+#Initial Model
+m5 <- glm(kid_tracking_significant_others_activity ~ used_parental_controls + checked_websites_visited + tracked_childs_location + tracked_calls_and_messages + age + gender, data = local_data5, family = "binomial")
+
+```
+
+
+```{r, echo = FALSE}
+#Final Model after trying different combinations
+m5 <- glm(kid_tracking_significant_others_activity ~ checked_websites_visited + tracked_childs_location + age + gender, data = local_data5, family = "binomial")
+
+summary(m5)
+
+exp (m5$coefficients)
+```
+
+tracked child location is coming out significant at 1% and gender at 5%.
+
+However, it is important to note here that The number of people who use monitoring tools to track their child's location is not particularly big in this survey, as compared to the other ways used by parents to track their child. So further research would be needed to see if the effect holds in relatively larger samples.
+
+
+***
+
+
+### Conclusion and limitations
+
+The analysis was limited to dependent variables with binary (Yes/No) options. Ideally, dependent variables with more than 2 options should also be considered. A few interesting hypotheses were considered in that respect as well for further study. However, since that would have required an implementation of ordinal logistic regression, perhaps using the polr function in the MASS library, the analysis was kept to these relatively simpler models in the interest of time. With additional time, it would have been interesting to investigate and understand this further.   
+
+Also, since there were a lot of missing values in the dataset, some of the models were based on a relatively small sample. With a larger number of complete observations, it might have been possible to get more interesting relationships that would come out to be statistically significant, which might not have been apparent in this relatively small number of complete responses.  
+
+
+***
+
+## Possible future improvements
+
+A more robust analysis on the trends of the effect of parents' behaviours on teen's behaviours with regard to social media usage (e.g. stalking behaviour, defiance / urge to be liberalised etc) could be conducted if there was more data. Perhaps more questions could be asked to parent and teen in this aspect, to further tease out these possible relationships between parent and teen. More historical data, not just for one year, could be collated and analysed to discover if there were any trends, or whether these parent-child relationships were consistent over time, for 13-17 year old teenage groups across cohorts. It would also be interesting if the survey was conducted for older children, beyond 17 year olds, to test if certain hypotheses or relationships between parent and child persist beyond these ages. For example, if data suggest that parent's stalking behaviour positively correlate with teen's stalking behaviour, it would be interesting to investigate whether the teen's stalking behaviour persists even when he/she is, say, 25 years old. If so, it would suggest that parents should be educated to let them realise what appropriate interventions they should be making, and sometimes well-intended interventions, if executed in the wrong way, could perhaps lead to more permanent adverse impact on the teen.    
+
+Regarding the analyses used in this section, the approach was rather simplistic where, for instance, not much attention was paid to the behavior of the residuals in the models to ascertain whether they were fairly normal or not. Ideally, this should not be the case and should be looked into to make sure any important variables are not being missed out, which might have led to some biased coefficient estimates in the analysis. Also, when more ordered factor or continuous variables are included to test further relationships, perhaps some transformations of the variables can lead to better fitted models.  
+
+In addition, since many of the variables in the dataset have binary responses, a phi coefficient (from psych library) can be a better measure of looking at the interdependence of different variables in the initial testing phase, instead of simply using Pearson's correlations, which are primarily suited for continuous variables.  
+
+Finally, as mentioned earlier, getting a larger set of complete responses by increasing the initial sample size and the use of ordinal logistic regression for exploring some additional relationships can lead to the identification of some more interesting patterns and relationships in the dataset.  
+
+
+***
+
+## 3.2 Findings on relationship between teenagers and their close friends / significant others
+
+### Introduction
+
+The dataset had a number of questions there were posed to the teen about their close friends and relationships with their significant others. 
+  
+A number of hypotheses were investigated using this dataset, to see if there were any relationships between teen's behaviours and their relationship with close friends / significant others.  
+  
+For example, teens were asked about the amount of time they spend with their closest friends (either online or face-to-face) and what social media accounts do they own. This was an opportunity to investigate if social media accounts have an effect on the amount of time teenagers spend with their friends. 
+
+### Executive summary of findings:
+  
+  
+<u>Effects of Social Media to Teens Relation with Friends and Girlfriends/Boyfriends</u>
+
+The table below summarises the questions being studied, the initial hypothesis, and findings drew from the data.  
+  
+Question                               |  Hypothesis   |  Findings
+-------------------------------------  |  ------------------------------------- | -------------------------------------
+1. Number of friends and followers on social media varies by gender    |  Female teens seem more attached to social media rather than male, thus number of friends and followers of female users might be higher than male  | On average, female teens has more friends on Facebook and more followers on Instagram than male teens. Number of social media accounts that female teens use is also slightly higher than male. 
+2. Relationship between number of social media account teens have and number of electronic device teens possess with how much time they spend with their close friends   |  The more social media accounts/electronic devices a teen has then the more time he/she spend with their close friends | Test shows a positive correlation between the two variables. Teens tend to spend more time with their close friends - either face-to-face, by phone, or any other media - when they have more social media accounts or electronic devices. This might indicate that social media and electronic devices help teens to communicate or get along with their friends.     
+3.	Relationship between teens online dating experiences with their perception about other people's image in social media   |   Teens who think that people tend to show different side of themselves in the social media would be less likely to experience online dating  | Results show that there is a correlation between those two variables. One might think that people would be less likely to do online dating when they aware that other people is showing a different side of themselves. However, teens in fact do online dating even though they aware that other people might not be his/herself but yet never met the girlfriend/boyfriend in person.
+4.	Does teens send flirtatious messages or flirty picture or videos when they are attracted to someone?  |  Teens in age 13-17 will less likely to send flirty messages, pictures, or videos to someone they find attractive |  It turned out that teens with african american background and japanese background have a positive tendency to send flirtatious messages, pictures, or videos to show their interest to somebody else       
+5.	How would teens react when they break up with their girlfriend/boyfriend? Will they do such thing as block or unfriend ex in social media or even remove ex from phone address book?  |  Younger teenagers might do such things when they break up but this behavior will diminish as they get older  |  Result shows that female teens tend to unfriend/block her ex than male teens. It also can be seen that the older the teens then the more likely he/she to remove her ex from phone address book. This is a contrast of what one would expect to see before testing.   
+
+***
+### Details of the questions investigated, and findings
+
+#### Question 1
+
+1. Number of friends and followers on social media varies by gender   
+  
+*Hypothesis: Female teens seem more attached to social media rather than male, thus number of friends and followers of female users might be higher than male*  
+  
+<b>Background info</b>
+
+For this question, the relevant dataset questions are:  
+
+K6_1: Which of the following social media do you use? Facebook?    
+K6_2: Which of the following social media do you use? Twitter?    
+K6_3: Which of the following social media do you use? Instagram?   
+K6_4: Which of the following social media do you use? Google+?    
+K6_5: Which of the following social media do you use? Snapchat?    
+K6_6: Which of the following social media do you use? Vine?  
+K6_7: Which of the following social media do you use? Tumbler?  
+The options respondents had were:  
+1. Yes  
+2. No    
+Number of social media accounts a person has can be calculated by summing up all "Yes" answer  
+
+KFB1A: How many friends do you have on Facebook? The options respondents had were ranging from 0 to 9999   
+KFB1B: How many followers do you have on Instagram? The options respondents had were ranging from 0 to 9999
+KFB1C: How many followers do you have on Instagram? The options respondents had were ranging from 0 to 9999  
+Child_gender: Is your child (the user of social media) male or female? The options respondents had were:   
+1. Male   
+2. Female   
+
+
+<b>Findings</b>  
+
+Social media behavior may vary by gender. In general, female is assumed to be more active in social media rather than male. In term of friends or followers in social media, female indeed has more friends or followers compared to male.  
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable x1: "Child_gender" Q: Is your child (the user of social media) male or female? Answer = 1: Male, 2: Female
+# Variable y: "KFB1A" Q: How many friends do you have on Facebook? Answer = 0 to 9999
+
+data_specific <- data.frame(x1 = survey_data$Child_gender, y = survey_data$KFB1A)
+# Remove rows where there is any NA in one or both cell
+data_specific <- data_specific[ !is.na(data_specific$x1) & !is.na(data_specific$y), ]
+# Remove rows where rows for "x1" are not 1 to 2 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$x1 >= 1 & data_specific$x1 <= 2, ]
+# Remove rows where rows for "y" are not between 0 and 9999 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$y >= 0 & data_specific$y <= 9999, ]
+# Rename 1 for "Male" and 2 for "Female"
+data_specific$x1  <- ifelse(data_specific$x1 == 1, "Male", "Female")
+
+# Count number of female and male
+summary(as.factor(data_specific$x1))
+```
+
+Data from survey out of 249 female and 231 male shows that number of Facebook friends of female users is considerabably higher than number of Facebook friends that male users have.   
+
+```{r, echo = FALSE}
+
+ggplot(data_specific, aes(y = data_specific$y,x = data_specific$x1)) + geom_boxplot() + labs(x = " ", y = "Number of Facebook Friends")
+```
+
+Female on average has 304 friends on Facebook while male has 221 friends. The median is also slightly lower for male, which is only 100 friends while female has 56 more friends. It can be seen from the graph that female has wider range of Facebook friends, with maximum number of friends 5000. This must be because Facebook policy that limit friends of Facebook to a maximum of 5000. In this case, it is assumed that user will only have one Facebook account and will not create a new one for having friends more than 5000. From the t test it can be concluded that mean of Facebook friends of female teen users is higher than male teen users as the p-value is 0.03822 in 95% confidence interval. 
+
+Besides Facebook, there is another social media account that is currently popular among teenagers: Instagram. Data from survey out of 206 female and 112 male who uses Instagram shows that number of Instagram followers of female users is also higher than number of Instagram followers that male users have.
+
+This can be counted through survey questions that indicate the gender of social media user and the number of Instagram followers that particular user has.   
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable x1: "Child_gender" Q: Is your child (the user of social media) male or female? Answer = 1: Male, 2: Female
+# Variable y: "KFB1C" Q: How many followers do you have on Instagram? Answer = 0 to 9999
+
+data_specific <- data.frame(x1 = survey_data$Child_gender, y = survey_data$KFB1C)
+# Remove rows where there is any NA in one or both cell
+data_specific <- data_specific[ !is.na(data_specific$x1) & !is.na(data_specific$y), ]
+# Remove rows where rows for "x1" are not 1 to 2 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$x1 >= 1 & data_specific$x1 <= 2, ]
+# Rename 1 for "Male" and 2 for "Female"
+data_specific$x1  <- ifelse(data_specific$x1 == 1, "Male", "Female")
+# Remove rows where rows for "y" are not between 0 and 9999 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$y >= 0 & data_specific$y <= 9999, ]
+# Show number of female and male users
+summary(as.factor(data_specific$x1))
+```
+
+```{r, echo = FALSE}
+
+ggplot(data_specific, aes(y = data_specific$y,x = data_specific$x1)) + geom_boxplot() + labs(x = " ", y = "Number of Instagram Followers")
+```
+
+
+On average, female has more followers with a number of 417 compared to male with only 280 followers in Instagram. And again, female has a wider range of quartile than male. The lower quantile of female is 68 followers and the upper is 450 while male has a lower quantile with only 34 followers and the upper is around 200 followers lower than female's.  
+
+Instagram is slightly different than Facebook. Using Instagram let you have followers rather than friends. This means that user A can follow user B even though B does not follow A back. On Facebook, friends are the other users that are recognized or accepted as your friends. So if A is a friend of B then B must be a friend of A. This might explain why on average, number Instagram followers is higher than number of Facebook friends for both female and male users.   
+
+Average Number of Friends/Followers      |  Facebook  |  Instagram
+---------  |  --------- |  ---------
+Female User    | 304     |  417 
+Male User   |  221  |  280
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Calculate number of social media accounts a teen has
+
+# Variable x1: "K6_1" Q: Which of the following social media do you use? Facebook. Answer = 1: Yes 2: No
+# Variable x2: "K6_2" Q: Which of the following social media do you use? Twitter. Answer = 1: Yes 2: No
+# Variable x3: "K6_3" Q: Which of the following social media do you use? Instagram. Answer = 1: Yes 2: No
+# Variable x4: "K6_4" Q: Which of the following social media do you use? Google+. Answer = 1: Yes 2: No
+# Variable x5: "K6_5" Q: Which of the following social media do you use? Snapchat. Answer = 1: Yes 2: No
+# Variable x6: "K6_6" Q: Which of the following social media do you use? Vine. Answer = 1: Yes 2: No
+# Variable x7: "K6_7" Q: Which of the following social media do you use? Tumbler. Answer = 1: Yes 2: No
+# Variable s1: "Child_gender" Q: Is your child (the user of social media) male or female? Answer = 1: Male, 2: Female 
+
+data_specific <- data.frame(x1 = survey_data$K6_1, x2 = survey_data$K6_2, x3 = survey_data$K6_3, x4 = survey_data$K6_4, x5 = survey_data$K6_5, x6 = survey_data$K6_6, x7 = survey_data$K6_7, s1 = survey_data$Child_gender )
+# Remove rows where there is any NA in one or both cell
+data_specific <- data_specific[ !is.na(data_specific$x1) &!is.na(data_specific$x2) & !is.na(data_specific$x3) & !is.na(data_specific$x4) & !is.na(data_specific$x5) & !is.na(data_specific$x6) & !is.na(data_specific$x7) & !is.na(data_specific$s1), ]
+# Remove rows where rows for "x1/2/3/4/5/6/7" are not 1 to 2 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$x1 >= 1 & data_specific$x1 <= 2 & data_specific$x2 >= 1 & data_specific$x2 <= 2 & data_specific$x3 >= 1 & data_specific$x3 <= 2 & data_specific$x4 >= 1 & data_specific$x4 <= 2 & data_specific$x5 >= 1 & data_specific$x5 <= 2 & data_specific$x6 >= 1 & data_specific$x6 <= 2 & data_specific$x7 >= 1 & data_specific$x7 <= 2 , ]
+# Remove rows where rows for gender "s1" are not 1 to 2 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$s1 >=1 & data_specific$s1 <= 2, ]
+# Calculate total number of social media accounts that a person has
+# The answer for question "x1/2/3/4/5/6/7" is 1 for "Yes" and 2 for "No" thus convert this number into the the "real" number by multiplying sum of total by -1 and add it by 14 then add this into new variable "n"
+data_specific[ ,'n'] <- -1*(data_specific$x1 + data_specific$x2 + data_specific$x3 + data_specific$x4 + data_specific$x5 + data_specific$x6 + data_specific$x7) + 14
+# Rename 1 for "Male" and 2 for "Female"
+data_specific$s2 <- ifelse(data_specific$s1 == 1, "Male", "Female")
+```
+
+Plot below shows that most female has up to four social media accounts and male up to three accounts. The median for female is also higher than male as female has three social media account while male has two. This might explain why female tends to have more friends and followers in social media. People usually put link of all social medias that she/he has in the profile, for example, put link of his/her Snapchat account in Instagram profile. Thus the more social media accounts a person has, the more likely a person will be recognized online. 
+
+```{r, echo = FALSE}
+
+ggplot(data = data_specific, aes(x = data_specific$s2, y = data_specific$n)) + geom_boxplot() + labs(x = " ", y = "Number of social media accounts")
+
+mean(data_specific[data_specific[ ,'s2'] == "Female", 'n'])
+mean(data_specific[data_specific[ ,'s2'] == "Male", 'n'])
+```
+
+Number of Facebook friends that a teen has can be predicted using number of followers on Instagram and Twitter. Regression result shows that this regression formula has an R-squared of 0.3396 which means that the variation in number of Facebook friends can be explained as much as 33.9% by having the number of Instagram and Twitter followers.  
+
+```{r, echo = FALSE}
+
+data <- data.frame(FBFriends = survey_data$KFB1A, TwitterFol = survey_data$KFB1B, IGFol = survey_data$KFB1C) 
+reg = lm(data = data, FBFriends ~ IGFol+ TwitterFol)
+summary(reg)
+```
+
+This regression could be improved by having another continuous variables that might correlated with the number of Facebook friends in the next survey such as how much time spent on Facebook, how many friends he/she has in real life e.g. number of school mates, et cetera.
+
+
+#### Question 2
+
+2. Relationship between number of social media account teens have and number of electronic device teens possess with how much time they spend with their close friends   
+  
+*Hypothesis: The more social media accounts/electronic devices a teen has then the more time he/she spend with their close friends*  
+  
+<b>Background info</b>
+
+For this question, the relevant dataset questions are:
+
+KF12: Now, thinking again about friends, please think about the friend you are closest to someone you can talk to about things that are really important to you, but who is not a boyfriend or girlfriend. How often are you in touch with this person? The options respondents had were:     
+1. Many times a day   
+2. Once a day  
+3. A few times a week   
+4. Once a week   
+5. Once every few weeks   
+6. Less often   
+7. Do not have a close friend   
+
+In order to ease interpretation, it is better to convert the answer scale of the communication frequency question - 1 for the least and 7 for the most frequent. After converting the scale would change into the following:   
+1. Do not have a close friend  
+2. Less often  
+3. Once every few weeks   
+4. Once a week   
+5. A few times a week   
+6. Once a day  
+7. Many times a day 
+
+K6_1: Which of the following social media do you use? Facebook?   
+K6_2: Which of the following social media do you use? Twitter?  
+K6_3: Which of the following social media do you use? Instagram?   
+K6_4: Which of the following social media do you use? Google+?   
+K6_5: Which of the following social media do you use? Snapchat?    
+K6_6: Which of the following social media do you use? Vine?   
+K6_7: Which of the following social media do you use? Tumbler?    
+The options respondents had were:  
+1. Yes  
+2. No    
+Number of social media accounts a person has can be calculated by summing up all "Yes" answer  
+ 
+K3_A: Do you have a smartphone?  
+K3_B: Do you have a cell phone that is not a smartphone?  
+K3_C: Do you have a desktop or laptop computer?  
+K3_D: Do you have a tablet computer like an iPad, Samsung Galaxy or Kindle Fire?    
+K3_E: Do you have a gaming console like an Xbox, PlayStation or Wii?  
+The options respondents had were yes or no.  
+Calculate total type of electronic devices that a person possesses by summing up all "Yes" answer. Store the total number in a new variable call "x".   
+
+
+<b>Findings</b>  
+
+People frequently relates social media with friendship, particularly how it might affects time he/she spend with their close friends. People might be interested in this area since there were no social media in few years back and now it has fastly grown into so many kind of social medias such as Facebook, Snapchat, and  Google+.   
+
+In the survey, social media users are asked regarding how much time he/she spent with their close friends. This includes face-to-face, on the phone, text messaging and all the other ways you might talk to this person.   
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable y: "KF12" Q:Now, thinking again about friends, please think about the friend you are closest to someone you can talk to about things that are really important to you, but who is not a boyfriend or girlfriend. How often are you in touch with this person? This includes face-to-face, on the phone, text messaging and all the other ways you might talk to this person # Answer: 1: Many times a day 2: Once a day 3: A few times a week 4: Once a week 5: Once every few weeks 6: Less often 7: Do not have a close friend   
+
+# Variable x1/2/3/4/5/6/7: "K6_1/2/3/4/5/6/7" Q: How many social media accounts do you have (twitter facebook instagram google+ snapchat vine tumblr)
+
+# Input all related variables and convert KF12 answer become 1: Do not have a close friend ... 7: Many times a day by multiplying by -1 and adding +8
+data_specific <- data.frame(x1 = survey_data$K6_1, x2 = survey_data$K6_2, x3 = survey_data$K6_3, x4 = survey_data$K6_4, x5 = survey_data$K6_5, x6 = survey_data$K6_6, x7 = survey_data$K6_7, y = ((-1)* survey_data$KF12)+8 )
+# Remove all incomplete rows
+data_specific <- data_specific[ !is.na(data_specific$x1) &!is.na(data_specific$x2) &!is.na(data_specific$x3) &!is.na(data_specific$x4) &!is.na(data_specific$x5) &!is.na(data_specific$x6) &!is.na(data_specific$x7) & !is.na(data_specific$y), ]
+# Remove rows where rows for "x1/2/3/4/5/6/7" are not 1 to 2 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$x1 >= 1 & data_specific$x1 <= 2 & data_specific$x2 >= 1 & data_specific$x2 <= 2 & data_specific$x3 >= 1 & data_specific$x3 <= 2 & data_specific$x4 >= 1 & data_specific$x4 <= 2 & data_specific$x5 >= 1 & data_specific$x5 <= 2 & data_specific$x6 >= 1 & data_specific$x6 <= 2 & data_specific$x7 >= 1 & data_specific$x7 <= 2 , ]
+data_specific <- data_specific[ data_specific$y >= 1 & data_specific$y <= 7, ]
+# Calculate total number of social media accounts that a person has
+# The answer for question "x1/2/3/4/5/6/7" is 1 for "Yes" and 2 for "No" thus convert this number into the the "real" number by multiplying sum of total by -1 and add it by 14 then add this into new variable "n"
+data_specific[,'x'] <- -1*(data_specific$x1 + data_specific$x2 + data_specific$x3 + data_specific$x4 + data_specific$x5 + data_specific$x6 + data_specific$x7) + 14
+```
+  
+Correlation between total number of social media accounts a person has can be calculated against how often a person interact with their close friends through any media.  
+
+```{r, echo = FALSE}
+
+cor.test(data_specific$y,data_specific$x)
+```
+
+The correlation of those two variables is 0.256 and the p value from the correlation test is < 2.2e-16 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between 0.20 to 0.31 which also shows that there exists a positive relationship between number of social media accounts the child has and how much time he/she spends with his close friends. Thus the more social media accounts a person has then the more time he/she spends with his close friends, either face-to-face or communicate using the social media.  
+
+Another correlation that might exists is relationship between number of electronic devices type someone has with time spent with their close friends. This includes face-to-face communication and any other way someone may interact with their close friends.  
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable y: "KF12" Q:Now, thinking again about friends, please think about the friend you are closest to someone you can talk to about things that are really important to you, but who is not a boyfriend or girlfriend. How often are you in touch with this person? This includes face-to-face, on the phone, text messaging and all the other ways you might talk to this person # Answer: 1: Many times a day 2: Once a day 3: A few times a week 4: Once a week 5: Once every few weeks 6: Less often 7: Do not have a close friend   
+
+# Variable x1/2/3/4/5: "K3_A/B/C/D/E" Q: Do you have the following type of device?  
+# A: smartphone B: phone that is not a smartphone C: desktop or laptop computer D: tablet E: gaming console
+
+# Input all related variables and convert KF12 answer become 1: Do not have a close friend ... 7: Many times a day by multiplying by -1 and adding +8
+data_specific <- data.frame(x1 = survey_data$K3_A, x2 = survey_data$K3_B, x3 = survey_data$K3_C, x4 = survey_data$K3_D, x5 = survey_data$K3_E, y = ((-1)*survey_data$KF12)+8 )
+# Remove all incomplete rows
+data_specific <- data_specific[ !is.na(data_specific$x1) & !is.na(data_specific$x2) & !is.na(data_specific$x3) & !is.na(data_specific$x4) & !is.na(data_specific$x5) & !is.na(data_specific$y), ]
+# Remove rows where rows for "x1/2/3/4/5" are not 1 to 2 (i.e. remove invalid replies)
+data_specific <- data_specific[ data_specific$x1 >= 1 & data_specific$x1 <=2 & data_specific$x2 >= 1 & data_specific$x2 <=2 & data_specific$x3 >= 1 & data_specific$x3 <=2 & data_specific$x4 >= 1 & data_specific$x4 <=2 & data_specific$x5 >= 1 & data_specific$x5 <=2, ]
+# Remove row where y is not 1,2,3,4,5,6 or 7
+data_specific <- data_specific[ data_specific$y >= 1 & data_specific$y <= 7, ]
+# Convert "Yes" answer into 1 and "No" into 0 to ease calculation
+data_specific$x1 <- ifelse(data_specific$x1 == 1, 1, 0)
+data_specific$x2 <- ifelse(data_specific$x2 == 1, 1, 0)
+data_specific$x3 <- ifelse(data_specific$x3 == 1, 1, 0)
+data_specific$x4 <- ifelse(data_specific$x4 == 1, 1, 0)
+data_specific$x5 <- ifelse(data_specific$x5 == 1, 1, 0)
+# Calculate total number of electronic devices type that a person has
+data_specific[ ,'TotalDeviceType'] <- data_specific$x1 + data_specific$x2 + data_specific$x3 + data_specific$x4 + data_specific$x5
+```
+
+Test correlation between time child spent with close friends and number of electronic device type the child possesses:   
+
+```{r, echo = FALSE}
+
+cor.test(data_specific$y, data_specific$TotalDeviceType)
+```
+
+The correlation of those two variables is 0.146 and the p value from the correlation test is 1.812e-06 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between 0.09 to 0.20 which also shows that there exists a positive relationship between number of electronic devices type the child has and how much time he/she spends with his close friends. This might be because electronic devices such as smartphone or laptop help you to communicate more intense with your close friends and because gaming consoles might become a way to spend time together with close friends. 
+
+This findings actually can be improved to be more precise. It would be better if survey split up the question of time spent with close friends into two questions: "How much time spent with close friends face-to-face (e.g. having lunch together, playing basketball, playing games)?" and "How much time spent with close friends through any other way (e.g. text messaging, Facebook chats, phone calls)?"
+
+
+#### Question 3
+
+3. Relationship between teens online dating experiences with their perception about other people's image in social media   
+  
+*Hypothesis: Teens who think that people tend to show different side of themselves in the social media would be less likely to experience online dating*  
+  
+<b>Background info</b>
+
+For this question, the relevant dataset questions are:   
+
+KFSNS3_A: Do you agree or disagree with each of the following statements? People get to show different sides of themselves on social media that they can't show offline? The options respondents had were:
+1. Strongly agree   
+2. Agree   
+3. Disagree   
+4. Strongy disagree   
+
+KR2: Have you ever had a boyfriend, girlfriend or significant other that you first met online, but never met in person? The options respondents had were:   
+1. Yes  
+2. No    
+
+
+<b>Findings</b>  
+
+Social media is not only capturing child's relationship with friends but also his/her relationship with girlfriend/boyfriend. One that is interesting is their experiences finding boyfriend/girlfriend thorugh social media.  
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable x1: "KFSNS3_A" Q: Do you agree or disagree with each of the following statements? People get to show different sides of themselves on social media that they can't show offline? Answer = 1: Strongly agree 2: Agree 3: Disagree 4:Strongly disagree
+
+# Variable y: "KR2" Q: Have you ever had a boyfriend, girlfriend or significant other that you first met online, but never met in person? Answer = 1: Yes 2: No
+
+data_specific <- data.frame(x1 = survey_data$KFSNS3_A, y = survey_data$KR2)
+# Remove incomplete rows
+data_specific <- data_specific[ !is.na(data_specific$x1) & !is.na(data_specific$y), ]
+# Remove invalid replies as answer should be 1/2/3/4
+data_specific <- data_specific[ data_specific$x1 >= 1 & data_specific$x1 <= 4 , ]
+data_specific <- data_specific[ data_specific$y >= 1 & data_specific$y <= 4, ]
+```
+
+```{r, echo = FALSE}
+
+cor.test(data_specific$x1,data_specific$y)
+```
+
+The correlation between those variables turned out to be positive. Teens who perceived that other people show different side of themselves that they can not show offline is more likely to experience having relationship with somebody they met online and never met in person. This mean that they find a person more interesting online and hence fall for that person, or maybe one is more able to present the more charming side and true self on social media instead of meeting in person. 
+
+
+#### Question 4
+
+4. Does teens send flirtatious messages or flirty picture or videos when they are attracted to someone?   
+  
+*Hypothesis: Teens in age 13-17 will less likely to send flirty messages, pictures, or videos to someone they find attractive*  
+  
+<b>Background info</b>
+
+For this question, the relevant dataset questions are:   
+
+KDATE2_D: Have you ever done any of these things to let someone know you were attracted to them or interested in them? Have you sent them flirtatious messages? The options respondents had were:   
+1. Yes  
+2. No    
+
+KDATE2_G: Have you ever done any of these things to let someone know you were attracted to them or interested in them? Have you sent them sexy or flirty pictures or videos of yourself? The options respondents had were:  
+1. Yes  
+2. No    
+
+QS10_1-15: Please check one or more categories below to indicate what race(s) you consider yourself to be. 
+
+Child_gender: Is your child (the user of social media) male or female? The options respondents had were:   
+1. Male   
+2. Female   
+
+
+<b>Findings</b>  
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# KDATE2_D: Have you ever done any of these things to let someone know you were attracted to them or interested in them? Have you sent them flirtatious messages? The options respondents had were yes or no.   
+# KDATE2_G: Have you ever done any of these things to let someone know you were attracted to them or interested in them? Have you sent them sexy or flirty pictures or videos of yourself? The options respondents had were yes or no.  
+# QS10_1-15: Please check one or more categories below to indicate what race(s) you consider yourself to be. 
+# Child_gender: Is your child (the user of social media) male or female? The options respondents had were: 1. Male 2. Female   
+
+data_specific <- data.frame(a = survey_data$KDATE2_D,b = survey_data$KDATE2_G, x15 = survey_data$QS10_15, x1 = survey_data$QS10_1, x2 = survey_data$QS10_2, x3 = survey_data$QS10_3, x4 = survey_data$QS10_4, x5 = survey_data$QS10_5, x6 = survey_data$QS10_6, x7 = survey_data$QS10_7, x9 = survey_data$QS10_9, x10 = survey_data$QS10_10, x11 = survey_data$QS10_11,  x13 = survey_data$QS10_13, x14 = survey_data$QS10_14, y = survey_data$Child_gender)
+# Remove incomplete rows
+data_specific <- data_specific[ !is.na(data_specific$a) & !is.na(data_specific$b) & !is.na(data_specific$x1) & !is.na(data_specific$x2) & !is.na(data_specific$x3) & !is.na(data_specific$x4) & !is.na(data_specific$x5) & !is.na(data_specific$x6) & !is.na(data_specific$x7)  & !is.na(data_specific$x9) & !is.na(data_specific$x10) & !is.na(data_specific$x11)  & !is.na(data_specific$x13) & !is.na(data_specific$x14) & !is.na(data_specific$x15) & !is.na(data_specific$y), ]
+# Remove invalid replies
+data_specific <- data_specific[ data_specific$y >= 1 & data_specific$y <= 2, ]
+data_specific <- data_specific[ data_specific$a >= 1 & data_specific$a <= 2, ]
+data_specific <- data_specific[ data_specific$b >= 1 & data_specific$b <= 2, ]
+data_specific <- data_specific[ data_specific$x1 >= 0 & data_specific$x1 <= 1 & data_specific$x2 >= 0 & data_specific$x2 <= 1 & data_specific$x3 >= 0 & data_specific$x3 <= 1 & data_specific$x4 >= 0 & data_specific$x4 <= 1 & data_specific$x5 >= 0 & data_specific$x5 <= 1 & data_specific$x6 >= 0 & data_specific$x6 <= 1 & data_specific$x7 >= 0 & data_specific$x7 <= 1  & data_specific$x9 >= 0 & data_specific$x9 <= 1 & data_specific$x10 >= 0 & data_specific$x10 <= 1 & data_specific$x11 >= 0 & data_specific$x11 <= 1  & data_specific$x13 >= 0 & data_specific$x13 <= 1 & data_specific$x14 >= 0 & data_specific$x14 <= 1 & data_specific$x15 >= 0 & data_specific$x15 <= 1, ]
+# Change "Male" from 1 to 0 and "Female" from 2 to 1
+data_specific$y <- data_specific$y -1
+```
+
+Correlation between sending flirty messages and black/african american teens:  
+
+```{r, echo = FALSE}
+
+cor.test(data_specific$x2,data_specific$a)
+```
+
+Correlation between sending flirty messages and japanese teens:  
+
+```{r, echo = FALSE}
+
+cor.test(data_specific$x7,data_specific$a)
+```
+
+Correlation between sending flirty videos and japanese teens:  
+
+```{r, echo = FALSE}
+
+cor.test(data_specific$x7,data_specific$b)
+```
+
+The correlation of those two variables is -0.068 and the p value from the correlation test is 0.02801 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between -0.127 to -0.028. Correlation test results show that there are negative correlations - except african americans: need a 10% level test. This means that japanese and black/african american were more likely to send flirtatious pictures, videos and messages among all other race such as white, asian indian, chinese, filipino, korean, and some other races. 
+
+
+#### Question 5
+
+5. How would teens react when they break up with their girlfriend/boyfriend? Will they do such thing as block or unfriend ex in social media or even remove ex from phone address book?   
+  
+*Hypothesis: How would teens react when they break up with their girlfriend/boyfriend? Will they do such thing as block or unfriend ex in social media or even remove ex from phone address book?*  
+  
+<b>Background info</b>
+
+For this question, the relevant dataset questions are:   
+
+KRSNS4_A: Have you ever unfriended or blocked someone that you used to be in a relationship with? The options respondents had were:
+1. Yes  
+2. No    
+
+KRCELL_D: Have you ever removed someone that you used to be in a relationship with from your phone address book? The options respondents had were:   
+1. Yes  
+2. No    
+
+Child_gender: Is your child (the user of social media) male or female? The options respondents had were:  
+1. Male
+2. Female
+
+Child_age: How old is your child (user of social media)? The options respondents had were 13/14/15/16/17 years old.  
+
+
+<b>Findings</b>  
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable y1: "KRSNS4_A" Q: Have you ever unfriended or blocked someone that you used to be in a relationship with? Answer = 1: Yes 2: No
+# Variable s1: "Child_gender" Q: Q: Is your child (the user of social media) male or female? Answer = 1: Male, 2: Female
+
+data_specific <- data.frame(s1 = survey_data$Child_gender, y1 = survey_data$KRSNS4_A)
+data_specific <- data_specific[ !is.na(data_specific$s1) & !is.na(data_specific$y1), ]
+data_specific <- data_specific[ data_specific$s1 >= 1 & data_specific$s1 <= 2, ]
+data_specific$Gender  <- ifelse(data_specific$s1 == 1, "Male", "Female")
+data_specific <- data_specific[ data_specific$y1 >= 1 & data_specific$y1 <= 3, ]
+```
+
+Here is the graph showing responses of question "Have you ever unfriended or blocked someone that you used to be in a relationship with?" by gender:   
+
+```{r, echo = FALSE}
+
+ggplot(data = data_specific, aes(data_specific$y1)) + geom_bar(aes(fill = Gender), position = "dodge") + scale_x_discrete(labels = c("1" = "Yes", "2" = "No")) + labs(x = " ", y = "Count", title = "Have you ever unfriended/blocked your ex?")
+```
+
+It can be seen that male is more unlikely to unfriended or blocked an ex in social media. This might be because female teens are a little bit more emotional than male teens especially after breaking up.   
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable y1: "KRCELL_D" Q: Have you ever removed someone that you used to be in a relationship with from your phone address book? Answer = 1: Yes 2: No
+# Variable s1: "Child_gender" Q: Q: Is your child (the user of social media) male or female? Answer = 1: Male, 2: Female
+
+data_specific <- data.frame(s1 = survey_data$Child_gender, y1 = survey_data$KRCELL_D)
+# Remove incomplete rows
+data_specific <- data_specific[ !is.na(data_specific$s1) & !is.na(data_specific$y1), ]
+# Remove invalid replies
+data_specific <- data_specific[ data_specific$s1 >= 1 & data_specific$s1 <= 2, ]
+# Convert 1 into "Male" and 2 into "Female"
+data_specific$Gender  <- ifelse(data_specific$s1 == 1, "Male", "Female")
+# Remove invalid replies
+data_specific <- data_specific[ data_specific$y1 >= 1 & data_specific$y1 <= 3, ]
+```
+
+Again it can be seen that male has less probability to removed his ex from phone address book rather than female towards her ex.  
+
+This is another response of question "Have you ever removed someone that you used to be in a relationship with from your phone address book?":   
+
+```{r, echo = FALSE}
+ 
+ggplot(data = data_specific, aes(data_specific$y1)) + geom_bar(aes(fill = Gender), position = "dodge") + scale_x_discrete() + labs(x = " ", y = "Count", title = "Have you ever removed your ex from your phone book address?")
+
+# + scale_x_discrete(labs = c("1" = "Yes", "2" = "No"))
+```
+
+As responses to this question might differ by teens age, graph below shows how each of age group (13/14/15/16/17) responded. 
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+
+# Variable y1: "KRCELL_D" Q: Have you ever removed someone that you used to be in a relationship with from your phone address book? Answer = 1: Yes 2: No
+# Variable s1: "Child_age" Q: How old is your child (user of social media)? Answer = 13/14/15/16/17 years old
+
+data_specific <- data.frame(age = survey_data$Child_age, y1 = survey_data$KRCELL_D)
+# Remove incomplete rows
+data_specific <- data_specific[ !is.na(data_specific$age) & !is.na(data_specific$y1), ]
+# Remove invalid replies
+data_specific <- data_specific[ data_specific$y1 >= 1 & data_specific$y1 <= 2, ]
+data_specific$y1 <- ifelse(data_specific$y1 == 1, "Yes", "No")
+data_specific <- data_specific[ data_specific$age >= 13 & data_specific$age <= 17, ]
+# Convert variable y1 answer into factor to enable plotting
+data_specific$Answer <- factor(data_specific$y1)
+```
+
+```{r, echo = FALSE}
+
+ggplot(data = data_specific, aes(x = age)) + geom_bar(aes(fill = Answer), position = "dodge") + labs(x = "Age", y = "Count", title = "Have you ever removed your ex from your phone book address?")
+```
+
+Graph shows that only a few of teens in age 13-14 that ever experienced removing ex from phone address book, while older teens seem more likely to remove ex. Using correlation test between this particular question against teens age reveals that there is a negative correlation between those variables.  
+
+```{r, echo = FALSE}
+
+cor.test(survey_data$Child_age, survey_data$KRCELL_D) 
+```
+
+Pearson correlation test of those two variables is -0.11 and the p value from the correlation test is 0.04032 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between -0.214 to -0.005. It shows that older teenagers will be more likely to remove ex from phone address book rather than younger teenagers. 
+
+***
+
+### Limitations
+
+For some investigations which were done in this section, after filtering out invalid / irrelevant data, a very small sample is left, hence making the results not as convincing (for example question 4 on Japanese and African Americans. A much larger dataset is needed in order to provide larger sample after filtering to give strong evidence to the conclusions. 
+
+  
+***
+
+### Conclusion
+The findings are summarised as follows:
+
+- On average, female teens has more friends on Facebook and more followers on Instagram than male teens. Number of social media accounts that female teens use is also slightly higher than male.
+
+- Test shows a positive correlation between Teens spending more time with their close friends - either face-to-face, by phone, or any other media - and having more social media accounts or electronic devices. This might indicate that social media and electronic devices help teens to communicate or get along with their friends.
+
+- One might think that people would be less likely to do online dating when they aware that other people is showing a different side of themselves. Perhaps it is this different side on the internet that the other presents which caused one to fall in love with. 
+
+- It turned out that teens with African American background and Japanese background have a positive tendency to send flirtatious messages, pictures, or videos to show their interest to somebody else!
+
+- Result shows that female teens tend to unfriend/block her ex more than male teens. It also can be seen that the older the teens the more likely he/she is to remove her ex from phone address book. 
+
+***
+```{r, echo = FALSE}
+library(ggplot2)
+library(RColorBrewer)  
+library(reshape2)
+library(plyr)
+
+#Import complete questionnaire
+load("cleaned_data.Rdata") 
+teensdata<- survey_data
+```
+
+
+***
+## 3.3 Findings on self perception
+
+### Introduction
+
+In general the dataset offers a lot of questions focusing on the use, general behaviour and perception of social media by parents and their kids between the age of 13 and 17 years.
+
+The previous research was mainly focusing on quite "straight forward" approaches, leading to already interesting results. Therefore the following will focus on a more descriptive and deep dive approach. 
+
+Social media like Facebook or Instagram provide a platform that enables people to engage and participate in social activities in a way that is close to the normal social spectrum and furthermore increase the reach of every person to the limits of number of users. 
+
+This imposes new challenges for each individual, like defining a close network of peers, differentiating between online and real world relationships - if there is any difference. But one of the most interesting questions is, "How does social media change the way one perceives him/herself, enabling benchmarking against more than 1bn different people, compared to the wider circle of acquaintances 15 years ago?"
+
+According to Huffington Post Article there has been research conducted how Facebook has significant impact on one's feelings as well as how one's personality is reflected in certain behavioural patterns on social media. ([Article](http://www.huffingtonpost.com/dr-perpetua-neo/does-facebook-make-you-de_b_8474654.html))
+
+Given this, it seems logical to infer that the higher the exposure to social media, the higher the impact on feelings and in consequences on self-perception. Defining a variable to measure "exposure" especially not just expressed as hours spent on Facebook, but also how emotionally people might be engaged to their own social media network, seems to be tricky. Generally the quality or value added of all networks is strongly relying on members of the network, in this case this would be number of friends a person has on a certain social media platform.
+
+The basic assumption therefore is, that the number of friends should have a significant impact on the perceived value added of social media for each individual, therefore should have a positively correlating impact on exposure (the higher perceived value, the more time online and therefore the more exposure) and based on the assumptions stated in the article, this should have an impact on feelings and self-perception.
+
+Hypothesis: "The number of friends on Facebook resp. followers on Instagram, has a significant impact on the perceived value added of social media and consequently about the own life".
+
+This hypothesis was amended due to findings during the analysis for the following reason. The set of 5 questions, at least in part require a certain capability of self-reflection, emotional intelligence and general maturity. 
+1. In general, does social media make you feel more connected to information about what's going on in your friend's lives?
+2. In general, does social media make you feel worse about your own life because of what you see from other friends on social media?
+3. In general, does social media make you feel better connected to your friends feelings?
+4. In general, does social media make you feel pressure to post content that will be popular and get lots of comments or likes?
+5. In general, does social media make you feel pressure to only post content that makes you look good to others?
+
+Especially question 4 and 5 support this assumption. Therefore the hypothesis was amended to the following.
+
+Hypothesis: "The age and the number of friends on Facebook resp. followers on Instagram, have a significant impact on the perceived value added of social media and consequently about the own life".
+
+Given the holistic nature of the question the following description will predominantly focus on the approach and the rational behind certain decisions.
+
+Prior to the explanation of the initial approach, the following steps need to be carried out.
+
+
+###Loading & cleaning
+
+```{r, echo = FALSE}
+
+library(ggplot2)
+library(RColorBrewer)  
+library(reshape2)
+library(plyr)
+library(knitr)
+#Import data
+
+
+                      ######################################################
+                      ############                              ############
+                      ############    -Loading and cleaning-    ############
+                      ############                              ############
+                      ######################################################
+
+
+#load dataset as perception inluding the following columns questions:
+
+# Possible answers(1 = Yes, a lot 2 = Yes, a little 3 = No)
+# KFSNS1_A: In general, does social media make you feel\tmore connected to information about whats going on in your friends lives?
+# KFSNS1_B: In general, does social media make you feel worse about your own life because of what you see from other friends on social media?
+# KFSNS1_C: In general, does social media make you feel better connected to your friends feelings?
+# KFSNS1_D: In general, does social media make you feel pressure to post content that will be popular and get lots of comments or likes?
+# KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others?
+
+#Possible answers (numeric)
+# KFB1A:    How many friends do you have on Facebook?
+# KFB1B:    How many followers do you have on Twitter?
+# KFB1C:    How many followers do you have on Instagram
+#Child_age: How old is your child?
+
+#Possible answers (1 = Yes 2 = No)
+#KF13_D:    Do you spend time with your closest friend on a regular basis at any of these places? Online, such as places like social networking sites or gaming sites?
+
+#Possible answers (1 = Every day 2 = Every few days 3 = Less often 4 = Never)
+#KFR11_H:   How often do you spend time with friendsposting on social media sites?
+
+perception<-data.frame("KFSNS1_A"=as.character(teensdata[,"KFSNS1_A"]),"KFSNS1_B"=as.character(teensdata[,"KFSNS1_B"]),"KFSNS1_C"=as.character(teensdata[,"KFSNS1_C"]),"KFSNS1_D"=as.character(teensdata[,"KFSNS1_D"]),"KFSNS1_E"=as.character(teensdata[,"KFSNS1_E"]),"KF13_D" = teensdata[,"KF13_D"],"KFR11_H" = teensdata[,"KFR11_H"],"KFB1A"=teensdata[,"KFB1A"],"KFB1B"=teensdata[,"KFB1B"],"KFB1C"=teensdata[,"KFB1C"], "Child_age" = teensdata[,"Child_age"])
+
+############################### CLEANING ###############################
+
+#clean out NA answers (apparently NA in KFSNS1_A also have NA in the othe KFSNS1_ questions)
+perception<-perception[!is.na(perception[,"KFSNS1_A"]),]
+
+#all lines that have neither Fb nor Instagram are removed from the dataset -> 
+#WhatsApp doesn't qualify for the questions but is considered to be social media in the questionaire as well
+perception<- perception[!is.na(perception[,"KFB1A"]) | !is.na(perception[,"KFB1C"]),]
+
+#All relevant questions that are looked into
+questions_short<- c("KFSNS1_A", "KFSNS1_B", "KFSNS1_C", "KFSNS1_D","KFSNS1_E","KF13_D","KFR11_H")
+
+#transform to numeric values to be able to calculate correlation 
+for(i in 1:length(questions_short))
+{
+  perception[,i]<- as.character(perception[,i])
+  perception[,i]<- as.numeric(perception[,i])
+}
+
+#clean questions from negative values (-> not valid answers but not marked as NA)
+for(i in 1:5)
+{
+  perception<-perception[perception[,i] %in% c(1,2,3),]
+}
+
+
+
+```
+
+Besides the standardised global cleaning, which was done centrally for the purpose of the following analysis, there needs to be done further cleaning for the following reason:
+
+The survey assumes different media channels as "social media". With regards to the hypothesis not all considered media channel by the survey are accurate or applicable e.g. WhatsApp is predominantly a peer-to-peer instant messenger service and doesn't fulfil the criteria of social exposure within the network. Therefore, in the following the Facebook and Instagram are summarised as social media. 
+
+Besides cleaning out not valid responses to all examined questions, all respondents have to be removed that are neither using Facebook nor Instagram. This means that all responses that are considered to be valid for this analysis must have cumulated valid responses to the research questions and have to be at least present in one of the networks.
+
+This cleaning is crucial for the validity of later results, but unfortunately decreases the number of responses from initially <b>`r nrow(teensdata)`</b> to a final of <b>`r nrow(perception)`</b> . In general the comparably small number of responses in the survey, needs to be kept in mind at all times.
+
+
+
+
+
+    
+###Clustering
+
+The cleaned data set is now ready to be clustered. The selection of Facebook and Instagram as representative networks follows the rational of reciprocity, size, primary way of communication as well as popularity.
+
+Reciprocity:
+Reciprocal: The connection between members of Facebook (friends) are exclusively reciprocal and need to be requested/approved individually. Therefore there is no mismatch between people be able accessing own vs. accessing other peoples information/posts.
+
+Non-reciprocal: Instagram and Twitter offer non-reciprocal relationships, that can lead to significant mismatches between the information streams. Extreme examples of these patterns can be seen with celebrity profiles, sometime following 200 profiles, but being followed by several million people.
+
+Size: Facebook as well as Instagram are both extremely popular and established networks. Facebook, as the game changer in the early 2000s and Instagram as the innovator, predominantly moving communication from text to picture based. Based on the non-reciprocal character and picture-based communication, Instagram is extremely interesting with regards to exposure and subtle messages, pictures are more capable of including that written messages.
+
+Based on this logic, every respondent has an assigned 33% tercile with 3 being highest 1 lowest, based on the individual number of friends for Facebook and follower on Instagram.
+
+This seems to be in line with the hypothesis, since it can be concluded that respondents with a comparably higher number of friends/followers have comparably higher exposure to the network and therefore might have different views on certain things, like perception of other or pressure to post content.
+
+
+
+```{r,echo = FALSE}
+#Create even groups by 33% - terciles
+
+#Facebook 
+perception1<-perception[!is.na(perception[,"KFB1A"]),]
+KFB1A_bins<-unname(quantile(perception1[,"KFB1A"],c(.33, .66, 1)))
+#Twitter
+perception2<-perception[!is.na(perception[,"KFB1B"]),]
+KFB1B_bins<-unname(quantile(perception2[,"KFB1B"],c(.33, .66, 1)))
+#Instagram
+perception3<-perception[!is.na(perception[,"KFB1C"]),]
+KFB1C_bins<-unname(quantile(perception3[,"KFB1C"],c(.33, .66, 1)))
+
+
+
+#create clusters by tercile of #fried/followers within social media 
+#channel replace actual number with cluster
+for (i in 1:nrow(perception)){
+  if (!is.na(perception[i,"KFB1A"])){
+    if (perception[i,"KFB1A"]<=KFB1A_bins[1]){
+      perception[i,"KFB1A"]<-1
+    }else if (perception[i,"KFB1A"]<=KFB1A_bins[2]){
+      perception[i,"KFB1A"]<-2
+    }else{
+      perception[i,"KFB1A"]<-3
+    }
+  }
+  
+  if (!is.na(perception[i,"KFB1B"])){
+    if (perception[i,"KFB1B"]<=KFB1B_bins[1]){
+      perception[i,"KFB1B"]<-1
+    }else if (perception[i,"KFB1B"]<=KFB1B_bins[2]){
+      perception[i,"KFB1B"]<-2
+    }else{
+      perception[i,"KFB1B"]<-3
+    }
+  }
+  
+  if (!is.na(perception[i,"KFB1C"])){
+    if (perception[i,"KFB1C"]<=KFB1C_bins[1]){
+      perception[i,"KFB1C"]<-1
+    }else if (perception[i,"KFB1C"]<=KFB1C_bins[2]){
+      perception[i,"KFB1C"]<-2
+    }else {
+      perception[i,"KFB1C"]<-3
+    }
+  }
+}
+
+
+```
+```{r , echo=FALSE}
+
+#   Subset, where respondends use both, Facebook and Instagram - 
+#     this is used to compare some parameters to the big set (perception)
+#     number of respondends using both is 397
+FbIn<- perception[!is.na(perception[,"KFB1A"]) & !is.na(perception[,"KFB1C"]),]
+
+
+#the correlation between terciles among the different media is 0.46348
+#   Question: Do #friends on facebook and #followers of the same person belong to the same tercile?
+cor_FbIn<- cor(FbIn$KFB1A,FbIn$KFB1C)
+
+
+#This question: How often do you spend time with friendsposting on social media sites? 1.Every day,2.Every few days,3. Less often,4. Never
+#with var_FbInKFR11_H = 0.775 (subset) and var_perceptionKFR11_H = 0.7704 (set) 
+#the values are equally varying regardless of presence in different social media
+
+var_FbInKFR11_H<- var(FbIn$KFR11_H)
+var_perceptionKFR11_H<- var(perception$KFR11_H)
+
+
+#Calculate the variance of usage among the different terciles based on #friend/#follower
+# in subset and set
+var_usage_media<- data.frame()
+for(j in 1:3)
+{
+  var_usage_media[j,1]<- var(FbIn[FbIn[,8]== j,"KFR11_H"])
+  var_usage_media[j,2]<- var(perception[perception[,8]== j,"KFR11_H"] , na.rm = TRUE)
+  var_usage_media[j,3]<- var(FbIn[FbIn[,10]== j,"KFR11_H"])
+  var_usage_media[j,4]<- var(perception[perception[,10]== j,"KFR11_H"], na.rm = TRUE)
+}
+colnames(var_usage_media)<- c("Facebook_Sub","Facebook_Total", "Instagram_Sub", "Instagram_Total")
+
+# Generally the data of the subset and the set is moving in same direction with almost equal values
+# While the medium tercile has a stronger variance compared to the others
+
+```
+###Evaluation of usage
+
+To ensure the comparability of the different subsets clustered by tercile, limited analysis was conducted based on frequency of usage. The following assumptions were done:
+
+People with an account in both networks can be considered to be the most exposed individuals in the set. Therefore the variance of logins within this subset was compared to the variance of logins in the entire data set among the different clusters. Due to the "either or"" decision with regards to representation in the networks, the correlation between belonging to same cluster in the two different networks could only be conducted in the subset.
+
+
+There is a moderate correlation with: <b>`r cor_FbIn`</b>
+
+The frequency of usage was measured by question KFR11_H
+
+How often do you spend time with friends posting on social media sites? 1.Every day, 2.Every few days, 3. Less often, 4. Never
+
+The variance of logins in the set is <b>`r var_perceptionKFR11_H`</b>, in the subset <b>`r var_FbInKFR11_H`</b>, which leaves to the conclusion that logins of respondents with no clustering by tercile vary equally among the different sets.
+
+As shown below, the variance of logins varies stronger over the different clusters in the set compared to the subset, while Instagram has almost equally variation of logins.
+
+
+
+
+
+```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
+kable(var_usage_media)
+```
+
+
+###Excursion
+
+As initially mentioned many conclusions relevant for the final approach, evolved during the first approach of analysing the data. After cleaning the data and clustering it, a visual analysis for assumed patterns was conducted with so called heat maps. As mentioned the observed correlation based on the clustering would have been expected to be much clearer, even though some weak patterns, proving the initial thought could be observed, like respondents from cohort 3 feel in general more connected to information than others. Furthermore most of the respondents stating that they "feel worse about their lives" considered themselves to be highly connected to information.
+
+
+How do responses vary among the clusters by tercile?
+```{r, echo = FALSE,fig.align = "center", fig.width= 10, fig.height= 8}
+
+#create first plot based on cluster 
+y<-count(perception[!is.na(perception[,"KFB1A"]),], vars = c(as.character("KFSNS1_A"),"KFB1A"))
+ for(i in 1:nrow(y)){y[i,"KFSNS1_A"]<- as.character(y[i,"KFSNS1_A"])}
+ggplot(y, aes(x = KFSNS1_A, y = KFB1A, fill = freq)) + geom_tile() + scale_fill_gradient(low = "white",   high = "steelblue") + 
+  geom_text(data=y, aes(KFSNS1_A, KFB1A, label = freq), color="black", size=rel(5))+
+  labs(x = "KFSNS1_A: Feel connected to information", y = "tercile by Facebook friends", title = "")+
+  scale_x_discrete(labels = c("1"="Yes a lot", "2"="Yes,  a little ","3"="No"))
+```
+
+How do questions access to information and perceived of own life correlate?
+```{r, echo = FALSE,fig.align = "center", fig.width= 10, fig.height= 8}
+#create second plot question/question
+y1<-count(perception[!is.na(perception[,"KFB1A"]),], vars = c(as.character("KFSNS1_A"),"KFSNS1_B"))
+ for(i in 1:nrow(y1)){
+ y1[i,"KFSNS1_A"]<- as.character(y1[i,"KFSNS1_A"]) 
+ y1[i,"KFSNS1_B"]<- as.character(y1[i,"KFSNS1_B"])}
+
+ggplot(y1, aes(x = KFSNS1_A, y = KFSNS1_B, fill = freq)) + geom_tile() + scale_fill_gradient(low = "white",   high = "steelblue") + 
+  geom_text(data=y1, aes(KFSNS1_A, KFSNS1_B, label = freq), color="black", size=rel(5))+
+  labs(x = "KFSNS1_A: Feel connected to information", y = "KFSNS1_B: Feel bad about life", title = "")+
+  scale_x_discrete(labels = c("1"="Yes a lot", "2"="Yes,  a little ","3"="No"))+
+  scale_y_discrete(labels = c("1"="Yes a lot", "2"="Yes,  a little ","3"="No"))
+
+```
+
+
+<b>Conclusion:</b>
+
+The heat maps do neither indicate any significant relationships between the number of friends on Facebook, nor the perceived mood (feeling bad about live) with perceived value added of the network (feel connected to information).
+
+Especially the "Yes a little" received comparably high results, which might be due to the "neither nor" character of the answer. Based on these observations, the following two conclusions were drawn:
+
+
+- The results are not supporting the initially logical assumptions based on the mentioned research strong enough, but on the other hand the observations are too weak to allow rejecting the hypothesis
+- The complexity and intimacy of some questions might increase the likelihood of answering with a more or less perceived neutral answer like the "Yes a little". Especially the intimate questions like
+
+KFSNS1_B: In general, does social media make you feel worse about your own life because of what you see from other friends on social media?
+KFSNS1_D: In general, does social media make you feel pressure to post content that will be popular and get lots of comments or likes?
+KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others?
+
+receive comparably high negative or indifferent responses. Given the initial thoughts, this might be due to the age of the participants and there mentioned emotional capabilities. To evaluate whether the age has an impact on the way of responding to the dataset was re-clustered by age.
+
+
+```{r,echo = FALSE}
+######################################################
+############                              ############
+############          -Analysis-          ############
+############    -Correlation by age-      ############
+############                              ############
+######################################################
+
+
+#create subsets by age
+perception13<- perception[perception[,"Child_age"]== 13,]
+perception14<- perception[perception[,"Child_age"]== 14,]
+perception15<- perception[perception[,"Child_age"]== 15,]
+perception16<- perception[perception[,"Child_age"]== 16,]
+perception17<- perception[perception[,"Child_age"]== 17,]
+
+
+# create subsets of correlation by age group (to be recoded like lower example)
+############### total ###############
+
+# final df used for plotting
+cor_plot_age<- data.frame()
+#final df giving #observations per subset
+n_per_cluster_age<- data.frame()
+#rownames from perception df
+perception_rnames<- colnames(perception)
+
+#working subsets
+age_sub_age<- data.frame()
+age_sub_age_cor<-data.frame()
+
+#vectors for row and column names
+cor_sub_rnames<-c()
+cor_sub_rnames_break<-c()
+cor_plot_age_coln<-c()
+
+#columnnumber for cor_plot_age each column represents the results of a unique combination eg. Age = 13/tercileFriends = 1
+cn<-1
+
+
+######################################################
+############         -Main loop-          ############
+######################################################
+
+
+#gets the ages relevant for analysis 13-17 - 18 represents total
+for(i in 13:18)
+{
+    #creates subset with the applicable filters by age
+    if(i < 18) age_sub_age<-perception[perception[,"Child_age"] == i,]
+    else 
+      {
+        #take total set as working subset
+        age_sub_age<-perception
+        i<- "Total"
+      }
+    
+    #creates string that contains relevant information about analysed cohort
+    subsetname<- paste("Cohort",as.character(i))
+    
+    #populates df containing #observations in cohort subset
+    n_per_cluster_age[cn,1]<-subsetname
+    n_per_cluster_age[cn,2]<- nrow(age_sub_age)
+    
+    #assigns current cohort name to column names vector
+    cor_plot_age_coln[cn]<-subsetname
+    
+    #needed to calculate the different correlation (results in 5x5 square matrix)
+    for(m in 1:5)
+    {
+      for(n in 1:5)
+      {
+        #checks whether calculated cor equals 1.0 this would mean same question and creates square matrix
+        if(cor(age_sub_age[,m], age_sub_age[,n])>=0.99) age_sub_age_cor[m,n]<- 0.0
+        else age_sub_age_cor[m,n]<- cor(age_sub_age[,m], age_sub_age[,n])
+      }
+    }
+    
+    # needed to get all values below the trace of the matrix
+    #initialize row count at two 
+    s<-2
+    #initialise row counter for transposing values from square matrix in 1 column
+    p<-1
+    
+    #columns can start at 1
+    for(r in 1:ncol(age_sub_age_cor))
+    {
+      #gets all rows needs to start at because [1,1] equals 0.0000 first field of trace
+      #q gets increased by increasing s per total column iteration
+      for (q in s:5)
+      {
+        #cor_rownames[p]<-paste(colnames(cor_sum13[r]),"/","\n",colnames(cor_sum13[q+1]))
+        #gets the value for each unique combination
+        cor_plot_age[p,cn]<-age_sub_age_cor[q,r]
+        
+        #assigns question combination to vector
+        cor_sub_rnames_break[p]<-paste(as.character(perception_rnames[r]),"/","\n",as.character(perception_rnames[q]))
+        cor_sub_rnames[p]<-paste(as.character(perception_rnames[r]),"/",as.character(perception_rnames[q]))
+        
+        #increases row index for cor_plot1
+        p<- p+1
+      }
+      #increases starting index rows for inner loop
+      s<-s+1
+    }
+
+    #for each processed unique subset increase column index for cor_plot_age
+    cn<-cn+1
+}
+
+#assign column names and row names - delete last two items from df
+colnames(cor_plot_age)<-cor_plot_age_coln
+rownames(cor_plot_age)<-cor_sub_rnames
+cor_plot_age<- cor_plot_age[(-c(11,12)),]
+cor_sub_rnames_break<-cor_sub_rnames_break[-c(11,12)]
+```
+
+###Clustering by age
+
+The following results are solely clustered by age, regardless of the tercile for the networks. This was done to look at the impact of age on the results in an isolated way.
+
+The table shows all correlation for all different unique combination of questions per age cohort. It can be observed that the correlation for the same combination of questions slightly vary among the different cohorts. With <b>`r nrow(perception[perception[,"Child_age"]== 13,]) ` </b>,<b>`r nrow(perception[perception[,"Child_age"]== 14,]) ` </b>,<b>`r nrow(perception[perception[,"Child_age"]== 15,]) ` </b>,<b>`r nrow(perception[perception[,"Child_age"]== 16,]) ` </b> and <b>`r nrow(perception[perception[,"Child_age"]== 17,]) ` </b> the respondents are more or less evenly distributed among the different ages (increasing order starting with 13). Therefore the observation can be assumed to be valid, with not too many variations due to the different sample sizes.
+
+
+
+```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
+kable(cor_plot_age)
+```
+
+The plot confirms the previous observation of varying correlations over the different cohorts for the same pair of question. Looking at question pair <b>KFSNS1_D / KFSNS1_E</b> within cohort 13, its interesting to observe that there is a outstanding high correlation for this pair and only in this cohort(displayed in table above). This might be due to two contradictive assumptions. Questions D as well as E are aiming almost in the exact same direction but slightly differently phrased. Therefore the two possibilities are that either the difference between the questions was not correctly perceived, or given the case that E is a control question for D, 13 year olds are more honest and responding the same way to equal questions.
+
+```{r, echo= FALSE , message=FALSE ,fig.align = "center", fig.width= 10, fig.height= 8}
+
+#final plot for age cor with questions
+#1:5 is just for values excluding total results
+rownames(cor_plot_age)<-cor_sub_rnames_break
+cor_plot_age_t <- as.data.frame(t(cor_plot_age[,1:5]))
+cor_plot_age_t_melt<-melt(cor_plot_age_t[,1:10])
+colnames(cor_plot_age_t_melt)<-c("Question_combination", "Correlation")
+#plot
+ggplot(cor_plot_age_t_melt, aes(x = Question_combination, y = Correlation)) + 
+  geom_boxplot(notch = FALSE,outlier.colour = "red", outlier.shape = 1)+
+  ggtitle("Calculated correlations for individual\nquestion combination clustered by age")
+```
+
+
+#### Clustering by age, tercile and network
+
+Following the same logic as above, the analysis of correlations between different questions sets will be done based on a new clustering. The respondents are now clustered by their age, tercile of friends/followers and their responses split up by the two networks Facebook and Instagram.
+
+
+```{r, echo= FALSE , message=FALSE}
+
+######################################################
+############                              ############
+############          -Analysis-          ############
+############        -Correlation-         ############
+############       -Age & tercile-       ############
+############                              ############
+######################################################
+
+
+
+cor_plot_tercile_FB<- data.frame()
+cor_plot_tercile_IG<- data.frame()
+#sub working set
+age_sub_w_FB<- data.frame()
+age_sub_w_IG<- data.frame()
+
+cor_tercile_coln<-c()
+
+n_per_cluster_tercile<- data.frame()
+#columnnumber for cor_plot1 each column represents the results of a unique combination eg. Age = 13/tercileFriends = 1
+cn<-1
+#creates ages to look for
+for(i in 13:18)
+{
+  #creates terciles to look for
+  for(j in 1:3)
+  {
+    if(i == 18)
+    {
+      age_sub_sm_FB<-perception[!is.na(perception[,"KFB1A"]) & perception[, "KFB1A"] == j,]
+      age_sub_sm_IG<-perception[!is.na(perception[,"KFB1C"]) & perception[, "KFB1C"] == j,]
+      x<-"Total"
+    }
+    
+    else
+      {
+        age_sub_sm_FB<-perception[perception[,"Child_age"] == i & !is.na(perception[,"KFB1A"]) & perception[, "KFB1A"] == j,]
+        age_sub_sm_IG<-perception[perception[,"Child_age"] == i & !is.na(perception[,"KFB1C"]) & perception[, "KFB1C"] == j,]
+        x<-i
+      } 
+    
+    #creates subset with the applicable filters by age and tercile
+    
+    #print(summary(age_sub_sm))
+    n_per_cluster_tercile[cn,1]<-paste(as.character(x),"/",as.character(j))
+    n_per_cluster_tercile[cn,2]<- nrow(age_sub_sm_FB)
+    n_per_cluster_tercile[cn,3]<- nrow(age_sub_sm_IG)
+
+    cor_tercile_coln[cn]<-c(paste(as.character(x),"/",as.character(j)))
+    #needed to calculate the different correlation (results in 5x5 square matrix)
+    for(m in 1:5)
+    {
+      for(n in 1:5)
+      {
+        
+        #checks whether calculated cor equals 1.0 this would mean same question
+        if(cor(age_sub_sm_FB[,m], age_sub_sm_FB[,n])>=0.99) age_sub_w_FB[m,n]<- 0.0
+        else age_sub_w_FB[m,n]<- cor(age_sub_sm_FB[,m], age_sub_sm_FB[,n])
+        
+        if(cor(age_sub_sm_IG[,m], age_sub_sm_IG[,n])>=0.99) age_sub_w_IG[m,n]<- 0.0
+        else age_sub_w_IG[m,n]<- cor(age_sub_sm_IG[,m], age_sub_sm_IG[,n])
+      }
+    }
+    #print(age_sub_w)
+    # needed to get all values below the trace of the matrix
+    s<-2
+    p<-1
+    #get columns can start at 1
+    for(r in 1:ncol(age_sub_w_FB))
+    {
+      #gets all rows needs to start at because [1,1] equals 0.0000 first field of trace
+      for (q in s:5)
+      {
+        #cor_rownames[p]<-paste(colnames(cor_sum13[r]),"/","\n",colnames(cor_sum13[q+1]))
+        #gets the value for each unique combination
+        cor_plot_tercile_FB[p,cn]<-age_sub_w_FB[q,r]
+        cor_plot_tercile_IG[p,cn]<-age_sub_w_IG[q,r]
+        
+        #increases row index for cor_plot1
+        p<- p+1
+        
+      }
+      #increases starting index rows for inner loop
+      s<-s+1
+    }
+    #print(cor_plot1)
+  
+  #for each processed unique subset increase column index for cor_plot1
+  cn<-cn+1
+    
+  }
+  
+}
+
+
+######################################################
+############          -Finalising-        ############
+######################################################
+
+
+#Finalising returns
+rownames(cor_plot_tercile_FB)<-cor_sub_rnames
+colnames(cor_plot_tercile_FB)<-c(cor_tercile_coln)
+cor_plot_tercile_FB<- cor_plot_tercile_FB[-c(11,12),]
+
+rownames(cor_plot_tercile_IG)<-cor_sub_rnames
+colnames(cor_plot_tercile_IG)<-c(cor_tercile_coln)
+cor_plot_tercile_IG<- cor_plot_tercile_IG[-c(11,12),]
+
+
+
+## eliminating the most non representative cluster with the given constraints
+
+#Facebook & Instagram (remove lowest 10% by quantity of occurences)
+n_per_cluster_bins_FB<-unname(quantile(n_per_cluster_tercile[,"V2"],c(.1,1)))
+n_per_cluster_bins_IG<-unname(quantile(n_per_cluster_tercile[,"V3"],c(.1,1)))
+
+for (i in 1:nrow(n_per_cluster_tercile))
+  {
+  if (n_per_cluster_tercile[i,"V2"]<=n_per_cluster_bins_FB[1]){n_per_cluster_tercile[i,4]<-1}
+  else{n_per_cluster_tercile[i,4]<-2}
+  
+  if (n_per_cluster_tercile[i,"V3"]<=n_per_cluster_bins_IG[1]){n_per_cluster_tercile[i,5]<-1}
+  else{n_per_cluster_tercile[i,5]<-2}
+  }
+
+colnames(n_per_cluster_tercile)<- c("Cohort", "Occurences_FB", "Occurences_IG","tercile_Group_FB","tercile_Group_FB")
+
+```
+
+
+###Information about the different cluster
+
+The number of observations in each cluster is important with regards to the reliability of further conclusions based on this data set. 
+
+<b>Occurrences:</b> Displays the number of all respondents that have an account in the corresponding network and cluster
+
+<b>tercile:</b> Value 1 indicates that this cohort belongs to the lowest 10% quantile and therefore shouldn't be considered due to the small sample size
+
+
+```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
+kable(n_per_cluster_tercile)
+```
+
+```{r, echo= FALSE , message=FALSE ,fig.align = "center", fig.width= 10 , fig.height= 8}
+#Showing #number of responses per cohorte (age & tercile) (final)
+n_per_cluster_tercile_melt <- melt(n_per_cluster_tercile[,1:3], id = c("Cohort"))
+#plot
+ggplot(n_per_cluster_tercile_melt, aes(x = Cohort, y = value, fill = variable)) + 
+  geom_bar(position = "dodge", stat = "identity")+ 
+  labs(x = "Cluster(age & tercile)", y = "# of occurences", title = "")+
+  ggtitle("# of observations for each cluster\n Facebook/Instagram")
+```
+
+###Correlation per cluster based on Facebook
+
+Observations:
+
+Highest correlation: The highest correlations can be observed for questions (A/C, B/E, D/E, B/C). Starting with the already mentioned unique combination of D/E, which are closely related questions the following can be concluded from the plot. Looking at all counter examples, so same first question matched with D and E, it becomes obvious that those questions with exception of (B/D, B/E) are more or less equally correlating with the opposite question. Also taking the observation of (D/E) into consideration, it appears to be a valid conclusion that the respondents perceive these two questions similarly.
+
+The same accounts for the combination of (A/C) with both asking about the quality of connection to friends their feelings respectively.
+Left with (B/E) this is most likely the most interesting question combination, looking at the correlation between feeling "worse about your own life because of what you see from other friends on social media" and feeling the pressure to "only post content that makes you look good to others". This observation is strongly in line with the initially presented research discussed by the ([Huffington Post](http://www.huffingtonpost.com/dr-perpetua-neo/does-facebook-make-you-de_b_8474654.html)).
+
+The last interesting observation with regards to the variance of the values is combination (B/C). The observations vary from positively to negatively correlating, which might be explained with the following assumption. Some people might perceive it positively to be connected to friend's feelings, while other might get jealous and therefore absorb it as negative feeling.
+
+
+```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
+kable(cor_plot_tercile_FB)
+```
+
+```{r, echo= FALSE , message=FALSE ,fig.align = "center", fig.width= 10 , fig.height= 8}
+#age, tercile for Facebook
+rownames(cor_plot_tercile_FB)<-cor_sub_rnames_break
+cor_plot_tercile_FB_t<- as.data.frame(t(cor_plot_tercile_FB[,1:15]))
+cor_plot_tercile_FB_t_melt<-melt(cor_plot_tercile_FB_t[,1:10])
+colnames(cor_plot_tercile_FB_t_melt)<-c("Question_combination", "Correlation")
+#plot
+ggplot(cor_plot_tercile_FB_t_melt, aes(x = Question_combination, y = Correlation)) + 
+  geom_boxplot(notch = FALSE,outlier.colour = "red",outlier.size = 3 , outlier.shape = 1)+
+  geom_jitter(width = 0.3, shape = 2)+
+  ggtitle("Calculated correlations for individual question combination\n clustered by age, tercile of friends and Facebook")
+```
+
+###Correlation per cluster based on Instagram
+
+In general the patterns follow the same patterns as observed with Facebook. Looking at the previously identified questions, it occurs that for (B/E) Instagram has slightly more extreme values but a weaker variance, while mean and median are almost equally with 0.44/0.43 and 0.477/0.49 respectively (Instagram first).
+
+The situation for (B/C) is almost the same, with one extreme outlier having a negative correlation of -0.37 from the 15 year old with a lot of followers.
+
+```{r, echo= FALSE , results=TRUE,fig.align = "center", fig.width= 10}
+kable(cor_plot_tercile_IG)
+```
+
+```{r, echo= FALSE , message=FALSE ,fig.align = "center", fig.width= 10 , fig.height= 8}
+#age, tercile for Facebook
+rownames(cor_plot_tercile_IG)<-cor_sub_rnames_break
+#age, tercile for Instagram
+cor_plot_tercile_IG_t<- as.data.frame(t(cor_plot_tercile_IG[,1:15]))
+cor_plot_tercile_IG_t_melt<-melt(cor_plot_tercile_IG_t[,1:10])
+colnames(cor_plot_tercile_IG_t_melt)<-c("Question_combination", "Correlation")
+#plot
+ggplot(cor_plot_tercile_IG_t_melt, aes(x = Question_combination, y = Correlation), ymax = "blue") + 
+  geom_boxplot(notch = FALSE,outlier.colour = "red", outlier.shape = 1)+
+  geom_jitter(width = 0.3, shape = 2)+
+  ggtitle("Calculated correlations for individual question combination\n clustered by age, tercile of friends and Instagram")
+
+
+for(i in 1:10)
+  {
+  print(colnames(cor_plot_tercile_IG_t[i]))
+  print(summary(cor_plot_tercile_IG_t[,i]))
+  print(summary(cor_plot_tercile_FB_t[,i]))
+}
+```
+
+###Conclusion and limitations
+
+Given the initial size of the entire set and the necessary cleaning, the cluster ended up being relatively small to make statistically significant observations. Furthermore the selected independent variables number of friends/followers and age must be evaluated under the following assumptions. Looking at dependent variables that are deeply connected to the psyche of human beings, given the age and the along going presumable changes in life of the respondents, using only these two variables is a strong reduction of complexity to explain highly connected and complex occurrences that are influenced by numerous factors. 
+Second, given the time restriction and scope of the project a deeper analysis was simply not possible. The overall aim of this analysis was to show how clustering by relevant parameters might lead to different results and insights, which will be quickly recaptured.
+
+Starting with the initial heat maps, that only had limited explanatory power, the clustering by tercile of friends and age led to more detailed and differentiated results, clearly showing that the correlations between the responses to the questions are also relying on the cluster criteria. Furthermore as discussed above, there is a correlation between feeling "worse about your own life because of what you see from other friends on social media" and feeling the pressure to "only post content that makes you look good to others". This observation addresses exactly what the author of the article initially describes with regards to her experience. Given the mentioned limitations regarding the dataset as well as the complexity of the human mind, the hypothesis must be rejected from a statistical point of view, nevertheless the observation showed as well, that exposure expressed in number of friends has an impact on the perception of social media.
+
+***
+
+# 4 Final Conclusion
+
+The investigation of dataset had revealed several interesting relationships. Firstly, parents' behaviour seem to affect teen's behaviours. In particular, parents who stalk their teen by monitoring his/her location, has a positive effect on the teen also monitoring his/her significant other's location or accessing his/her phone. Secondly, the sample data showed differences between male and female teen's extent of social media usage. Female teens have more friends on Facebook and more followers on Instagram than male teens. Female teens also use more types of social media. Female teens tend to unfriend/block her ex than male teens. The data also suggests that social media and electronic devices help teens to communicate or get along with their friends. Lastly, clustering of responses to various survey questions showed that how social media impacted one's self-perception depended not only on the number of friends the teen had, but also their age. The older the teen, the more likely he/she would be able to comprehend questions that required more self-reflection. This hypothesis was supported by data which showed more variance by age for questions like "whether you feel worse about your own life because of what you see from other friends on social media". 
+
+Nonetheless, the dataset was relatively small (especially after data cleaning and given the number of variables studied), and hence a larger sample dataset would be required to have more conclusive results. In fact, if time permitted, studies could be done to see if trends were consistent over years (i.e. different cohorts of 13-17 year old teens), and other analysis could include investigating if such trends would persist beyond teenage years into adulthood. For example, longitudinal studies could be done to track whether the surveyed teens' responses to the same questions, such as feeling pressure to appear good, persist when they are in their 30s (i.e. it could be studied whether parents' influences had 'permanent' impact on the teen, or whether the impact was transient during teen years).
+
