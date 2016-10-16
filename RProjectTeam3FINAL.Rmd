@@ -33,7 +33,7 @@ In short, here are the several things which were done to eliminate invalid entri
 
 * rows where caseID was not a valid number was removed, by coverting caseID from factor to character to integer and eliminating the NA entries
 * rows where the adults answered they do not have teenagers aged 13 through 17 live in their households at least 50% of the time, or gave an invalid answer, were removed since the rest of the survey was not answered
-* rows where the adults answered that they do not have teenagers aged 13 to 17 in their households where they are the parent or legal guardian of, or gave an invalid anwer, were removed since the rest of the survey is left unanswered
+* rows where the adults answered that they do not have teenagers aged 13 to 17 in their households who they are the parent or legal guardian of, or gave an invalid anwer, were removed since the rest of the survey is left unanswered
 * entries where the children were not 13-17 in age were removed
 
 ```{r, echo=FALSE, eval=FALSE}
@@ -83,7 +83,7 @@ save(survey_data, file = 'cleaned_data.Rdata')
 
 ### 1.3 Categories of studies carried out  
 
-Given the wide breadth of questions in the survey, it would be interesting to investigate 3 main aspects of how social media relates to (i) parent and teenage child; (ii) teenage child and friends; (iii) teen's self-perception.  Each of these 3 areas have a set of questions and hypotheses which are studied using the data. They are covered in detail under section 3, with an executive summary of the questions, hypotheses and findings, preceding the subsection.  
+Given the wide breadth of questions in the survey, it would be interesting to investigate three main aspects of how social media relates to (i) parent and teenage child; (ii) teenage child and friends; (iii) teen's self-perception.  Each of these three areas have a set of questions and hypotheses which are studied using the data. They are covered in detail under section 3, with an executive summary of the questions, hypotheses and findings, preceding the subsection.  
 
 The three categories are:  
   
@@ -107,7 +107,7 @@ library(plyr)
 library(plotly)
 ```
 
-####1) Number of female and male that took part in the survey
+####1) Number of females and males that took part in the survey
 
 ```{r, echo = FALSE}
 
@@ -185,7 +185,7 @@ In most cases, the independent variables were also survey responses that could h
 
 It's also important to note here that the models based on logistic regression had a different way of interpreting the coefficients. Firstly, the dependent variable in logistic regression is its logarithmic transformation. So the exponential function was used first to convert the coefficients of independent variables. Then if the coefficient of a variable <i>x</i> was <i>(1+k)</i>, it meant that a one unit increase in variable <i>x</i> (or <i>x</i> being 1 instead of 0 in case of binary variables) will imply a <i>(k*100)%</i> more (or less if k is negative) chance of the dependent variable being true.  
 
-The 5 questions, their corresponding hypotheses, and their associated findings are summarised in the section below.  
+The five questions that were looked into in this section, their corresponding hypotheses, and associated findings are summarised in the section below.  
   
 ***
 
@@ -198,10 +198,10 @@ The table below summarises the questions studied, the initial hypothesis, and fi
   
 Question                               |  Hypothesis   |  Findings
 -------------------------------------  |  ------------------------------------- | -------------------------------------
-1. Relationship between parents blocking their child's phone usage and their child's online behaviour on sexy/flirty pictures   |  If teens are rebellious, then the stricter the parent, the more the child wants to be liberal and may be more inclined to send flirty pictures | The regression results suggest that if parents took away their child's cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of other parent's strict behaviours: parent using parental controls to restrict child's use of his/her cell phone, and limiting the amount of time or times of day when child can go online   
-2.	Relationship on whether children self-censor their posts if they are friends with parents on social media   |   Teens whose parents are friends with them on social media will likely not post details of their relationship online  | There was no statiscally significant evidence to show that whether the parent was connected to their child on social media had an impact on child posting public affection for their significant other (proxy of whether child self-censors their posts). Upon adding more variables to the regression, the regression suggests that teens feeling pressure to only post content that makes them look good to others, were around 90% ("Yes, a little pressure") to 214% ("Yes, a lot pressure") more likely to post public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours (connecting with child on social media, being friends on Facebook, and checking child's social media profile) have an effect on teen's public affection behaviour.  This seems to suggest that teens are more influenced by their self-perception, rather than their parent's interventions, with respect to whether or not they post public affection towards his/her significant other.     
+1. Relationship between parents blocking their child's phone usage and their child's online behaviour on sexy/flirty pictures   |  If teens are rebellious, then the stricter the parent, the more the child wants to be liberal and may be more inclined to send flirty pictures | The regression results suggest that if parents take away their child's cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of other strict behaviours of parents: parent using parental controls to restrict child's use of his/her cell phone, and limiting the amount of time or times of day when child can go online.   
+2.	Do children self-censor their posts if they are friends with parents on social media   |   Teens whose parents are friends with them on social media are not likely to post details of their relationship online  | There was no statiscally significant evidence to show whether the parent being connected to their child on social media had an impact on child posting public affection for their significant other (proxy of whether child self-censors their posts). Upon adding more variables to the regression, the regression suggested that teens feeling pressure to only post content that makes them look good to others, were around 90% ("Yes, a little pressure") to 214% ("Yes, a lot pressure") more likely to post public affection towards their significant other. There was no significant statistical evidence to show that various teen's parent's behaviours (connecting with child on social media, being friends on Facebook, and checking child's social media profile) have an effect on teen's public affection behaviour.  This seems to suggest that teens are more influenced by their self-perception, rather than their parent's interventions, with respect to whether or not they post public affection towards his/her significant other.     
 3. Relationship between the parent using internet / social media themselves vs. them talking to their child about inappropriate online behavior | Parents are likely to be in a better position to advise their children on online behavior if they themselves use internet or are on social media | The results show that parents who use at least some form of internet themselves are more likely to understand what goes on around and talk to their children about inappropriate online behavior. The parents_advice_score increses by 0.27 if the parent uses internet, which is about 0.17 standard deviations above the mean of parents_advice_score.  Similarly, parents are more likely to advise about inappropriate online behavior if their children are younger, and the parents_advice_score decreases by 0.15 on average for every one year increase in age. This makes sense as younger kids are less aware when they are new to internet. However, it can be argued that parents should pay just as much attention to older kids as they are more likely to engage in inappropriate behavior in their late teens.  
-4.	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend |  If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend | It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 190% more likely (at 90% confidence level) to access the phone of someone they were dating or used to date (child's stalking behaviour).  It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour).  In both cases, parent monitoring child's location seemed correlated with both child's stalking behaviours (accessing phone and tracking GPS location).      
+4.	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend |  If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend | It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 190% more likely (at 90% confidence level) to access the phone of someone they were dating or used to date (child's stalking behaviour).  Also, it appeared that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour).  In both cases, parent monitoring child's location seemed correlated with both child's stalking behaviours (accessing phone and tracking GPS location).      
 5. How more likely are children to trust their significant others and not have the urge to constantly monitor their activities if their parents are more trusting of them? | Children are likely to have healthier relationships and not have insecurities regarding their significant others if they are trusted by their parents | The results show that those kids whose parents use any monitoring tools track their locations are about 120% more likely to track their significant others' activities on social media on average. Also, interestingly, males are about 45% less likely on average to keep track of their significant others on social media. Perhaps a possible reason for this is that females tend to give more importance to their relationships than their male counterparts in general, and perhaps their happiness and well-being is more dependent upon how things are going in their intimate relationships, and hence more concerned to find out more about their significant other.      
 
 
@@ -304,7 +304,7 @@ exp(ml$coefficients)
   
 The take_away_privileges variable is statistically significant with 99% confidence level.  
   
-The regression results suggest that if parents took away their child's cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of parent using parental controls to restrict child's use of his/her cell phone, and limiting the amount of time or times of day when  child can go online.  
+The regression results suggest that if parents take away their child's cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of parent using parental controls to restrict child's use of his/her cell phone, and limiting the amount of time or times of day when  child can go online.  
   
 Given that take_away_privileges was significant, the results suggest that parent's strictness behaviour did affect teen's behaviour on social media.  However, to be more conclusive, more aspects of parental strict behaviour, and more teen's possible rebellious behaviour, could be looked at if time permitted, and if more data was available.  For example, there was a lack of data on other proxies of rebellious behaviour or desire to be more liberal due to strictness of parent, besides sending flirty messages. Perhaps the survey could have included questions on whether the child had found alternative ways to access social media, such as using their friend's internet device or lie to parents that they were in school studying but were actually using a library computer to use social media.  With more data, the investigation could be more comprehensive to determine whether parents being strict had made the situation worse than if parents did not intervene.                 
       
@@ -313,9 +313,9 @@ Given that take_away_privileges was significant, the results suggest that parent
   
 #### Question 2  
  
-Question:  Relationship on whether children self-censor their posts if they are friends with parents on social media.    
+Question:  Do children self-censor their posts if they are friends with parents on social media.    
   
-*Hypothesis: Teens whose parents are friends with them on social media will likely not post details of their relationship online.*  
+*Hypothesis: Teens whose parents are friends with them on social media are not likely to post details of their relationship online.*  
   
 <b>Background info - data cleaning and manipulation</b>
 
@@ -390,7 +390,7 @@ ggplot(data = na.omit(data_specific)) + geom_bar(aes(x = parent_connect_child, f
 
 It seems that when the parent is connected to the child (option 1 / "Yes"), the proportion of teens who express their affection for their significant other publicly, is higher.  
 
-A further a proportion test is done:  
+A proportion test is done to test this further:  
 
 ```{r}
 prob_table <- table(data_specific$parent_connect_child, data_specific$teen_public_affection)
@@ -458,9 +458,9 @@ exp(ml$coefficients)
 
 ```
 
-The regression suggests that teens feeling pressure to only post content that makes them look good to others, were around 90% ("Yes, a little pressure") to 214% ("Yes, a lot pressure") more likely to post public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours (connecting with child on social media, being friends on Facebook, and checking child's social media profile) have an effect on teen's public affection behaviour.  
+The regression suggests that teens feeling pressure to only post content that makes them look good to others, are around 90% ("Yes, a little pressure") to 214% ("Yes, a lot pressure") more likely to post public affection towards their significant other. There is no significant statistical evidence to show that various teen's parent's behaviours (connecting with child on social media, being friends on Facebook, and checking child's social media profile) have an effect on teen's public affection behaviour.  
 
-This seems to suggest that teens are more influenced by their self-perception, rather than their parent's interventions, with respect to whether or not they post public affection towards his/her significant other.  
+This seems to suggest that teens are more influenced by their self-perception, rather than their parent's interventions, with respect to whether or not they show public affection towards their significant other on social media.  
   
 ***
   
@@ -479,13 +479,13 @@ For this question, the relevant dataset questions are:
 parents_advice_score: This is a calculated column, which is basically the sum of P15_B and P15_C. It is a measure of how often a parent talks to his/her child about appropriate/inappropriate online behavior in general.  
 Takes values between 2 (lowest) and 8 (highest)   
 
-P15_B: How often do you talk with your child about what is appropriate or inappropriateto share online?  
+P15_B: How often do you talk with your child about what is appropriate or inappropriate to share online?  
 1.Never  
 2.Rarely   
 3.Occasionally  
 4.Frequently  
 
-P15_C: How often do you talk with your child about what is appropriate or inappropriatecontent for them to be viewing online?   
+P15_C: How often do you talk with your child about what is appropriate or inappropriate content for them to be viewing online?   
 1.Never  
 2.Rarely   
 3.Occasionally  
@@ -779,7 +779,7 @@ exp(ml$coefficients)
 
 ```
 
-It seems that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour). It is interesting to note that the coefficient for this is much higher than the previous child stalking behaviour (accessing phone of significant other). This seems to indicate that a parent's behaviour would more strongly correlate to child's similar behaviour (both tracking location).    
+It seems that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they are dating or used to date (child's stalking behaviour). It is interesting to note that the coefficient for this is much higher than the previous child stalking behaviour (accessing phone of significant other). This seems to indicate that a parent's behaviour would more strongly correlate to child's similar behaviour (both tracking location).    
   
 In both cases, parent monitoring child's location seemed correlated with both child's stalking behaviours (accessing phone and tracking GPS location).  
 
@@ -805,7 +805,7 @@ KFSNS1_B: In general, does social media make you feel worse about your own life 
 
 KFSNS1_E: In general, does social media make you feel pressure to only post content that makes you look good to others? 1.Yes, a lot,2.Yes, a little,3.No
 
-* Hypothesis: Perhaps if one feel frequently pressured to look good, he/she would also frequently check if his significant other was doing things that 'betray' him/her and hence more likely to stalk.
+* Hypothesis: Perhaps if one feels frequently pressured to look good, he/she would also frequently check if his significant other was doing things that 'betray' him/her and hence is more likely to stalk.
 
 
 ```{r, echo = FALSE}
@@ -1058,7 +1058,7 @@ exp (m5$coefficients)
 
 The results show that both tracked_childs_location and gender are significant at 5%. The coefficients reveal that those kids whose parents use any monitoring tools track their locations are about 120% more likely to track their significant others' activities on social media on average. It is important to note however that the number of people who use monitoring tools to track their child's location is not particularly big in this survey, as compared to the other ways used by parents to track their child. So further research would be needed to see if the effect holds in relatively larger samples.  
 
-Also, interestingly, males are about 45% less likely on average to keep track of their significant others on social media. This might go against our general perception, which usually is that females tend to trust their partners more. Perhaps a possible reason for this is that females tend to give more importance to their relationships than their male counterparts in general, and perhaps their happiness and well-being is more dependent upon how things are going in their intimate relationships, and hence more concerned to find out more about their significant other. Again, more research / data outside this dataset would be helpful to further investigate this result.  
+Also, interestingly, males are about 45% less likely on average to keep track of their significant others on social media. This might go against our general perception, which usually is that females tend to trust their partners more. Perhaps a possible reason for this difference is that females tend to give more importance to their relationships than their male counterparts in general, and perhaps their happiness and well-being is more dependent upon how things are going in their intimate relationships, and hence more concerned to find out more about their significant other. Again, more research / data outside this dataset would be helpful to further investigate this result.  
 
 
 ***
@@ -1094,7 +1094,7 @@ The dataset had a number of questions there were posed to the teen about their c
   
 A number of hypotheses were investigated using this dataset, to see if there were any relationships between teen's behaviours and their relationship with close friends / significant others.  
   
-For example, teens were asked about the amount of time they spend with their closest friends (either online or face-to-face) and what social media accounts do they own. This was an opportunity to investigate if social media accounts have an effect on the amount of time teenagers spend with their friends. 
+For example, teens were asked about the amount of time they spend with their closest friends (either online or face-to-face) and what social media accounts they own. This was an opportunity to investigate if social media accounts have an effect on the amount of time teenagers spend with their friends. 
 
 ### Executive summary of findings:
   
@@ -1105,11 +1105,11 @@ The table below summarises the questions being studied, the initial hypothesis, 
   
 Question                               |  Hypothesis   |  Findings
 -------------------------------------  |  ------------------------------------- | -------------------------------------
-1. Number of friends and followers on social media varies by gender    |  Female teens seem more attached to social media rather than male, thus number of friends and followers of female users might be higher than male  | On average, female teens has more friends on Facebook and more followers on Instagram than male teens. Number of social media accounts that female teens use is also slightly higher than male. 
-2. Relationship between number of social media account teens have and number of electronic device teens possess with how much time they spend with their close friends   |  The more social media accounts/electronic devices a teen has then the more time he/she spend with their close friends | Test shows a positive correlation between the two variables. Teens tend to spend more time with their close friends - either face-to-face, by phone, or any other media - when they have more social media accounts or electronic devices. This might indicate that social media and electronic devices help teens to communicate or get along with their friends.     
-3.	Relationship between teens online dating experiences with their perception about other people's image in social media   |   Teens who think that people tend to show different side of themselves in the social media would be less likely to experience online dating  | Results show that there is a correlation between those two variables. One might think that people would be less likely to do online dating when they aware that other people is showing a different side of themselves. However, teens in fact do online dating even though they aware that other people might not be his/herself but yet never met the girlfriend/boyfriend in person.
-4.	Does teens send flirtatious messages or flirty picture or videos when they are attracted to someone?  |  Teens in age 13-17 will less likely to send flirty messages, pictures, or videos to someone they find attractive |  It turned out that teens with african american background and japanese background have a positive tendency to send flirtatious messages, pictures, or videos to show their interest to somebody else       
-5.	How would teens react when they break up with their girlfriend/boyfriend? Will they do such thing as block or unfriend ex in social media or even remove ex from phone address book?  |  Younger teenagers might do such things when they break up but this behavior will diminish as they get older  |  Result shows that female teens tend to unfriend/block her ex than male teens. It also can be seen that the older the teens then the more likely he/she to remove her ex from phone address book. This is a contrast of what one would expect to see before testing.   
+1. Number of friends and followers on social media varies by gender    |  Female teens seem more attached to social media rather than male, thus number of friends and followers of female users might be higher than male  | On average, female teens have more friends on Facebook and more followers on Instagram than male teens. Number of social media accounts that female teens use is also slightly higher than male teens. 
+2. Relationship between the number of social media accounts teens have and the number of electronic devices teens possess with how much time they spend with their close friends   |  The more social media accounts/electronic devices a teen has, the more time he/she would spend with their close friends | Test shows a positive correlation between the two variables. Teens tend to spend more time with their close friends - either face-to-face, by phone, or any other media - when they have more social media accounts or electronic devices. This might indicate that social media and electronic devices help teens to communicate or get along with their friends.     
+3.	Relationship between teens online dating experiences with their perception about other people's image in social media   |   Teens who think that people tend to show different side of themselves in the social media would be less likely to experience online dating  | Results show that there is a correlation between those two variables. One might think that people would be less likely to do online dating when they are aware that other people might be showing a different side of themselves. However, teens in fact do online dating even though they are aware that other people might not be his/herself but yet never met the girlfriend/boyfriend in person.  
+4.	Do teens send flirtatious messages or flirty picture or videos when they are attracted to someone?  |  Teens in age 13-17 are less likely to send flirty messages, pictures, or videos to someone they find attractive |  It turned out that teens with African American background and Japanese background have a positive tendency to send flirtatious messages, pictures, or videos to show their interest in somebody else       
+5.	How do teens react when they break up with their girlfriend/boyfriend? Do they do such thing as block or unfriend their ex on social media or even remove them from phone address book?  |  Younger teenagers might do such things when they break up but this behavior will diminish as they get older  |  Results show that female teens tend to unfriend/block their ex more than male teens. It also can be seen that the older the teens, the more likely they are to remove their ex from phone address book. This is in contrast to what one would expect to see before testing.   
 
 ***
 ### Details of the questions investigated, and findings
@@ -1146,7 +1146,7 @@ Child_gender: Is your child (the user of social media) male or female? The optio
 
 <b>Findings</b>  
 
-Social media behavior may vary by gender. In general, female is assumed to be more active in social media rather than male. In term of friends or followers in social media, female indeed has more friends or followers compared to male.  
+Social media behavior may vary by gender. In general, females are assumed to be more active on social media rather than males. In terms of friends or followers on social media, females indeed have more friends or followers compared to male.  
 
 ```{r, echo = FALSE, message = FALSE, include = FALSE}
 
@@ -1167,16 +1167,16 @@ data_specific$x1  <- ifelse(data_specific$x1 == 1, "Male", "Female")
 summary(as.factor(data_specific$x1))
 ```
 
-Data from survey out of 249 female and 231 male shows that number of Facebook friends of female users is considerabably higher than number of Facebook friends that male users have.   
+Data from survey out of 249 female and 231 male shows that the number of Facebook friends of female users is considerabably higher than the number of Facebook friends that male users have.   
 
 ```{r, echo = FALSE}
 
 ggplot(data_specific, aes(y = data_specific$y,x = data_specific$x1)) + geom_boxplot() + labs(x = " ", y = "Number of Facebook Friends")
 ```
 
-Female on average has 304 friends on Facebook while male has 221 friends. The median is also slightly lower for male, which is only 100 friends while female has 56 more friends. It can be seen from the graph that female has wider range of Facebook friends, with maximum number of friends 5000. This must be because Facebook policy that limit friends of Facebook to a maximum of 5000. In this case, it is assumed that user will only have one Facebook account and will not create a new one for having friends more than 5000. From the t test it can be concluded that mean of Facebook friends of female teen users is higher than male teen users as the p-value is 0.03822 in 95% confidence interval. 
+Females have on average 304 friends on Facebook while males have 221 friends. The median is also slightly lower for males, which is only 100 friends while femals have 56 more friends. It can be seen from the graph that females have a wider range of Facebook friends, with maximum number of friends 5000. This must be because Facebook policy limits Facebook friends to a maximum of 5000. In this case, it is assumed that user will only have one Facebook account and will not create a new one for having friends more than 5000. From the t test it can be concluded that mean of Facebook friends of female teen users is higher than male teen users as the p-value is 0.03822 in 95% confidence interval.  
 
-Besides Facebook, there is another social media account that is currently popular among teenagers: Instagram. Data from survey out of 206 female and 112 male who uses Instagram shows that number of Instagram followers of female users is also higher than number of Instagram followers that male users have.
+Besides Facebook, there is another social media account that is currently popular among teenagers: Instagram. The survey data, in which 206 females and 112 males use Instagram, shows that the number of Instagram followers of female users is also higher than the number of Instagram followers that male users have.
 
 This can be counted through survey questions that indicate the gender of social media user and the number of Instagram followers that particular user has.   
 
@@ -1204,9 +1204,9 @@ ggplot(data_specific, aes(y = data_specific$y,x = data_specific$x1)) + geom_boxp
 ```
 
 
-On average, female has more followers with a number of 417 compared to male with only 280 followers in Instagram. And again, female has a wider range of quartile than male. The lower quantile of female is 68 followers and the upper is 450 while male has a lower quantile with only 34 followers and the upper is around 200 followers lower than female's.  
+On average, females have more followers with a number of 417 compared to males with only 280 followers on Instagram. And again, females have a wider range of quartile than male. The lower quantile of females is 68 followers and the upper is 450 while males have a lower quantile with only 34 followers and the upper is around 200 followers lower than female's.  
 
-Instagram is slightly different than Facebook. Using Instagram let you have followers rather than friends. This means that user A can follow user B even though B does not follow A back. On Facebook, friends are the other users that are recognized or accepted as your friends. So if A is a friend of B then B must be a friend of A. This might explain why on average, number Instagram followers is higher than number of Facebook friends for both female and male users.   
+Instagram is slightly different from Facebook. Using Instagram lets you have followers rather than friends. This means that user A can follow user B even though B does not follow A back. On Facebook, friends are the other users that are recognized or accepted as your friends. So if A is a friend of B then B must also be a friend of A. This might explain why on average, number of Instagram followers is higher than number of Facebook friends for both female and male users.   
 
 Average Number of Friends/Followers      |  Facebook  |  Instagram
 ---------  |  --------- |  ---------
@@ -1240,7 +1240,7 @@ data_specific[ ,'n'] <- -1*(data_specific$x1 + data_specific$x2 + data_specific$
 data_specific$s2 <- ifelse(data_specific$s1 == 1, "Male", "Female")
 ```
 
-Plot below shows that most female has up to four social media accounts and male up to three accounts. The median for female is also higher than male as female has three social media account while male has two. This might explain why female tends to have more friends and followers in social media. People usually put link of all social medias that she/he has in the profile, for example, put link of his/her Snapchat account in Instagram profile. Thus the more social media accounts a person has, the more likely a person will be recognized online. 
+The plot below shows that most females have up to four social media accounts and males have up to three accounts. The median for females is also higher than males as females have three social media accounts while males have two. This might explain why females tend to have more friends and followers on social media. People usually put link of all social media accounts that they have in the profile, for example, they put link of his/her Snapchat account in Instagram profile. Thus the more social media accounts a person has, the more likely a person will be recognized online. 
 
 ```{r, echo = FALSE}
 
@@ -1250,7 +1250,7 @@ mean(data_specific[data_specific[ ,'s2'] == "Female", 'n'])
 mean(data_specific[data_specific[ ,'s2'] == "Male", 'n'])
 ```
 
-Number of Facebook friends that a teen has can be predicted using number of followers on Instagram and Twitter. Regression result shows that this regression formula has an R-squared of 0.3396 which means that the variation in number of Facebook friends can be explained as much as 33.9% by having the number of Instagram and Twitter followers.  
+Number of Facebook friends that a teen has can be predicted using number of followers on Instagram and Twitter. Regression results show that this regression formula has an R-squared of 0.3396 which means that the variation in number of Facebook friends can be explained as much as 33.9% by having the number of Instagram and Twitter followers.  
 
 ```{r, echo = FALSE}
 
@@ -1259,14 +1259,14 @@ reg = lm(data = data, FBFriends ~ IGFol+ TwitterFol)
 summary(reg)
 ```
 
-This regression could be improved by having another continuous variables that might correlated with the number of Facebook friends in the next survey such as how much time spent on Facebook, how many friends he/she has in real life e.g. number of school mates, et cetera.
+This regression could be improved by having another continuous variables that might be correlated with the number of Facebook friends in the next survey such as how much time spent on Facebook, how many friends he/she has in real life e.g. number of school mates, et cetera.
 
 
 #### Question 2
 
-2. Relationship between number of social media account teens have and number of electronic device teens possess with how much time they spend with their close friends   
+2. Relationship between the number of social media account teens have and the number of electronic devices teens possess with how much time they spend with their close friends   
   
-*Hypothesis: The more social media accounts/electronic devices a teen has then the more time he/she spend with their close friends*  
+*Hypothesis: The more social media accounts/electronic devices a teen has, the more time he/she would spend with their close friends*  
   
 <b>Background info</b>
 
@@ -1313,9 +1313,9 @@ Calculate total type of electronic devices that a person possesses by summing up
 
 <b>Findings</b>  
 
-People frequently relates social media with friendship, particularly how it might affects time he/she spend with their close friends. People might be interested in this area since there were no social media in few years back and now it has fastly grown into so many kind of social medias such as Facebook, Snapchat, and  Google+.   
+People frequently relate social media with friendship, particularly how it might affect the time they spend with their close friends. People might be interested in this area since there were no social media a few years back and now it has fastly grown into so many kinds of social media such as Facebook, Snapchat, and  Google+.   
 
-In the survey, social media users are asked regarding how much time he/she spent with their close friends. This includes face-to-face, on the phone, text messaging and all the other ways you might talk to this person.   
+In the survey, social media users are asked about how much time they spent with their close friends. This included face-to-face, on the phone, text messaging and all the other ways they might talk to them.   
 
 ```{r, echo = FALSE, message = FALSE, include = FALSE}
 
@@ -1335,16 +1335,16 @@ data_specific <- data_specific[ data_specific$y >= 1 & data_specific$y <= 7, ]
 data_specific[,'x'] <- -1*(data_specific$x1 + data_specific$x2 + data_specific$x3 + data_specific$x4 + data_specific$x5 + data_specific$x6 + data_specific$x7) + 14
 ```
   
-Correlation between total number of social media accounts a person has can be calculated against how often a person interact with their close friends through any media.  
+Correlation between total number of social media accounts a person has can be calculated against how often a person interacts with their close friends through any media.  
 
 ```{r, echo = FALSE}
 
 cor.test(data_specific$y,data_specific$x)
 ```
 
-The correlation of those two variables is 0.256 and the p value from the correlation test is < 2.2e-16 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between 0.20 to 0.31 which also shows that there exists a positive relationship between number of social media accounts the child has and how much time he/she spends with his close friends. Thus the more social media accounts a person has then the more time he/she spends with his close friends, either face-to-face or communicate using the social media.  
+The correlation of those two variables is 0.256 and the p value from the correlation test is < 2.2e-16 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between 0.20 to 0.31 which also shows that there exists a positive relationship between number of social media accounts the child has and how much time he/she spends with his/her close friends. Thus the more social media accounts a person has, the more time he/she spends with his close friends, either face-to-face or through communication using the social media.  
 
-Another correlation that might exists is relationship between number of electronic devices type someone has with time spent with their close friends. This includes face-to-face communication and any other way someone may interact with their close friends.  
+Another correlation that might exist is the relationship between the number of electronic device types someone has with time spent with their close friends. This includes face-to-face communication and any other way someone may interact with their close friends.  
 
 ```{r, echo = FALSE, message = FALSE, include = FALSE}
 
@@ -1371,23 +1371,23 @@ data_specific$x5 <- ifelse(data_specific$x5 == 1, 1, 0)
 data_specific[ ,'TotalDeviceType'] <- data_specific$x1 + data_specific$x2 + data_specific$x3 + data_specific$x4 + data_specific$x5
 ```
 
-Test correlation between time child spent with close friends and number of electronic device type the child possesses:   
+Test correlation between time child spent with close friends and the number of electronic device types the child possesses:   
 
 ```{r, echo = FALSE}
 
 cor.test(data_specific$y, data_specific$TotalDeviceType)
 ```
 
-The correlation of those two variables is 0.146 and the p value from the correlation test is 1.812e-06 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between 0.09 to 0.20 which also shows that there exists a positive relationship between number of electronic devices type the child has and how much time he/she spends with his close friends. This might be because electronic devices such as smartphone or laptop help you to communicate more intense with your close friends and because gaming consoles might become a way to spend time together with close friends. 
+The correlation of those two variables is 0.146 and the p value from the correlation test is 1.812e-06 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between 0.09 to 0.20 which also shows that there exists a positive relationship between number of electronic devices type the child has and how much time he/she spends with his close friends. This might be because electronic devices such as smartphone or laptop help you to communicate more frequently with your close friends and because gaming consoles might also become a way to spend time together with close friends. 
 
-This findings actually can be improved to be more precise. It would be better if survey split up the question of time spent with close friends into two questions: "How much time spent with close friends face-to-face (e.g. having lunch together, playing basketball, playing games)?" and "How much time spent with close friends through any other way (e.g. text messaging, Facebook chats, phone calls)?"
+These findings can actually be improved and be more precise. It would be better if survey split up the question of time spent with close friends into two questions: "How much time do you spend with close friends face-to-face (e.g. having lunch together, playing basketball, playing games)?" and "How much time do you spend with close friends through any other way (e.g. text messaging, Facebook chats, phone calls)?"  
 
 
 #### Question 3
 
-3. Relationship between teens online dating experiences with their perception about other people's image in social media   
+3. Relationship between teens' online dating experiences with their perception about other people's image on social media   
   
-*Hypothesis: Teens who think that people tend to show different side of themselves in the social media would be less likely to experience online dating*  
+*Hypothesis: Teens who think that people tend to show different side of themselves on the social media would be less likely to experience online dating*  
   
 <b>Background info</b>
 
@@ -1406,7 +1406,7 @@ KR2: Have you ever had a boyfriend, girlfriend or significant other that you fir
 
 <b>Findings</b>  
 
-Social media is not only capturing child's relationship with friends but also his/her relationship with girlfriend/boyfriend. One that is interesting is their experiences finding boyfriend/girlfriend thorugh social media.  
+Social media is not only capturing child's relationship with friends but also his/her relationship with girlfriend/boyfriend. One that is interesting is their experiences finding boyfriend/girlfriend through social media.  
 
 ```{r, echo = FALSE, message = FALSE, include = FALSE}
 
@@ -1427,14 +1427,14 @@ data_specific <- data_specific[ data_specific$y >= 1 & data_specific$y <= 4, ]
 cor.test(data_specific$x1,data_specific$y)
 ```
 
-The correlation between those variables turned out to be positive. Teens who perceived that other people show different side of themselves that they can not show offline is more likely to experience having relationship with somebody they met online and never met in person. This mean that they find a person more interesting online and hence fall for that person, or maybe one is more able to present the more charming side and true self on social media instead of meeting in person. 
+The correlation between those variables turned out to be positive. Teens who perceived that other people show different side of themselves that they can not show offline are more likely to experience having relationship with somebody they met online and never met in person. This means that they find a person more interesting online and hence fall for that person, or maybe one is more able to present the more charming side and true self on social media instead of meeting in person.  
 
 
 #### Question 4
 
 4. Does teens send flirtatious messages or flirty picture or videos when they are attracted to someone?   
   
-*Hypothesis: Teens in age 13-17 will less likely to send flirty messages, pictures, or videos to someone they find attractive*  
+*Hypothesis: Teens in age 13-17 are less likely to send flirty messages, pictures, or videos to someone they find attractive*  
   
 <b>Background info</b>
 
@@ -1476,35 +1476,35 @@ data_specific <- data_specific[ data_specific$x1 >= 0 & data_specific$x1 <= 1 & 
 data_specific$y <- data_specific$y -1
 ```
 
-Correlation between sending flirty messages and black/african american teens:  
+Correlation between sending flirty messages and Black/African American teens:  
 
 ```{r, echo = FALSE}
 
 cor.test(data_specific$x2,data_specific$a)
 ```
 
-Correlation between sending flirty messages and japanese teens:  
+Correlation between sending flirty messages and Japanese teens:  
 
 ```{r, echo = FALSE}
 
 cor.test(data_specific$x7,data_specific$a)
 ```
 
-Correlation between sending flirty videos and japanese teens:  
+Correlation between sending flirty videos and Japanese teens:  
 
 ```{r, echo = FALSE}
 
 cor.test(data_specific$x7,data_specific$b)
 ```
 
-The correlation of those two variables is -0.068 and the p value from the correlation test is 0.02801 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between -0.127 to -0.028. Correlation test results show that there are negative correlations - except african americans: need a 10% level test. This means that japanese and black/african american were more likely to send flirtatious pictures, videos and messages among all other race such as white, asian indian, chinese, filipino, korean, and some other races. 
+The correlation of those two variables is -0.068 and the p value from the correlation test is 0.02801 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between -0.127 to -0.028. Correlation test results show that there are negative correlations - except African Americans: need a 10% level test. This means that Japanese and Black/African Americans are more likely to send flirtatious pictures, videos and messages among all other races such as White, Asian Indian, Chinese, Filipino, Korean and others. 
 
 
 #### Question 5
 
-5. How would teens react when they break up with their girlfriend/boyfriend? Will they do such thing as block or unfriend ex in social media or even remove ex from phone address book?   
+5. How do teens react when they break up with their girlfriend/boyfriend? Do they do such thing as block or unfriend their ex on social media or even remove them from phone address book?   
   
-*Hypothesis: How would teens react when they break up with their girlfriend/boyfriend? Will they do such thing as block or unfriend ex in social media or even remove ex from phone address book?*  
+*Hypothesis: Younger teenagers might do such things when they break up but this behavior will diminish as they get older*  
   
 <b>Background info</b>
 
@@ -1546,7 +1546,7 @@ Here is the graph showing responses of question "Have you ever unfriended or blo
 ggplot(data = data_specific, aes(data_specific$y1)) + geom_bar(aes(fill = Gender), position = "dodge") + scale_x_discrete(labels = c("1" = "Yes", "2" = "No")) + labs(x = " ", y = "Count", title = "Have you ever unfriended/blocked your ex?")
 ```
 
-It can be seen that male is more unlikely to unfriended or blocked an ex in social media. This might be because female teens are a little bit more emotional than male teens especially after breaking up.   
+It can be seen that males are more unlikely to unfriended or blocked an ex on social media. This might be because female teens are a little bit more emotional than male teens especially after breaking up.   
 
 ```{r, echo = FALSE, message = FALSE, include = FALSE}
 
@@ -1564,7 +1564,7 @@ data_specific$Gender  <- ifelse(data_specific$s1 == 1, "Male", "Female")
 data_specific <- data_specific[ data_specific$y1 >= 1 & data_specific$y1 <= 3, ]
 ```
 
-Again it can be seen that male has less probability to removed his ex from phone address book rather than female towards her ex.  
+Again it can be seen that males have less probability to remove his ex from phone address book rather than females towards their ex.  
 
 This is another response of question "Have you ever removed someone that you used to be in a relationship with from your phone address book?":   
 
@@ -1575,7 +1575,7 @@ ggplot(data = data_specific, aes(data_specific$y1)) + geom_bar(aes(fill = Gender
 # + scale_x_discrete(labs = c("1" = "Yes", "2" = "No"))
 ```
 
-As responses to this question might differ by teens age, graph below shows how each of age group (13/14/15/16/17) responded. 
+As responses to these questions might differ by teens age, graph below shows how teens in each of the age groups (13/14/15/16/17) responded. 
 
 ```{r, echo = FALSE, message = FALSE, include = FALSE}
 
@@ -1598,20 +1598,20 @@ data_specific$Answer <- factor(data_specific$y1)
 ggplot(data = data_specific, aes(x = age)) + geom_bar(aes(fill = Answer), position = "dodge") + labs(x = "Age", y = "Count", title = "Have you ever removed your ex from your phone book address?")
 ```
 
-Graph shows that only a few of teens in age 13-14 that ever experienced removing ex from phone address book, while older teens seem more likely to remove ex. Using correlation test between this particular question against teens age reveals that there is a negative correlation between those variables.  
+The graph shows that only a few of teens in age 13-14 ever experienced removing ex from phone address book, while older teens seem more likely to remove ex. Using correlation test between this particular question against teens, age reveals that there is a negative correlation between those variables.   
 
 ```{r, echo = FALSE}
 
 cor.test(survey_data$Child_age, survey_data$KRCELL_D) 
 ```
 
-Pearson correlation test of those two variables is -0.11 and the p value from the correlation test is 0.04032 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between -0.214 to -0.005. It shows that older teenagers will be more likely to remove ex from phone address book rather than younger teenagers. 
+Pearson's correlation test of those two variables is -0.11 and the p value from the correlation test is 0.04032 which means that the null hypothesis that the correlation is equal to 0 can be rejected. The 95% confidence interval is between -0.214 to -0.005. It shows that older teenagers are more likely to remove ex from phone address book rather than younger teenagers. Though it can be argued that teens in age 13-14 are less likely to be in a romantic relationship in the first place.  
 
 ***
 
 ### Limitations
 
-For some investigations which were done in this section, after filtering out invalid / irrelevant data, a very small sample is left, hence making the results not as convincing (for example question 4 on Japanese and African Americans. A much larger dataset is needed in order to provide larger sample after filtering to give strong evidence to the conclusions. 
+For some investigations which were done in this section, after filtering out invalid / irrelevant data, a very small sample was left, hence making the results not as convincing (for example question 4 on Japanese and African Americans). A much larger dataset is needed in order to provide larger sample after filtering to give strong evidence to the conclusions. 
 
   
 ***
@@ -1619,15 +1619,15 @@ For some investigations which were done in this section, after filtering out inv
 ### Conclusion
 The findings are summarised as follows:
 
-- On average, female teens has more friends on Facebook and more followers on Instagram than male teens. Number of social media accounts that female teens use is also slightly higher than male.
+- On average, female teens have more friends on Facebook and more followers on Instagram than male teens. Number of social media accounts that female teens use is also slightly higher than those of male teens.  
 
-- Test shows a positive correlation between Teens spending more time with their close friends - either face-to-face, by phone, or any other media - and having more social media accounts or electronic devices. This might indicate that social media and electronic devices help teens to communicate or get along with their friends.
+- Tests show a positive correlation between Teens spending more time with their close friends - either face-to-face, by phone, or any other media - and having more social media accounts or electronic devices. This might indicate that social media and electronic devices help teens to communicate or get along with their friends.
 
-- One might think that people would be less likely to do online dating when they aware that other people is showing a different side of themselves. Perhaps it is this different side on the internet that the other presents which caused one to fall in love with. 
+- One might think that people would be less likely to do online dating when they are aware that other people show a different side of themselves onlone. Perhaps it is this different side on the internet that the other presents which causes one to fall in love with. 
 
 - It turned out that teens with African American background and Japanese background have a positive tendency to send flirtatious messages, pictures, or videos to show their interest to somebody else!
 
-- Result shows that female teens tend to unfriend/block her ex more than male teens. It also can be seen that the older the teens the more likely he/she is to remove her ex from phone address book. 
+- Results show that female teens tend to unfriend/block their ex more than male teens. It can also be seen that the older the teens the more likely he/she is to remove her ex from phone address book. 
 
 ***
 ```{r, echo = FALSE}
@@ -2315,7 +2315,7 @@ for(i in 1:10)
 
 ###Conclusion and limitations
 
-Given the initial size of the entire set and the necessary cleaning, the cluster ended up being relatively small to make statistically significant observations. Furthermore the selected independent variables number of friends/followers and age must be evaluated under the following assumptions. Looking at dependent variables that are deeply connected to the psyche of human beings, given the age and the along going presumable changes in life of the respondents, using only these two variables is a strong reduction of complexity to explain highly connected and complex occurrences that are influenced by numerous factors. 
+Given the initial size of the entire set and the necessary cleaning, the cluster ended up being relatively small to make statistically significant observations. Furthermore the selected independent variables number of friends/followers and age must be evaluated under the following assumptions. Looking at dependent variables that are deeply connected to the psyche of human beings, given the age and the along going presumable changes in life of the respondents, using only these two variables is a strong reduction of complexity to explain highly connected and complex occurrences that are influenced by numerous factors.  
 Second, given the time restriction and scope of the project a deeper analysis was simply not possible. The overall aim of this analysis was to show how clustering by relevant parameters might lead to different results and insights, which will be quickly recaptured.
 
 Starting with the initial heat maps, that only had limited explanatory power, the clustering by tercile of friends and age led to more detailed and differentiated results, clearly showing that the correlations between the responses to the questions are also relying on the cluster criteria. Furthermore as discussed above, there is a correlation between feeling "worse about your own life because of what you see from other friends on social media" and feeling the pressure to "only post content that makes you look good to others". This observation addresses exactly what the author of the article initially describes with regards to her experience. Given the mentioned limitations regarding the dataset as well as the complexity of the human mind, the hypothesis must be rejected from a statistical point of view, nevertheless the observation showed as well, that exposure expressed in number of friends has an impact on the perception of social media.
@@ -2324,7 +2324,6 @@ Starting with the initial heat maps, that only had limited explanatory power, th
 
 # 4 Final Conclusion
 
-The investigation of dataset had revealed several interesting relationships. Firstly, parents' behaviour seem to affect teen's behaviours. In particular, parents who stalk their teen by monitoring his/her location, has a positive effect on the teen also monitoring his/her significant other's location or accessing his/her phone. Secondly, the sample data showed differences between male and female teen's extent of social media usage. Female teens have more friends on Facebook and more followers on Instagram than male teens. Female teens also use more types of social media. Female teens tend to unfriend/block her ex than male teens. The data also suggests that social media and electronic devices help teens to communicate or get along with their friends. Lastly, clustering of responses to various survey questions showed that how social media impacted one's self-perception depended not only on the number of friends the teen had, but also their age. The older the teen, the more likely he/she would be able to comprehend questions that required more self-reflection. This hypothesis was supported by data which showed more variance by age for questions like "whether you feel worse about your own life because of what you see from other friends on social media". 
+The investigation of dataset revealed several interesting relationships. Firstly, parents' behaviour seems to affect teen's behaviour. In particular, parents stalking their teens by monitoring his/her location, has a positive effect on the teen also monitoring his/her significant other's location or accessing his/her phone. Secondly, the sample data showed differences between male and female teen's extent of social media usage. Female teens have more friends on Facebook and more followers on Instagram than male teens. Female teens also use more types of social media. Female teens tend to unfriend/block her ex than male teens. The data also suggests that social media and electronic devices help teens to communicate or get along with their friends. Lastly, clustering of responses to various survey questions showed how social media impacts one's self-perception depends not only on the number of friends the teen has, but also their age. The older the teen, the more likely he/she would be able to comprehend questions that required more self-reflection. This hypothesis was supported by data which showed more variance by age for questions like "whether you feel worse about your own life because of what you see from other friends on social media".  
 
-Nonetheless, the dataset was relatively small (especially after data cleaning and given the number of variables studied), and hence a larger sample dataset would be required to have more conclusive results. In fact, if time permitted, studies could be done to see if trends were consistent over years (i.e. different cohorts of 13-17 year old teens), and other analysis could include investigating if such trends would persist beyond teenage years into adulthood. For example, longitudinal studies could be done to track whether the surveyed teens' responses to the same questions, such as feeling pressure to appear good, persist when they are in their 30s (i.e. it could be studied whether parents' influences had 'permanent' impact on the teen, or whether the impact was transient during teen years).
-
+Nonetheless, the dataset was relatively small (especially after data cleaning and given the number of variables studied), and hence a larger sample dataset would be required to have more conclusive results. In fact, if time permitted, studies could be done to see if trends were consistent over years (i.e. for different cohorts of 13-17 year old teens). Other analyses could include investigating if such trends would persist beyond teenage years into adulthood. For example, longitudinal studies could be done to track whether the surveyed teens' responses to the same questions, such as feeling pressure to appear good, persist when they are in their 30s (i.e. it could be studied whether parents' influences had 'permanent' impact on the teen, or whether the impact was transient during teen years).
