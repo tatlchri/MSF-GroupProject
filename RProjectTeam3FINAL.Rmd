@@ -81,6 +81,18 @@ save(survey_data, file = 'cleaned_data.Rdata')
 # But with a merged Rmd file, this is not needed
 ```
 
+### 1.3 Categories of studies carried out  
+
+Given the wide breadth of questions in the survey, it would be interesting to investigate 3 main aspects of how social media relates to (i) parent and teenage child; (ii) teenage child and friends; (iii) teen's self-perception.  Each of these 3 areas have a set of questions and hypotheses which are studied using the data. They are covered in detail under section 3, with an executive summary of the questions, hypotheses and findings, preceding the subsection.  
+
+The three categories are:  
+  
+1. Findings on relationship between teenagers and their parents  
+
+2. Findings on relationship between teenagers and their close friends / significant others  
+  
+3. Findings on self perception
+
 # 2 Descriptive Statistics
 
 ```{r setup, include=FALSE}
@@ -188,9 +200,9 @@ Question                               |  Hypothesis   |  Findings
 -------------------------------------  |  ------------------------------------- | -------------------------------------
 1. Relationship between parents blocking their child's phone usage and their child's online behaviour on sexy/flirty pictures   |  If teens are rebellious, then the stricter the parent, the more the child wants to be liberal and may be more inclined to send flirty pictures | The regression results suggest that if parents took away their child's cell phone or internet privileges as punishment, the teen is 169% more likely to send sexy or flirty pictures or videos of themselves. There is no statistically significant effect of other parent's strict behaviours: parent using parental controls to restrict child's use of his/her cell phone, and limiting the amount of time or times of day when child can go online   
 2.	Relationship on whether children self-censor their posts if they are friends with parents on social media   |   Teens whose parents are friends with them on social media will likely not post details of their relationship online  | There was no statiscally significant evidence to show that whether the parent was connected to their child on social media had an impact on child posting public affection for their significant other (proxy of whether child self-censors their posts). Upon adding more variables to the regression, the regression suggests that teens feeling pressure to only post content that makes them look good to others, were around 90% ("Yes, a little pressure") to 214% ("Yes, a lot pressure") more likely to post public affection towards his/her significant other. There is no significant statistical evidence to show that various teen's parent's behaviours (connecting with child on social media, being friends on Facebook, and checking child's social media profile) have an effect on teen's public affection behaviour.  This seems to suggest that teens are more influenced by their self-perception, rather than their parent's interventions, with respect to whether or not they post public affection towards his/her significant other.     
-3. Relationship between the parent using internet / social media themselves vs. them talking to their child about inappropriate online behavior | Parents are likely to be in a better position to advise their children on online behavior if they themselves use internet or are on social media | ....    
+3. Relationship between the parent using internet / social media themselves vs. them talking to their child about inappropriate online behavior | Parents are likely to be in a better position to advise their children on online behavior if they themselves use internet or are on social media | Only use_internet and age are significant at 5%. Parents talk less as children grow older. Facebook usage and Gender are close to being significant at 10% level. More data might make these two variables significant in this model as well.    
 4.	Relationship between stalking behaviour of parent to child and stalking behaviour of child to his/her boyfriend/girlfriend |  If parents stalk teen, teen is more likely to inherit the stalking behaviour and stalk his/her boyfriend/girlfriend | It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 190% more likely (at 90% confidence level) to access the phone of someone they were dating or used to date (child's stalking behaviour).  It seemed that if parent monitors their child's location (parent's stalking behaviour), teens are around 567% more likely (at 90% confidence level) to track the location of someone they were dating or used to date (child's stalking behaviour).  In both cases, parent monitoring child's location seemed correlated with both child's stalking behaviours (accessing phone and tracking GPS location).      
-5. How more likely are children to trust their significant others and not have the urge to constantly monitor their activities if their parents are more trusting of them? | Children are likely to have healthier relationships and not have insecurities regarding their significant others if they are trusted by their parents | ....    
+5. How more likely are children to trust their significant others and not have the urge to constantly monitor their activities if their parents are more trusting of them? | Children are likely to have healthier relationships and not have insecurities regarding their significant others if they are trusted by their parents | Results reveal that males are less likely to keep track of their significant other on social media. However, it is important to note here that The number of people who use monitoring tools to track their child's location is not particularly big in this survey, as compared to the other ways used by parents to track their child. So further research would be needed to see if the effect holds in relatively larger samples.      
 
 
 ***
@@ -1007,7 +1019,7 @@ Prop test:
 prop.test(table(local_data5$kid_tracking_significant_others_activity, local_data5$gender), alternative = "less")
 ```
 
-Reveals that males are less likely to keep track of their significant other on social media. which might go against one's general perception, which usually is that females tend to trust their partners more. The behavior on social mediaappears to be otherwise howevver. It may also mean however that females tend to give more importance to their relationships than their counterparts in general, whereas men may give more time to other things n social media.
+The results reveal that males are less likely to keep track of their significant other on social media. Perhaps a possible reason for this is that females tend to give more importance to their relationships than their male counterparts in general, and perhaps their happiness and well-being is more dependent upon how things are going in their intimate relationships, and hence more concerned to find out more about their significant other. However, more research / data outside this dataset would have to be used to investigate this hypothesis.      
 
 Regression:
 
@@ -1044,7 +1056,7 @@ Also, since there were a lot of missing values in the dataset, some of the model
 
 ***
 
-## Possible future improvements
+### Possible future improvements
 
 A more robust analysis on the trends of the effect of parents' behaviours on teen's behaviours with regard to social media usage (e.g. stalking behaviour, defiance / urge to be liberalised etc) could be conducted if there was more data. Perhaps more questions could be asked to parent and teen in this aspect, to further tease out these possible relationships between parent and teen. More historical data, not just for one year, could be collated and analysed to discover if there were any trends, or whether these parent-child relationships were consistent over time, for 13-17 year old teenage groups across cohorts. It would also be interesting if the survey was conducted for older children, beyond 17 year olds, to test if certain hypotheses or relationships between parent and child persist beyond these ages. For example, if data suggest that parent's stalking behaviour positively correlate with teen's stalking behaviour, it would be interesting to investigate whether the teen's stalking behaviour persists even when he/she is, say, 25 years old. If so, it would suggest that parents should be educated to let them realise what appropriate interventions they should be making, and sometimes well-intended interventions, if executed in the wrong way, could perhaps lead to more permanent adverse impact on the teen.    
 
