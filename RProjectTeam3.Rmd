@@ -184,7 +184,7 @@ For logistic regression, the function <i>glm</i> was used, <i>model <- glm(y ~ x
   
 In most cases, the independent variables were also survey responses that could have more than 2 options. e.g. 1.Yes, a lot, 2.Yes, a little, 3.No.  Researching literature online, there were two possible approaches: (1) leave such variables as numeric (R would interpret them as continuous variables), or convert them as factors (R would interpret them as categorical variables, and regression would yield a coefficient for each possible option by creating something like dummy variables). Setting these variables as continuous variables might be contentious as the values of the variables were discrete in nature, and we could not necessarily say that they the possible values were equally spaced. It might be difficult to explain why one option had value 1, and not 2 or 50 etc. Hence on balance, these variables were converted to factor, even though this would increase the total number of variables used in the regression and inflate the R<sup>2</sup> value (AIC value for logistic regression).  All dependent and independent variables were reordered so that the higher the value, the higher the scale of the response. i.e. instead of 1 for Yes and 2 for No, we reordered it to 0 for No and 1 for Yes.          
 
-It's also important to note here that the models based on logistic regression had a different way of interpreting the coefficients
+It's also important to note here that the models based on logistic regression had a different way of interpreting the coefficients. Firstly, the dependent variable in logistic regression is its logarithmic transformation. So the exponential function was used first to convert the coefficients of independent variables. Then if the coefficient of a variable <i>x</i> was <i>(1+k)</i>, it meant that a one unit increase in variable <i>x</i> (or <i>x</i> being 1 instead of 0 in case of binary variables) will imply a <i>(k*100)%</i> more (or less if k is negative) chance of the dependent variable being true.
 
 The 5 questions, their corresponding hypotheses, and their associated findings are summarised in the section below.  
   
@@ -493,19 +493,19 @@ P15_C: How often do you talk with your child about what is appropriate or inappr
 4.Frequently  
 
 *[Independent variables]*:  
-P2_A: Do you ever use Facebook?  
+P2_A (use_facebook): Do you ever use Facebook?  
 1.Yes  
 2.No  
 
-P2_B: Do you ever use Twitter?  
+P2_B (use_twitter): Do you ever use Twitter?  
 1.Yes  
 2.No  
 
-P2_C: Do you ever access the internet on a cell phone, tablet or other mobile handheld device, at least occasionally?   
+P2_C (use_internet): Do you ever access the internet on a cell phone, tablet or other mobile handheld device, at least occasionally?   
 1.Yes  
 2.No  
 
-P2_D: Do you ever use some other social media site?    
+P2_D (use_other_social_media): Do you ever use some other social media site?    
 1.Yes  
 2.No  
 
@@ -563,15 +563,16 @@ cat('After data cleaning, the number of valid data records for analysis is: ', d
 
 ```
 
+<b>Findings</b>  
 
-First, we look at the correlations of the variables that we are interested in. Although Pearson's 
+First, a simple correlation table is generated for the variables of interest in this question. Although Pearson's correlation is primarily suited for continuous variables, it can still give some idea of the direction of variables with respect to each other as they are all ordered.  
 
 ```{r, echo = FALSE}  
 cor(local_data4[,"parents_advice_score"], local_data4[,c("parents_advice_score","use_facebook", "use_twitter", "use_other_social_media", "use_internet")], use = "pairwise.complete.obs")
 
 ```
 
-Correlation tests were run on each of these and only the correlation of use_internet came out to be significantly different from 0 at 5% confidence level. Its results are shown below: 
+The correlations of parents_advice_score are pretty much the same with all variables, just a little higher for use_internet. Tests were run on each of these and only the correlation of use_internet came out to be significantly different from 0 (positive) at 5% significance level. Its results are shown below:  
 
 ```{r, echo = FALSE}
 cor.test(local_data4$parents_advice_score, local_data4$use_internet)
@@ -594,12 +595,11 @@ local_data4$use_other_social_media <- factor(local_data4$use_other_social_media,
 ```
 
 
-
-Plotting
+Visual examination of how the parents_advice_score varies with child's gender and age:  
 
 ```{r, echo = FALSE}
 
-g1 <- ggplot(data = na.omit(local_data4[,c("gender","parents_advice_score")])) + geom_bar(aes(x = gender, fill = factor(parents_advice_score)), position = "fill") + scale_y_continuous(labels=percent)
+ g1 <- ggplot(data = na.omit(local_data4[,c("gender","parents_advice_score")])) + geom_bar(aes(x = gender, fill = factor(parents_advice_score)), position = "fill") + scale_y_continuous(labels=percent)
 
 g2 <- ggplot(data = na.omit(local_data4[,c("age","parents_advice_score")])) + geom_bar(aes(x = age, fill = factor(parents_advice_score)), position = "fill") + scale_y_continuous(labels=percent)
 
@@ -607,26 +607,29 @@ grid.arrange(g1, g2, ncol = 1)
 
 ```
 
+The first graph suggests that parents might be slightly more likely to talk about inappropriate online behavior to their female children as compared to male children, which is interesting as the general perception is that males need this advice more as they are more likely to indulge in such behaviors.  
 
-Mean test for gender:
+The second graph suggests that parents might be less likely to talk to their children about inappropriate online behavior as they get older, which is expected.  
 
+Now, t tests are conducted to see if the differences in parents_advice_score based on gender and age are statistically significant:  
 
+Mean test for gender  
 ```{r, echo = FALSE}
 
 t.test(x = local_data4$parents_advice_score[local_data4$gender == "Male"], y = local_data4$parents_advice_score[local_data4$gender == "Female"], alternative = "less")
 
 ```
 
-
-Mean test for age:
-
+Mean test for age  
 ```{r, echo = FALSE}
 
 t.test(local_data4$parents_advice_score[local_data4$age == 13 | local_data4$age == 14 | local_data4$age == 15], local_data4$parents_advice_score[local_data4$age == 16 | local_data4$age == 17], alternative = "greater")
 
 ```
 
-Divided into two clusters for testing whether there is a difference in means. 13-15 and 16-17.
+The difference in parents_advice_score based on gender is not significant at 5%, although the p-value of 0.065 tell that it would be sigificant at 10% significance level.  
+
+For age, the responses were divided into two clusers, one with children aged 13-15 and the other with children aged 16-17. The difference in parents_advice_score turns out to be significant even at 1%.  
 
 
 Initial Regression Model:
@@ -638,8 +641,10 @@ m4 <- lm(parents_advice_score ~ use_facebook + use_twitter + use_internet + use_
 summary(m4)
 ```
 
+An initial regression model that includes all of the variables suggests that only age and use_internet are significant at some level.  
 
-Final Model:
+Regressions with multiple other combinations of these variables are tried and then the least significant variables use_twitter and use_other_social_media are taken out to reach the following final model:  
+
 ```{r, echo = FALSE}
 m4 <- lm(parents_advice_score ~ use_facebook + use_internet + age + gender, data = local_data4)
 
@@ -647,9 +652,11 @@ m4 <- lm(parents_advice_score ~ use_facebook + use_internet + age + gender, data
 summary(m4)
 ```
 
-Only use_internet and age are significant at 5%. Parents talk less as children grow older.
+The results show that both use_internet and age are significant at 5%. It means that parents who use at least some form of internet themselves are more likely to understand what goes on around and talk to their children about inappropriate online behavior. The parents_advice_score increses by 0.27 if the parent uses internet, which is about 0.17 standard deviations above the mean of parents_advice_score.
 
-Facebook usage and Gender are close to being significant at 10% level. More data might make these two variables significant in this model as well.
+Similarly, parents are more likely to advise about inappropriate online behavior if their children are younger, and the parents_advice_score decreases by 0.15 on average for every one year increase in age. This makes sense as younger kids are less aware when they are new to internet. However, it can be argued that parents should pay just as much attention to older kids as they are more likely to engage in inappropriate behavior in their late teens.
+
+Although use_facebook and gender are not significant here at 10% level, more data might make these two variables significant in this model as well. This would suggest that parents who specifically use facebook would be more likely to talk about inappopriate online behavior to their children, and also that female children are more likely to be advised as compared to male children. It would be interesting to see how this gender bias varies across different cultures and races.
 
 ***
 
@@ -788,7 +795,7 @@ KR3_A: Have you ever searched for information online about someone you were curr
 
 KR3_C: Have you ever searched for information online about someone you dated or hooked up with in the past? 1(YES)-2(NO)
 
-* Hypothesis: These two questions are proxies of teen's desire to know more about their significant other that presumably the date(s) did not reveal, otherwise he/she would not be searching for more info. So if these questions were answered Yes, perhaps the more likely the teen would exhibit stalking behaviour.
+* Hypothesis: These two questions are proxies of teen's desire to know more about their significant other that presumably the date(s) did not reveal, otherwise he/she would not be searching for more info. So if these questions were answered Yes, perhaps the more likely the teen would exhibit stalking behaviour.  
 
 KF15: Have you ever had a fight with any of your friends that started because of something that happened online or because of a text? 1(YES)-2(NO)
 
@@ -878,27 +885,27 @@ Question: How more likely are children to trust their significant others and not
 For this question, the relevant dataset questions are:
 
 *[Dependent variable]*:  
-KRSNS3_A: When you use social media do you ever keep track of where your boyfriend, girlfriend or significant other is or what they are doing? 
+KRSNS3_A (kid_tracking_significant_others_activity): When you use social media do you ever keep track of where your boyfriend, girlfriend or significant other is or what they are doing? 
 1.Yes  
 2.No  
   
 *[Independent variables]*:  
-P13_A: Have you ever used parental controls or other technological means of blocking, filtering or monitoring your child's online activities?  
+P13_A (used_parental_controls): Have you ever used parental controls or other technological means of blocking, filtering or monitoring your child's online activities?  
 1.Yes  
 2.No  
 3.Does Not Apply  
 
-P13_B: Have you ever checked which websites your child visited?  
+P13_B (checked_websites_visited): Have you ever checked which websites your child visited?  
 1.Yes  
 2.No  
 3.Does Not Apply  
 
-P14_G: Have you ever used monitoring tools to track your child's location with his/her cell phone?   
+P14_G (tracked_childs_location): Have you ever used monitoring tools to track your child's location with his/her cell phone?   
 1.Yes  
 2.No  
 3.Does Not Apply  
 
-P14_H: Have you ever looked at the phone call records or messages on your child's phone?    
+P14_H (tracked_calls_and_messages): Have you ever looked at the phone call records or messages on your child's phone?    
 1.Yes  
 2.No  
 3.Does Not Apply  
@@ -906,7 +913,7 @@ P14_H: Have you ever looked at the phone call records or messages on your child'
   
 <b> Data cleaning </b>  
   
-Similar data cleaning and manipulation operations were performed to get rid of invalid responses and to re-order values according from least to most.  
+Similar data cleaning and manipulation operations were performed to get rid of invalid responses and to re-order values from least to most.  
 
 ```{r, echo = FALSE}
 local_data5 <- data.frame(used_parental_controls = survey_data$P13_A, checked_websites_visited = survey_data$P13_B, tracked_childs_location = survey_data$P14_G, tracked_calls_and_messages = survey_data$P14_H,  kid_tracking_significant_others_activity = survey_data$KRSNS3_A, age = survey_data$Child_age, gender = survey_data$Child_gender)
@@ -948,7 +955,10 @@ cat('After data cleaning, the number of valid data records for analysis is: ', d
 ```
 
 
-Correlation Matrix:
+<b>Findings</b>  
+
+
+A simple correlation table is generated for the variables of interest in this question. Again, Pearson’s correlation is primarily suited for continuous variables, here it will just give us some idea of the direction of variables with respect to each other.  
 
 ```{r, echo = FALSE}
 cor(local_data5[,"kid_tracking_significant_others_activity"], local_data5[,c("kid_tracking_significant_others_activity","used_parental_controls", "checked_websites_visited", "tracked_childs_location", "tracked_calls_and_messages")], use = "pairwise.complete.obs")
@@ -956,7 +966,9 @@ cor(local_data5[,"kid_tracking_significant_others_activity"], local_data5[,c("ki
 
 ```
 
-Correlation tests were run to see if there is significant statistical evidence that the correlation is different from 0 for any of these variables. Only tracked_childs_location came out to be different from 0 and its results are shown below:
+The correlation of kid_tracking_significant_others_activity with tracked_childs_location is relatively higher as compared to other variables.  
+
+Correlation tests were run for each of these and there is significant statistical evidence for only tracked_childs_location that its correlation with kid_tracking_significant_others_activity is different from 0. Its results are shown below:  
 
 ```{r, echo = FALSE}
 cor.test(local_data5$kid_tracking_significant_others_activity, local_data5$tracked_childs_location)
@@ -981,8 +993,7 @@ local_data5$kid_tracking_significant_others_activity <- factor(local_data5$kid_t
 ```
 
 
-
-Plotting y
+Visual examination of how kid_tracking_significant_others_activity varies with gender:  
 
 ```{r, echo = FALSE}
 
@@ -995,7 +1006,10 @@ grid.arrange(g1, g2, ncol = 1)
 
 ```
 
-Plotting x
+Both the graphs suggest that females are more likely to track the activities of their significant others on social media as compared to males, which seems interesting if this behavior holds generally outside this sample too.  
+
+
+Visual examination of how different ways that parents use to monitor their children's activities vary with the child's gender:  
 
 ```{r, echo = FALSE}
 
@@ -1011,25 +1025,30 @@ grid.arrange(g3, g4, g5, g6, ncol = 2)
 
 ```
 
+From these graphs, it appears that the parents' ways to monitor their children do not significantly change based on the child's gender. However, it's interesting to see that females are relatively more likely to be monitored by their parents as compared to males. Also, it is perhaps surprising to see that there is a large proportion of parents in general who have tracked children's calls and messages and their visited websites at least at some point in time.  
 
-Prop test:
 
+Now, a proportion test is conducted to see if the difference in kid_tracking_significant_others_activity based on gender is statistically significant:  
 
 ```{r, echo = FALSE}
 
 prop.test(table(local_data5$kid_tracking_significant_others_activity, local_data5$gender), alternative = "less")
 ```
 
-Reveals that males are less likely to keep track of their significant other on social media. which might go against our general perception, which usually is that females tend to trust their partners more. The behavior on social mediaappears to be otherwise howevver. It may also mean however that females tend to give more importance to their relationships than their counterparts in general, whereas men may give more time to other things n social media.
+The test results show that the difference in kid_tracking_significant_others_activity based on gender is significant at 5%. It suggests that males are less likely to keep track of their significant other on social media. However, a regression model can be used to further investigate this hypothesis.  
 
-Regression:
+An initial regression model is run to see how the parents' monitoring of their children affects the childrens' monitoring of their significant others on social media. Again, logistic regression is used since the dependent variable is binary:
 
 ```{r, echo = FALSE}
 #Initial Model
 m5 <- glm(kid_tracking_significant_others_activity ~ used_parental_controls + checked_websites_visited + tracked_childs_location + tracked_calls_and_messages + age + gender, data = local_data5, family = "binomial")
 
+summary(m5)
 ```
 
+This model that includes all of the variables suggests that only tracked_childs_location is significant and gender is almost at the border of signficance.   
+
+Regressions with multiple other combinations of these variables are tried and then the less significant variables used_parental_controls and tracked_calls_and_messages are taken out to reach the following final model:  
 
 ```{r, echo = FALSE}
 #Final Model after trying different combinations
@@ -1040,9 +1059,9 @@ summary(m5)
 exp (m5$coefficients)
 ```
 
-tracked child location is coming out significant at 1% and gender at 5%.
+The results show that both tracked_childs_location and gender are significant at 5%. The coefficients reveal that those kids whose parents use any monitoring tools track their locations are about 120% more likely to track their significant others' activities on social media on average. It is important to note however that the number of people who use monitoring tools to track their child's location is not particularly big in this survey, as compared to the other ways used by parents to track their child. So further research would be needed to see if the effect holds in relatively larger samples.
 
-However, it is important to note here that The number of people who use monitoring tools to track their child's location is not particularly big in this survey, as compared to the other ways used by parents to track their child. So further research would be needed to see if the effect holds in relatively larger samples.
+Also, interestingly, males are about 45% less likely on average to keep track of their significant others on social media. This might go against our general perception, which usually is that females tend to trust their partners more. Perhaps a possible reason for this is that females tend to give more importance to their relationships than their male counterparts in general, and perhaps their happiness and well-being is more dependent upon how things are going in their intimate relationships, and hence more concerned to find out more about their significant other. Again, more research / data outside this dataset would be helpful to further investigate this result.
 
 
 ***
