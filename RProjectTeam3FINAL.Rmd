@@ -18,23 +18,23 @@ output:
 # 1 Introduction
 ### 1.1 Description of dataset
 
-The dataset that this report is based on is called "Teen Relationship Survey Pretest", obtained from the URL:http://www.pewinternet.org/datasets/sep-25-oct-9-2014-and-feb-10-march-6-2015-teens/
+The underlying dataset for this report is based on "Teen Relationship Survey Pretest", obtained from the URL:http://www.pewinternet.org/datasets/sep-25-oct-9-2014-and-feb-10-march-6-2015-teens/
 
-This survey is a KnowledgePanel research study conducted by the Pew Research Center and focused on asked questions on both an adult and his/her child aged 13 through 17. 
+This survey is a KnowledgePanel research study conducted by the Pew Research Center and focuses on questions about usage of social media for adults and their children aged 13 through 17. 
 
-With the teen specifically, the survey touched on a variety of topics related to teen friendships and romantic relationships, particularly the role technology (such as mobile phones, Facebook, etc.) plays in those relationships. On the other hand, with the parent, the survey asked about technology, and the ways the child and the parent use a variety of digital devices and social media platforms.
+Specifically for teens, the survey touches a variety of topics related to friendships and romantic relationships, particularly the role technology (such as mobile phones, Facebook, etc.) play in those relationships. On the other hand, the survey asks parents about technology, and the ways they as well as their children use a variety of digital devices and social media platforms.
 
-The dataset has 1642 entries (number of parents/kids who completed the survey) and 317 variables (answers of each question). 
+The dataset has 1642 respsonses (number of parents/kids who completed the survey) and 317 variables (answers of each question). 
 
-### 1.2 Data Cleaning methodology
+### 1.2 Data cleaning methodology
 
-In the r script or rmd code, one can find the full code for cleaning the original dataset. 
-In short, here are the several things which were done to eliminate invalid entries.
+The full code for cleaning the original dataset can be found in the R script. 
+Briefly summarised, the following steps were executed to eliminate invalid entries:
 
-* rows where caseID was not a valid number was removed, by coverting caseID from factor to character to integer and eliminating the NA entries
-* rows where the adults answered they do not have teenagers aged 13 through 17 live in their households at least 50% of the time, or gave an invalid answer, were removed since the rest of the survey was not answered
-* rows where the adults answered that they do not have teenagers aged 13 to 17 in their households who they are the parent or legal guardian of, or gave an invalid anwer, were removed since the rest of the survey is left unanswered
-* entries where the children were not 13-17 in age were removed
+* rows where caseID was not valid were removed, converting caseID from factor to character to integer and eliminating the NA entries
+* rows where the adults answered they do not have teenagers aged 13 through 17 living in their households at least 50% of the time or gave an invalid answer were removed, because the rest of the survey was not answered
+* rows where the adults answered that they do not have teenagers aged 13 to 17 in their households who they are the parent or legal guardian of or gave an invalid answer were removed, because the rest of the survey is left unanswered
+* entries where the children were not between the age of 13 and 17 were removed
 
 ```{r, echo=FALSE, eval=FALSE}
 # Data cleaning
@@ -83,13 +83,13 @@ save(survey_data, file = 'cleaned_data.Rdata')
 
 ### 1.3 Categories of studies carried out  
 
-Given the wide breadth of questions in the survey, it would be interesting to investigate three main aspects of how social media relates to (i) parent and teenage child; (ii) teenage child and friends; (iii) teen's self-perception.  Each of these three areas have a set of questions and hypotheses which are studied using the data. They are covered in detail under section 3, with an executive summary of the questions, hypotheses and findings, preceding the subsection.  
+Given the wide breadth of questions in the survey, it would be interesting to investigate three main aspects of how social media relates to (i) parent and teenage child relationships; (ii) teenage child and friends relationships and lastly (iii) the teen's self-perception in relation to social media. Each of these three areas have sets of questions and hypotheses which are examined using the given dataset. These are covered in detail under section 3, with an executive summary of the questions, hypotheses and findings, preceding the subsection.  
 
 The three categories are:  
   
 1. Findings on relationship between teenagers and their parents  
 
-2. Findings on relationship between teenagers and their close friends / significant others  
+2. Findings on relationship between teenagers and their close friends/significant others  
   
 3. Findings on self perception
 
@@ -167,25 +167,25 @@ library(scales)
 ```
 ### Introduction
 
-The dataset had a number of questions that were posed to parents, and a number of similar questions posed to their teens.  
+The dataset has a number of questions that were posed to parents, and a number of similar questions posed to their children.  
   
-A number of hypotheses were investigated using this dataset, to see if there were any relationships between parent's behaviours and the teen's behaviours with respect to social media and technology usage.  
+A number of hypotheses were investigated using this dataset, to see if there are any relationships between parent's behaviours and the teen's behaviours with respect to social media and technology usage.  
   
-For example, parents were asked if they monitor their child's location (could be considered as a form of stalking behaviour), and whether the teen monitored someone they were dating or had dated (similar stalking behaviour). This was an opportunity to investigate if teens were more likely to exhibit stalking behaviour if their parent did the same too.  
+For example, parents were asked whether they monitor their child's location (could be considered as a form of stalking behaviour), and whether the teen monitored someone they were dating or had dated (similar stalking behaviour). This was an opportunity to investigate, if teens were more likely to exhibit stalking behaviour based on their parents initial behaviour.  
   
-There were also questions on, for example, whether the parent blocks their child's phone usage and whether the child sends sexy/flirty messages. One of the hypotheses was thus whether the child would be more likely to send sexy/flirty messages if the parent blocks their child's phone usage. This could suggest that the parent's intervention might have this effect of triggering a rebellious behaviour (e.g. the stricter the parent, the more the child wants to be liberal).    
+There were also questions relating to whether the parents restrict their child's phone usage and whether the child sends sexy/flirty messages. One of the hypotheses was thus whether the child would be more likely to send sexy/flirty messages if the parent blocks their child's phone usage. This could indicate that the parent's intervention might have an effect of triggering a rebellious behaviour (e.g. the stricter the parent, the more the child is likely to show rebellious behaviour).    
 
 <b>Methodology</b>  
   
-As the dependent variables for most of the investigations were categorical variables (being responses of survey questions), logistic regression was used for regression analysis instead of linear regression. Linear regression would not have made sense as its coefficients would not translate into anything meaningful.  Dependent variables where the possible responses were "No" or "Yes", i.e. binary 0 or 1 response, were chosen for analysis.    
+As the dependent variables for most of the investigations are categorical variables (being responses of survey questions), logistic regression was used for regression analysis instead of linear regression. Linear regression would not have made sense as its coefficients would not translate into anything meaningful.  Dependent variables where the possible responses were "No" or "Yes", i.e. binary 0 or 1 response, were chosen for analysis.    
   
 For logistic regression, the function <i>glm</i> was used, <i>model <- glm(y ~ x1 + x2 + .. + xk, data = dataframe, family = "binomial").</i>    
   
-In most cases, the independent variables were also survey responses that could have more than 2 options. e.g. 1.Yes, a lot, 2.Yes, a little, 3.No.  Researching literature online, there were two possible approaches: (1) leave such variables as numeric (R would interpret them as continuous variables), or convert them as factors (R would interpret them as categorical variables, and regression would yield a coefficient for each possible option by creating something like dummy variables). Setting these variables as continuous variables might be contentious as the values of the variables were discrete in nature, and one could not necessarily say that they the possible values were equally spaced. It might be difficult to explain why one option had value 1, and not 2 or 50 etc. Hence on balance, these variables were converted to factor, even though this would increase the total number of variables used in the regression and inflate the R<sup>2</sup> value (AIC value for logistic regression).  All dependent and independent variables were reordered so that the higher the value, the higher the scale of the response. i.e. instead of 1 for Yes and 2 for No, it was reordered to 0 for No and 1 for Yes.          
+In most cases, the independent variables were also survey responses that could have more than 2 options. e.g. 1.Yes, a lot, 2.Yes, a little, 3.No. Researching literature online, there are two possible approaches: (1) leave such variables as numeric (R would interpret them as continuous variables), or convert them as factors (R would interpret them as categorical variables, and regression would yield a coefficient for each possible option by creating something like dummy variables). Setting these variables as continuous variables might be contentious as the values of the variables were discrete in nature, and one could not necessarily say that the possible values were equally spaced. It might be difficult to explain why one option had value 1, and not 2 or 50 etc. Hence on balance, these variables were converted to factor, even though this would increase the total number of variables used in the regression and inflate the R<sup>2</sup> value (AIC value for logistic regression).  All dependent and independent variables were reordered so that the higher the value, the higher the scale of the response. i.e. instead of 1 for Yes and 2 for No, it was reordered to 0 for No and 1 for Yes.          
 
 It's also important to note here that the models based on logistic regression had a different way of interpreting the coefficients. Firstly, the dependent variable in logistic regression is its logarithmic transformation. So the exponential function was used first to convert the coefficients of independent variables. Then if the coefficient of a variable <i>x</i> was <i>(1+k)</i>, it meant that a one unit increase in variable <i>x</i> (or <i>x</i> being 1 instead of 0 in case of binary variables) will imply a <i>(k*100)%</i> more (or less if k is negative) chance of the dependent variable being true.  
 
-The five questions that were looked into in this section, their corresponding hypotheses, and associated findings are summarised in the section below.  
+The five questions that were looked into in this section, their corresponding hypotheses and associated findings are summarised in the section below.  
   
 ***
 
@@ -955,7 +955,7 @@ cat('After data cleaning, the number of valid data records for analysis is: ', d
 
 <b>Findings</b>  
 
-A simple correlation table is generated for the variables of interest in this question. Again, Pearson’s correlation is primarily suited for continuous variables, here it will just give us some idea of the direction of variables with respect to each other.  
+A simple correlation table is generated for the variables of interest in this question. Again, Pearson???s correlation is primarily suited for continuous variables, here it will just give us some idea of the direction of variables with respect to each other.  
 
 ```{r, echo = FALSE}
 cor(local_data5[,"kid_tracking_significant_others_activity"], local_data5[,c("kid_tracking_significant_others_activity","used_parental_controls", "checked_websites_visited", "tracked_childs_location", "tracked_calls_and_messages")], use = "pairwise.complete.obs")
@@ -2258,8 +2258,8 @@ Observations:
 
 Highest correlation: The highest correlations can be observed for questions (A/C, B/E, D/E, B/C). Starting with the already mentioned unique combination of D/E, which are closely related questions the following can be concluded from the plot. Looking at all counter examples, so same first question matched with D and E, it becomes obvious that those questions with exception of (B/D, B/E) are more or less equally correlating with the opposite question. Also taking the observation of (D/E) into consideration, it appears to be a valid conclusion that the respondents perceive these two questions similarly.
 
-The same accounts for the combination of (A/C) with both asking about the quality of connection to friends their feelings respectively.
-Left with (B/E) this is most likely the most interesting question combination, looking at the correlation between feeling "worse about your own life because of what you see from other friends on social media" and feeling the pressure to "only post content that makes you look good to others". This observation is strongly in line with the initially presented research discussed by the ([Huffington Post](http://www.huffingtonpost.com/dr-perpetua-neo/does-facebook-make-you-de_b_8474654.html)).
+The same accounts for the combination of (A/C) with both asking about the quality of connection to friends  and their feelings respectively.
+Left with (B/E) this is likely the most interesting question combination, looking at the correlation between feeling "worse about your own life because of what you see from other friends on social media" and feeling the pressure to "only post content that makes you look good to others". This observation is strongly in line with the initially presented research discussed by the ([Huffington Post](http://www.huffingtonpost.com/dr-perpetua-neo/does-facebook-make-you-de_b_8474654.html)).
 
 The last interesting observation with regards to the variance of the values is combination (B/C). The observations vary from positively to negatively correlating, which might be explained with the following assumption. Some people might perceive it positively to be connected to friend's feelings, while other might get jealous and therefore absorb it as negative feeling.
 
@@ -2283,7 +2283,7 @@ ggplot(cor_plot_tercile_FB_t_melt, aes(x = Question_combination, y = Correlation
 
 ###Correlation per cluster based on Instagram
 
-In general the patterns follow the same patterns as observed with Facebook. Looking at the previously identified questions, it occurs that for (B/E) Instagram has slightly more extreme values but a weaker variance, while mean and median are almost equally with 0.44/0.43 and 0.477/0.49 respectively (Instagram first).
+In general the reponses follow the same patterns as observed with Facebook. Looking at the previously identified questions, it occurs that for (B/E) Instagram has slightly more extreme values but a weaker variance, while mean and median are almost equally with 0.44/0.43 and 0.477/0.49 respectively (Instagram first).
 
 The situation for (B/C) is almost the same, with one extreme outlier having a negative correlation of -0.37 from the 15 year old with a lot of followers.
 
@@ -2316,7 +2316,7 @@ for(i in 1:10)
 ###Conclusion and limitations
 
 Given the initial size of the entire set and the necessary cleaning, the cluster ended up being relatively small to make statistically significant observations. Furthermore the selected independent variables number of friends/followers and age must be evaluated under the following assumptions. Looking at dependent variables that are deeply connected to the psyche of human beings, given the age and the along going presumable changes in life of the respondents, using only these two variables is a strong reduction of complexity to explain highly connected and complex occurrences that are influenced by numerous factors.  
-Second, given the time restriction and scope of the project a deeper analysis was simply not possible. The overall aim of this analysis was to show how clustering by relevant parameters might lead to different results and insights, which will be quickly recaptured.
+Second, given the time restriction and scope of the project a deeper analysis was simply not possible. The overall aim of this analysis was to show how clustering by relevant parameters might lead to different results and insights, which will be briefly recaptured.
 
 Starting with the initial heat maps, that only had limited explanatory power, the clustering by tercile of friends and age led to more detailed and differentiated results, clearly showing that the correlations between the responses to the questions are also relying on the cluster criteria. Furthermore as discussed above, there is a correlation between feeling "worse about your own life because of what you see from other friends on social media" and feeling the pressure to "only post content that makes you look good to others". This observation addresses exactly what the author of the article initially describes with regards to her experience. Given the mentioned limitations regarding the dataset as well as the complexity of the human mind, the hypothesis must be rejected from a statistical point of view, nevertheless the observation showed as well, that exposure expressed in number of friends has an impact on the perception of social media.
 
@@ -2324,6 +2324,6 @@ Starting with the initial heat maps, that only had limited explanatory power, th
 
 # 4 Final Conclusion
 
-The investigation of dataset revealed several interesting relationships. Firstly, parents' behaviour seems to affect teen's behaviour. In particular, parents stalking their teens by monitoring his/her location, has a positive effect on the teen also monitoring his/her significant other's location or accessing his/her phone. Secondly, the sample data showed differences between male and female teen's extent of social media usage. Female teens have more friends on Facebook and more followers on Instagram than male teens. Female teens also use more types of social media. Female teens tend to unfriend/block her ex than male teens. The data also suggests that social media and electronic devices help teens to communicate or get along with their friends. Lastly, clustering of responses to various survey questions showed how social media impacts one's self-perception depends not only on the number of friends the teen has, but also their age. The older the teen, the more likely he/she would be able to comprehend questions that required more self-reflection. This hypothesis was supported by data which showed more variance by age for questions like "whether you feel worse about your own life because of what you see from other friends on social media".  
+The investigation of the dataset revealed several interesting relationships. First, parents' behaviour seems to affect teen's behaviour. In particular, parents stalking their teens by monitoring his/her location, has a positive effect on the teen also monitoring his/her significant other's location or accessing his/her phone. Second, the sample data showed differences between male and female teen's extent of social media usage. Female teens have more friends on Facebook and more followers on Instagram than male teens. Female teens also use more types of social media. Female teens tend to unfriend/block her ex more likely than males. The data also suggests that social media and electronic devices help teens to communicate or get along with their friends. Last, clustering of responses by age and number of friends/followers shows how the correlations between the responses to selected questions vary among the different clusters, leading to observation that the perceived pressure to post socially accepted content correlates with the perceived life situtation/quality. Given the nature of this question, requiring a non neglectable capability of self-reflection, it can be infered that the precision of the given response correlates with the age of the respondend. The formulated hypothesis however had to be rejected from a statistical point of view, because the given results could not be assumed to be significant. Given the mentioned restriction, the initial suggestion that social media can work as a booster of negative feelings could be observed.
 
-Nonetheless, the dataset was relatively small (especially after data cleaning and given the number of variables studied), and hence a larger sample dataset would be required to have more conclusive results. In fact, if time permitted, studies could be done to see if trends were consistent over years (i.e. for different cohorts of 13-17 year old teens). Other analyses could include investigating if such trends would persist beyond teenage years into adulthood. For example, longitudinal studies could be done to track whether the surveyed teens' responses to the same questions, such as feeling pressure to appear good, persist when they are in their 30s (i.e. it could be studied whether parents' influences had 'permanent' impact on the teen, or whether the impact was transient during teen years).
+Nevertheless, the dataset was relatively small (especially after data cleaning and given the number of variables covered). A larger dataset would have significantly improved the reliability of the findings, and also enabled to draw more conclusive results. In fact, if time permitted, studies could be done to see whether trends were consistent over years (i.e. for different cohorts of 13-17 year old teens). Other analyses could include investigation, whether such trends would persist beyond teenage years towards adulthood. For example, longitudinal studies could be done to track whether the surveyed teens' responses to the same questions, such as feeling pressure to appear good, persist when they are in their 30s. Furthermore it could be analysed whether parents' influences had 'permanent' impact on the teen, or whether the impact was transient during teen years).
